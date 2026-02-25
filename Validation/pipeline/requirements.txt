@@ -1,0 +1,40 @@
+# Core
+torch>=2.1.0
+# NOTE: NVIDIA users should install the CUDA wheel separately:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu121
+
+# LlamaIndex
+llama-index-core>=0.12.0
+llama-index-llms-ollama>=0.5.0
+llama-index-embeddings-huggingface>=0.5.0
+
+# Embeddings / Chunking
+sentence-transformers>=3.0.0
+
+# Vector DB
+chromadb>=0.6.0
+
+# Hybrid search
+rank-bm25>=0.2.2
+FlashRank>=0.2.0
+
+# PDF
+pypdf>=4.0.0
+
+# Evaluation
+ragas>=0.2.0
+
+# Tokeniser
+tiktoken>=0.7.0
+
+# NLP
+nltk>=3.9.0
+
+# HTTP (for PDF fetching)
+requests>=2.32.0
+
+# Env
+python-dotenv>=1.0.0
+
+# Dev / test
+pytest>=8.0.0
