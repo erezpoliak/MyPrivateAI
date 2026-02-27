@@ -20,6 +20,9 @@ from ..common.utils import get_logger
 
 logger = get_logger(__name__)
 
+# Shared tiktoken encoding for token counting
+_ENC = tiktoken.get_encoding("cl100k_base")
+
 
 # ── Fixed-size chunker ───────────────────────────────────────────────────────
 
@@ -35,7 +38,7 @@ class FixedSizeChunker:
         config = config or Config()
         self._chunk_size = config.fixed_chunk_size
         self._overlap = config.fixed_chunk_overlap
-        self._enc = tiktoken.get_encoding("cl100k_base")
+        self._enc = _ENC
 
     def chunk(
         self, text: str, metadata: dict[str, Any] | None = None
@@ -91,7 +94,10 @@ class SemanticChunker:
     def __init__(self, config: Config | None = None) -> None:
         config = config or Config()
         self._threshold_pct = config.semantic_threshold_pct
+        self._max_tokens = config.semantic_max_tokens
+        self._overlap = config.fixed_chunk_overlap
         self._device = config.device
+        self._enc = _ENC
 
         logger.info(
             "Loading SentenceTransformer %s on %s",
@@ -139,34 +145,93 @@ class SemanticChunker:
             if d >= threshold
         ]
 
-        # Build chunks from sentence groups
+        # Build chunks from sentence groups, sub-splitting oversized ones
         metadata = metadata or {}
         groups = self._split_at(sentences, split_indices)
         nodes: list[TextNode] = []
-        for idx, group in enumerate(groups):
-            nodes.append(
-                TextNode(
-                    text=" ".join(group),
-                    metadata={
-                        **metadata,
-                        "chunk_strategy": "semantic",
-                        "chunk_index": idx,
-                        "sentence_count": len(group),
-                    },
+        n_subsplit = 0
+
+        for group in groups:
+            chunk_text = " ".join(group)
+            sub_chunks = self._cap_chunk(chunk_text)
+            if len(sub_chunks) > 1:
+                n_subsplit += 1
+            for sub_text in sub_chunks:
+                nodes.append(
+                    TextNode(
+                        text=sub_text,
+                        metadata={
+                            **metadata,
+                            "chunk_strategy": "semantic",
+                            "chunk_index": len(nodes),
+                            "sentence_count": len(group),
+                        },
+                    )
                 )
-            )
 
         logger.debug(
             "SemanticChunker produced %d chunks from %d sentences "
-            "(threshold=%.4f at p%d)",
+            "(%d sub-split, threshold=%.4f at p%d)",
             len(nodes),
             len(sentences),
+            n_subsplit,
             threshold,
             self._threshold_pct,
         )
         return nodes
 
     # ── helpers ──────────────────────────────────────────────────────────────
+
+    def _cap_chunk(self, text: str) -> list[str]:
+        """Sub-split *text* at sentence boundaries if it exceeds max tokens.
+
+        Chunks that fit within ``self._max_tokens`` are returned as-is.
+        Oversized chunks are split by accumulating sentences until the
+        token budget is exhausted, then starting a new sub-chunk with
+        sentence-level overlap.
+        """
+        tokens = self._enc.encode(text)
+        if len(tokens) <= self._max_tokens:
+            return [text]
+
+        sentences = sent_tokenize(text)
+        sub_chunks: list[str] = []
+        current: list[str] = []
+        current_len = 0
+
+        for sent in sentences:
+            sent_tokens = self._enc.encode(sent)
+            sent_len = len(sent_tokens)
+
+            # Edge case: single sentence exceeds max tokens — fall back
+            # to fixed token splitting so nothing escapes the cap.
+            if sent_len > self._max_tokens:
+                if current:
+                    sub_chunks.append(" ".join(current))
+                    current = []
+                    current_len = 0
+                start = 0
+                while start < sent_len:
+                    end = min(start + self._max_tokens, sent_len)
+                    sub_chunks.append(self._enc.decode(sent_tokens[start:end]))
+                    if end == sent_len:
+                        break
+                    start += self._max_tokens - self._overlap
+                continue
+
+            if current and current_len + sent_len > self._max_tokens:
+                sub_chunks.append(" ".join(current))
+                # Overlap: keep the last sentence for continuity
+                last = current[-1]
+                current = [last]
+                current_len = len(self._enc.encode(last))
+            current.append(sent)
+            current_len += sent_len
+
+        if current:
+            sub_chunks.append(" ".join(current))
+
+        return sub_chunks
 
     @staticmethod
     def _cosine_dissimilarity(embeddings: np.ndarray) -> np.ndarray:
