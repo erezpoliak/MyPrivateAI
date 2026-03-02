@@ -1,0 +1,150 @@
+"""Vector store and LLM initialisation backed by ChromaDB + LlamaIndex.
+
+Provides ``DocumentStore`` which:
+- Creates a ``HuggingFaceEmbedding`` on the GPU device detected by ``Config``
+- Initialises an Ollama LLM connection
+- ``build_index(nodes)`` — ingests TextNodes into a persistent ChromaDB
+  collection and returns a ``VectorStoreIndex``
+- ``load_index()`` — loads an existing ChromaDB collection into a
+  ``VectorStoreIndex`` (no re-embedding required)
+"""
+
+from __future__ import annotations
+
+from llama_index.core import StorageContext, VectorStoreIndex
+from llama_index.core.schema import TextNode
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.llms.ollama import Ollama
+from llama_index.vector_stores.chroma import ChromaVectorStore
+
+import chromadb
+from chromadb.errors import NotFoundError
+
+from ..common.config import Config
+from ..common.utils import ensure_dir, get_logger
+
+logger = get_logger(__name__)
+
+_DEFAULT_COLLECTION = "documents"
+
+
+class DocumentStore:
+    """Manage a LlamaIndex ``VectorStoreIndex`` backed by ChromaDB.
+
+    Usage::
+
+        store = DocumentStore(config)
+
+        # First run — build from corpus nodes
+        index = store.build_index(nodes)
+
+        # Subsequent runs — reload persisted collection
+        index = store.load_index()
+
+    The ``embed_model`` and ``llm`` properties are exposed so downstream
+    retrieval / query code can reuse the same instances.
+    """
+
+    def __init__(
+        self,
+        config: Config | None = None,
+        collection_name: str = _DEFAULT_COLLECTION,
+    ) -> None:
+        self._config = config or Config()
+        self._collection_name = collection_name
+        self._index: VectorStoreIndex | None = None
+
+        # -- Embedding model (GPU-accelerated via config.device) ---------------
+        logger.info(
+            "Loading HuggingFaceEmbedding %s on %s",
+            self._config.embedding_model,
+            self._config.device,
+        )
+        self._embed_model = HuggingFaceEmbedding(
+            model_name=self._config.embedding_model,
+            device=self._config.device,
+        )
+
+        # -- Ollama LLM -------------------------------------------------------
+        logger.info(
+            "Connecting to Ollama at %s (model: %s)",
+            self._config.ollama_base_url,
+            self._config.ollama_model,
+        )
+        self._llm = Ollama(
+            model=self._config.ollama_model,
+            base_url=self._config.ollama_base_url,
+            request_timeout=self._config.ollama_timeout,
+            temperature=self._config.ollama_temperature,
+        )
+
+    # -- public properties ----------------------------------------------------
+
+    @property
+    def embed_model(self) -> HuggingFaceEmbedding:
+        return self._embed_model
+
+    @property
+    def llm(self) -> Ollama:
+        return self._llm
+
+    @property
+    def index(self) -> VectorStoreIndex | None:
+        return self._index
+
+    # -- index lifecycle ------------------------------------------------------
+
+    def build_index(self, nodes: list[TextNode]) -> VectorStoreIndex:
+        """Embed *nodes* and persist them in a ChromaDB collection.
+
+        Any existing collection with the same name is dropped first so the
+        index always reflects the current corpus.
+        """
+        ensure_dir(self._config.chroma_dir)
+
+        client = chromadb.PersistentClient(path=str(self._config.chroma_dir))
+
+        # Clear stale data — rebuild from scratch
+        try:
+            client.delete_collection(self._collection_name)
+            logger.info("Deleted existing collection '%s'", self._collection_name)
+        except (ValueError, NotFoundError):
+            pass  # collection didn't exist yet
+
+        collection = client.create_collection(self._collection_name)
+        vector_store = ChromaVectorStore(chroma_collection=collection)
+        storage_ctx = StorageContext.from_defaults(vector_store=vector_store)
+
+        logger.info("Building index from %d nodes …", len(nodes))
+        self._index = VectorStoreIndex(
+            nodes=nodes,
+            storage_context=storage_ctx,
+            embed_model=self._embed_model,
+            show_progress=True,
+        )
+
+        logger.info(
+            "Index built and persisted (%d nodes in '%s')",
+            len(nodes),
+            self._collection_name,
+        )
+        return self._index
+
+    def load_index(self) -> VectorStoreIndex:
+        """Load a previously persisted ChromaDB collection into a VectorStoreIndex."""
+        client = chromadb.PersistentClient(path=str(self._config.chroma_dir))
+        collection = client.get_collection(self._collection_name)
+
+        vector_store = ChromaVectorStore(chroma_collection=collection)
+
+        self._index = VectorStoreIndex.from_vector_store(
+            vector_store=vector_store,
+            embed_model=self._embed_model,
+        )
+
+        logger.info(
+            "Index loaded from persisted collection '%s' (%d documents)",
+            self._collection_name,
+            collection.count(),
+        )
+        return self._index
