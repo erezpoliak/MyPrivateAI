@@ -12,6 +12,7 @@ import torch
 
 class CorpusMode(str, Enum):
     """Which corpus source to use for a run."""
+    NONE = "none"
     GOLD_REF = "gold_ref"
     FETCHED = "fetched"
 

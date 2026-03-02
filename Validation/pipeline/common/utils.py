@@ -82,6 +82,13 @@ def ensure_dir(path: Path) -> Path:
     return path
 
 
+# ── DOI helpers ────────────────────────────────────────────────────────────
+
+def doi_to_path(papers_dir: Path, doi: str) -> Path:
+    """Return the local PDF path for a DOI inside *papers_dir*."""
+    return papers_dir / (doi.replace("/", "__").replace(":", "_") + ".pdf")
+
+
 # ── NLTK bootstrap ──────────────────────────────────────────────────────────
 
 def _bootstrap_nltk(config: Config | None = None) -> None:

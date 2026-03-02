@@ -17,7 +17,7 @@ _SCHEMA = """
 CREATE TABLE IF NOT EXISTS runs (
     run_id          INTEGER PRIMARY KEY AUTOINCREMENT,
     experiment      TEXT    NOT NULL,          -- e.g. "baseline", "phase1", "phase2", "ceiling"
-    corpus_mode     TEXT    NOT NULL,          -- "gold_ref" | "fetched"
+    corpus_mode     TEXT    NOT NULL,          -- "none" | "gold_ref" | "fetched"
     started_at      TEXT    NOT NULL,
     finished_at     TEXT,
     config_json     TEXT    NOT NULL,          -- serialised Config snapshot

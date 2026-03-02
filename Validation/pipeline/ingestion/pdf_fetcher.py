@@ -14,7 +14,7 @@ from typing import Optional
 import requests
 
 from ..common.config import Config
-from ..common.utils import ensure_dir, get_logger, retry
+from ..common.utils import doi_to_path, ensure_dir, get_logger, retry
 
 logger = get_logger(__name__)
 
@@ -66,7 +66,7 @@ class PDFFetcher:
 
     def fetch(self, doi: str) -> FetchResult:
         """Fetch a PDF for *doi*. Returns a cached copy if already on disk."""
-        cached = self._cached_path(doi)
+        cached = doi_to_path(self._papers_dir, doi)
         if cached.exists():
             logger.debug("Cache hit: %s", doi)
             return FetchResult(doi=doi, success=True, path=cached, source="cache")
@@ -189,22 +189,13 @@ class PDFFetcher:
                 error=f"{source}: unexpected Content-Type {content_type!r}",
             )
 
-        dest = self._cached_path(doi)
+        dest = doi_to_path(self._papers_dir, doi)
         with open(dest, "wb") as f:
             for chunk in resp.iter_content(chunk_size=8192):
                 f.write(chunk)
 
         logger.info("Downloaded %s via %s → %s", doi, source, dest.name)
         return FetchResult(doi=doi, success=True, path=dest, source=source)
-
-    def _cached_path(self, doi: str) -> Path:
-        """Return the local file path for a DOI's cached PDF."""
-        return self._papers_dir / self._doi_to_filename(doi)
-
-    @staticmethod
-    def _doi_to_filename(doi: str) -> str:
-        """Convert a DOI to a safe filename."""
-        return doi.replace("/", "__").replace(":", "_") + ".pdf"
 
     def _wait(self, source: str) -> None:
         """Enforce per-source rate limits."""
