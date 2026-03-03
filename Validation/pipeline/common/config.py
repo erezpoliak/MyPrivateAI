@@ -85,7 +85,6 @@ class Config:
 
     # -- RAGAS ---------------------------------------------------------------
     ragas_judge_model: str = "gpt-4o-mini"
-    ragas_ceiling_model: str = "gpt-4o"
 
     # -- Agent (Phase 2) -----------------------------------------------------
     max_agent_hops: int = 3

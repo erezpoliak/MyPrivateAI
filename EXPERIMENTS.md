@@ -9,7 +9,7 @@
 | 3 | **Phase 1** | Semantic | Hybrid BM25+Vector (RRF) | FlashRank top-3 | Llama 3.1 8B | GPT-4o-mini | CR > 0.92, Faith > 0.98 |
 | 4 | **Phase 2** | Semantic | Multi-hop agent using Hybrid BM25+Vector (RRF) | FlashRank top-3 | Llama 3.1 8B | GPT-4o-mini | AC > 85% ceiling, Traj > 0.80, AC(cplx 3-4) ≥ Llama+Gold_REF |
 | 5 | **Llama+Gold_REF** | N/A | Gold_REF injected | None | Llama 3.1 8B | GPT-4o-mini | Llama comprehension ceiling |
-| 6 | **Ceiling (GPT-4o)** | N/A | Gold_REF injected | None | GPT-4o | GPT-4o | Upper bound anchor |
+| 6 | **Ceiling (GPT-4o)** | N/A | Gold_REF injected | None | GPT-4o | GPT-4o-mini | Upper bound anchor |
 
 ---
 
