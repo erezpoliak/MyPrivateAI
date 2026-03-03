@@ -1,0 +1,60 @@
+# MyPrivateAI
+
+**A local-first desktop application that brings cloud-level AI to sensitive private documents — without sacrificing security, cost, or accessibility.**
+
+While existing local AI tools require technical expertise, MyPrivateAI offers a simple installer for researchers, lawyers, and professionals handling confidential data.
+
+**The core innovation:** Local LLMs typically underperform on complex reasoning compared to GPT-4. Our Optimized Agentic RAG system combines advanced retrieval with multi-turn reasoning agents, enabling complex multi-document analysis once reserved for cloud services. Through systematic validation on research benchmarks, we aim to demonstrate that frontier-level performance is achievable on consumer hardware.
+
+MyPrivateAI will deliver a "cloud LLM experience" locally — completely free, private, and offline — making advanced AI accessible to anyone with sensitive documents.
+
+---
+
+## Validation Experiment Design
+
+Before building the full application, we rigorously validate our core hypothesis:
+
+> *An Optimized Agentic RAG pipeline can compensate for an 8B model's limitations and achieve performance close to GPT-4o on complex mutli-paper private document tasks.*
+
+We use a 6-experiment design evaluated with [RAGAS](https://docs.ragas.io/) metrics on the **SciRAG-QA** benchmark. Each transition between experiments isolates a single variable, letting us decompose exactly where performance gains (and losses) come from.
+
+| # | Experiment | What it tests |
+|---|---|---|
+| 1 | **Closed Book** | Local LLM parametric knowledge alone — no retrieval |
+| 2 | **Baseline RAG** | Fixed-size chunking + basic vector search |
+| 3 | **Phase 1 — Optimized Retrieval** | Semantic chunking + hybrid BM25/vector search + FlashRank reranking |
+| 4 | **Phase 2 — Agentic RAG** | Multi-hop reasoning agent over the optimized retrieval pipeline |
+| 5 | **Llama + Gold References** | Perfect retrieval (gold contexts injected) — isolates model capability ceiling |
+| 6 | **GPT-4o Ceiling** | GPT-4o with gold contexts — absolute upper bound |
+
+### Gap Analysis
+
+```
+Closed Book  ──┐
+                ├─ RAG value-add
+Baseline     ──┘──┐
+                   ├─ Better retrieval + semantic chunking
+Phase 1      ─────┘──┐
+                      ├─ Agentic multi-hop reasoning
+Phase 2      ────────┘──┐
+                         ├─ Retrieval gap 
+Llama+Gold   ──────────┘──┐
+                            ├─ Model gap 
+GPT-4o       ────────────┘
+```
+
+**Success criteria:** Phase 2 achieves >= 85% of the GPT-4o ceiling on answer correctness, and matches or exceeds Llama+Gold on complexity 3-4 questions (demonstrating that the agent's reasoning compensates for imperfect retrieval on hard questions).
+
+---
+
+## Installation
+
+> **Coming soon.** MyPrivateAI is currently in the validation phase. A guided installer will be provided in a future release.
+
+---
+
+## Experiment Results
+
+> **Coming soon.** Results will be published here as each experiment is completed.
+
+---
