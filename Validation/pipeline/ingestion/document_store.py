@@ -1,8 +1,7 @@
-"""Vector store and LLM initialisation backed by ChromaDB + LlamaIndex.
+"""Vector store backed by ChromaDB + LlamaIndex.
 
 Provides ``DocumentStore`` which:
 - Creates a ``HuggingFaceEmbedding`` on the GPU device detected by ``Config``
-- Initialises an Ollama LLM connection
 - ``build_index(nodes)`` — ingests TextNodes into a persistent ChromaDB
   collection and returns a ``VectorStoreIndex``
 - ``load_index()`` — loads an existing ChromaDB collection into a
@@ -14,7 +13,6 @@ from __future__ import annotations
 from llama_index.core import StorageContext, VectorStoreIndex
 from llama_index.core.schema import TextNode
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-from llama_index.llms.ollama import Ollama
 from llama_index.vector_stores.chroma import ChromaVectorStore
 
 import chromadb
@@ -41,8 +39,8 @@ class DocumentStore:
         # Subsequent runs — reload persisted collection
         index = store.load_index()
 
-    The ``embed_model`` and ``llm`` properties are exposed so downstream
-    retrieval / query code can reuse the same instances.
+    The ``embed_model`` property is exposed so downstream retrieval code
+    can reuse the same instance.
     """
 
     def __init__(
@@ -65,28 +63,11 @@ class DocumentStore:
             device=self._config.device,
         )
 
-        # -- Ollama LLM -------------------------------------------------------
-        logger.info(
-            "Connecting to Ollama at %s (model: %s)",
-            self._config.ollama_base_url,
-            self._config.ollama_model,
-        )
-        self._llm = Ollama(
-            model=self._config.ollama_model,
-            base_url=self._config.ollama_base_url,
-            request_timeout=self._config.ollama_timeout,
-            temperature=self._config.ollama_temperature,
-        )
-
     # -- public properties ----------------------------------------------------
 
     @property
     def embed_model(self) -> HuggingFaceEmbedding:
         return self._embed_model
-
-    @property
-    def llm(self) -> Ollama:
-        return self._llm
 
     @property
     def index(self) -> VectorStoreIndex | None:
