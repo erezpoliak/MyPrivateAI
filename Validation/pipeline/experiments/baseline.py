@@ -21,7 +21,8 @@ if str(_PIPELINE_DIR) not in sys.path:
     sys.path.insert(0, str(_PIPELINE_DIR))
 
 from common.config import Config
-from experiments.runner import ExperimentSpec, parse_args, run_experiment
+from experiments.runner import parse_args, run_experiment
+from experiments.spec import ExperimentSpec
 from ingestion.fixed_chunker import FixedSizeChunker
 from retrieval.vector_retriever import VectorRetriever
 
