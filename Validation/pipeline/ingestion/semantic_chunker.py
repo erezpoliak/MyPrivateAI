@@ -1,8 +1,7 @@
-"""Fixed-size and semantic chunking strategies.
+"""Semantic chunking strategy.
 
-FixedSizeChunker  — 512-token sliding window via tiktoken.
-SemanticChunker   — Splits on cosine-dissimilarity spikes (95th percentile)
-                    using SentenceTransformer embeddings on GPU when available.
+SemanticChunker — Splits on cosine-dissimilarity spikes (95th percentile)
+                  using SentenceTransformer embeddings on GPU when available.
 """
 
 from __future__ import annotations
@@ -20,65 +19,7 @@ from ..common.utils import get_logger
 
 logger = get_logger(__name__)
 
-# Shared tiktoken encoding for token counting
 _ENC = tiktoken.get_encoding("cl100k_base")
-
-
-# ── Fixed-size chunker ───────────────────────────────────────────────────────
-
-
-class FixedSizeChunker:
-    """Split text into fixed-size token windows with overlap.
-
-    Uses tiktoken's ``cl100k_base`` encoding to count tokens so chunk
-    boundaries align with sub-word units rather than raw characters.
-    """
-
-    def __init__(self, config: Config | None = None) -> None:
-        config = config or Config()
-        self._chunk_size = config.fixed_chunk_size
-        self._overlap = config.fixed_chunk_overlap
-        self._enc = _ENC
-
-    def chunk(
-        self, text: str, metadata: dict[str, Any] | None = None
-    ) -> list[TextNode]:
-        """Return a list of TextNodes, each up to *chunk_size* tokens."""
-        tokens = self._enc.encode(text)
-        if not tokens:
-            return []
-
-        metadata = metadata or {}
-        nodes: list[TextNode] = []
-        start = 0
-
-        while start < len(tokens):
-            end = min(start + self._chunk_size, len(tokens))
-            chunk_text = self._enc.decode(tokens[start:end])
-            nodes.append(
-                TextNode(
-                    text=chunk_text,
-                    metadata={
-                        **metadata,
-                        "chunk_strategy": "fixed",
-                        "chunk_index": len(nodes),
-                        "token_count": end - start,
-                    },
-                )
-            )
-            if end == len(tokens):
-                break
-            start += self._chunk_size - self._overlap
-
-        logger.debug(
-            "FixedSizeChunker produced %d chunks from %d tokens",
-            len(nodes),
-            len(tokens),
-        )
-        return nodes
-
-
-# ── Semantic chunker ─────────────────────────────────────────────────────────
 
 
 class SemanticChunker:
@@ -133,7 +74,7 @@ class SemanticChunker:
         )
 
         # Cosine dissimilarity between consecutive sentence embeddings
-        dissimilarities = self._cosine_dissimilarity(embeddings)
+        dissimilarities = _cosine_dissimilarity(embeddings)
 
         # Threshold: split where dissimilarity exceeds the Nth percentile
         threshold = float(np.percentile(dissimilarities, self._threshold_pct))
@@ -147,7 +88,7 @@ class SemanticChunker:
 
         # Build chunks from sentence groups, sub-splitting oversized ones
         metadata = metadata or {}
-        groups = self._split_at(sentences, split_indices)
+        groups = _split_at(sentences, split_indices)
         nodes: list[TextNode] = []
         n_subsplit = 0
 
@@ -233,25 +174,26 @@ class SemanticChunker:
 
         return sub_chunks
 
-    @staticmethod
-    def _cosine_dissimilarity(embeddings: np.ndarray) -> np.ndarray:
-        """Return 1 − cos(e_i, e_{i+1}) for consecutive embedding pairs."""
-        # Normalise rows to unit length
-        norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
-        norms = np.where(norms == 0, 1, norms)  # avoid division by zero
-        normed = embeddings / norms
 
-        # Cosine similarity = dot product of adjacent normalised vectors
-        cos_sim = np.sum(normed[:-1] * normed[1:], axis=1)
-        return 1.0 - cos_sim
+# ── Pure helper functions ────────────────────────────────────────────────────
 
-    @staticmethod
-    def _split_at(items: list[str], indices: list[int]) -> list[list[str]]:
-        """Split *items* into groups at the given indices."""
-        groups: list[list[str]] = []
-        prev = 0
-        for idx in indices:
-            groups.append(items[prev:idx])
-            prev = idx
-        groups.append(items[prev:])
-        return groups
+
+def _cosine_dissimilarity(embeddings: np.ndarray) -> np.ndarray:
+    """Return 1 − cos(e_i, e_{i+1}) for consecutive embedding pairs."""
+    norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
+    norms = np.where(norms == 0, 1, norms)  # avoid division by zero
+    normed = embeddings / norms
+
+    cos_sim = np.sum(normed[:-1] * normed[1:], axis=1)
+    return 1.0 - cos_sim
+
+
+def _split_at(items: list[str], indices: list[int]) -> list[list[str]]:
+    """Split *items* into groups at the given indices."""
+    groups: list[list[str]] = []
+    prev = 0
+    for idx in indices:
+        groups.append(items[prev:idx])
+        prev = idx
+    groups.append(items[prev:])
+    return groups

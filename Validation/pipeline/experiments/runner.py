@@ -35,7 +35,7 @@ from common.db import RunDB
 from common.llm import get_llm
 from common.metrics import EvalSample, RAGASEvaluator
 from common.utils import get_logger
-from ingestion.corpus_builder import Chunker, CorpusBuilder
+from ingestion.corpus_builder import Chunker, build_corpus
 from ingestion.document_store import DocumentStore
 
 logger = get_logger(__name__)
@@ -287,8 +287,7 @@ def run_experiment(spec: ExperimentSpec, args: argparse.Namespace) -> int:
 
     # ── Build corpus ─────────────────────────────────────────────────────
     chunker = spec.create_chunker(config)
-    builder = CorpusBuilder(chunker, config)
-    nodes, manifest = builder.build(qa_pairs)
+    nodes, manifest = build_corpus(qa_pairs, chunker, config)
     logger.info(
         "Corpus: %d nodes from %d papers",
         manifest.total_nodes,

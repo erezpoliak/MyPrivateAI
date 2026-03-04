@@ -39,7 +39,7 @@ class DocumentStore:
         # Subsequent runs — reload persisted collection
         index = store.load_index()
 
-    The ``embed_model`` property is exposed so downstream retrieval code
+    The ``embed_model`` attribute is exposed so downstream retrieval code
     can reuse the same instance.
     """
 
@@ -50,7 +50,7 @@ class DocumentStore:
     ) -> None:
         self._config = config or Config()
         self._collection_name = collection_name
-        self._index: VectorStoreIndex | None = None
+        self.index: VectorStoreIndex | None = None
 
         # -- Embedding model (GPU-accelerated via config.device) ---------------
         logger.info(
@@ -58,20 +58,10 @@ class DocumentStore:
             self._config.embedding_model,
             self._config.device,
         )
-        self._embed_model = HuggingFaceEmbedding(
+        self.embed_model = HuggingFaceEmbedding(
             model_name=self._config.embedding_model,
             device=self._config.device,
         )
-
-    # -- public properties ----------------------------------------------------
-
-    @property
-    def embed_model(self) -> HuggingFaceEmbedding:
-        return self._embed_model
-
-    @property
-    def index(self) -> VectorStoreIndex | None:
-        return self._index
 
     # -- index lifecycle ------------------------------------------------------
 
@@ -97,10 +87,10 @@ class DocumentStore:
         storage_ctx = StorageContext.from_defaults(vector_store=vector_store)
 
         logger.info("Building index from %d nodes …", len(nodes))
-        self._index = VectorStoreIndex(
+        self.index = VectorStoreIndex(
             nodes=nodes,
             storage_context=storage_ctx,
-            embed_model=self._embed_model,
+            embed_model=self.embed_model,
             show_progress=True,
         )
 
@@ -109,7 +99,7 @@ class DocumentStore:
             len(nodes),
             self._collection_name,
         )
-        return self._index
+        return self.index
 
     def load_index(self) -> VectorStoreIndex:
         """Load a previously persisted ChromaDB collection into a VectorStoreIndex."""
@@ -118,9 +108,9 @@ class DocumentStore:
 
         vector_store = ChromaVectorStore(chroma_collection=collection)
 
-        self._index = VectorStoreIndex.from_vector_store(
+        self.index = VectorStoreIndex.from_vector_store(
             vector_store=vector_store,
-            embed_model=self._embed_model,
+            embed_model=self.embed_model,
         )
 
         logger.info(
@@ -128,4 +118,4 @@ class DocumentStore:
             self._collection_name,
             collection.count(),
         )
-        return self._index
+        return self.index

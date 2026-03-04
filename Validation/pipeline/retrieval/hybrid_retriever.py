@@ -23,6 +23,80 @@ from .vector_retriever import VectorRetriever
 logger = get_logger(__name__)
 
 
+# ------------------------------------------------------------------
+# Pure functions — independently testable
+# ------------------------------------------------------------------
+
+def rrf_fuse(
+    vector_results: list[NodeWithScore],
+    bm25_results: list[NodeWithScore],
+    config: Config,
+) -> list[NodeWithScore]:
+    """Merge two ranked lists using weighted Reciprocal Rank Fusion.
+
+    For each result at rank *r* (1-based), the contribution is::
+
+        weight * 1 / (k + r)
+
+    Nodes appearing in both lists accumulate scores from each.
+    """
+    k = config.rrf_k
+    # node_id → (accumulated_score, NodeWithScore)
+    scores: dict[str, tuple[float, NodeWithScore]] = {}
+
+    for rank, nws in enumerate(vector_results, start=1):
+        node_id = nws.node.node_id
+        rrf_score = config.rrf_vector_weight / (k + rank)
+        prev_score, _ = scores.get(node_id, (0.0, nws))
+        scores[node_id] = (prev_score + rrf_score, nws)
+
+    for rank, nws in enumerate(bm25_results, start=1):
+        node_id = nws.node.node_id
+        rrf_score = config.rrf_bm25_weight / (k + rank)
+        prev_score, prev_nws = scores.get(node_id, (0.0, nws))
+        scores[node_id] = (prev_score + rrf_score, prev_nws)
+
+    # Sort descending by fused score
+    ranked = sorted(scores.values(), key=lambda x: x[0], reverse=True)
+
+    return [
+        NodeWithScore(node=nws.node, score=score)
+        for score, nws in ranked
+    ]
+
+
+def rerank(
+    query: str,
+    candidates: list[NodeWithScore],
+    ranker: Ranker,
+) -> list[NodeWithScore]:
+    """Rerank *candidates* using a FlashRank cross-encoder."""
+    passages = [
+        {"id": nws.node.node_id, "text": nws.node.get_content()}
+        for nws in candidates
+    ]
+
+    rerank_request = RerankRequest(query=query, passages=passages)
+    reranked_passages = ranker.rerank(rerank_request)
+
+    # Build a lookup from node_id → NodeWithScore for reassembly
+    node_map: dict[str, NodeWithScore] = {
+        nws.node.node_id: nws for nws in candidates
+    }
+
+    return [
+        NodeWithScore(
+            node=node_map[p["id"]].node,
+            score=float(p["score"]),
+        )
+        for p in reranked_passages
+    ]
+
+
+# ------------------------------------------------------------------
+# HybridRetriever class
+# ------------------------------------------------------------------
+
 class HybridRetriever:
     """Hybrid search combining vector similarity and BM25 term matching.
 
@@ -65,10 +139,6 @@ class HybridRetriever:
             self._config.reranker_model,
         )
 
-    # ------------------------------------------------------------------
-    # Public API
-    # ------------------------------------------------------------------
-
     def retrieve(self, query: str) -> list[NodeWithScore]:
         """Return top-N reranked nodes for *query*."""
         # 1. Retrieve from both sources
@@ -76,14 +146,14 @@ class HybridRetriever:
         bm25_results = self._bm25.retrieve(query)
 
         # 2. Fuse via weighted RRF
-        fused = self._rrf_fuse(vector_results, bm25_results)
+        fused = rrf_fuse(vector_results, bm25_results, self._config)
 
         if not fused:
             logger.warning("RRF fusion produced zero candidates for %r", query)
             return []
 
         # 3. Rerank with FlashRank
-        reranked = self._rerank(query, fused)
+        reranked = rerank(query, fused, self._ranker)
 
         # 4. Trim to top-N
         top_n = reranked[: self._config.hybrid_top_n]
@@ -97,73 +167,3 @@ class HybridRetriever:
             len(top_n),
         )
         return top_n
-
-    # ------------------------------------------------------------------
-    # Reciprocal Rank Fusion
-    # ------------------------------------------------------------------
-
-    def _rrf_fuse(
-        self,
-        vector_results: list[NodeWithScore],
-        bm25_results: list[NodeWithScore],
-    ) -> list[NodeWithScore]:
-        """Merge two ranked lists using weighted Reciprocal Rank Fusion.
-
-        For each result at rank *r* (1-based), the contribution is::
-
-            weight * 1 / (k + r)
-
-        Nodes appearing in both lists accumulate scores from each.
-        """
-        k = self._config.rrf_k
-        # node_id → (accumulated_score, NodeWithScore)
-        scores: dict[str, tuple[float, NodeWithScore]] = {}
-
-        for rank, nws in enumerate(vector_results, start=1):
-            node_id = nws.node.node_id
-            rrf_score = self._config.rrf_vector_weight / (k + rank)
-            prev_score, _ = scores.get(node_id, (0.0, nws))
-            scores[node_id] = (prev_score + rrf_score, nws)
-
-        for rank, nws in enumerate(bm25_results, start=1):
-            node_id = nws.node.node_id
-            rrf_score = self._config.rrf_bm25_weight / (k + rank)
-            prev_score, prev_nws = scores.get(node_id, (0.0, nws))
-            scores[node_id] = (prev_score + rrf_score, prev_nws)
-
-        # Sort descending by fused score
-        ranked = sorted(scores.values(), key=lambda x: x[0], reverse=True)
-
-        return [
-            NodeWithScore(node=nws.node, score=score)
-            for score, nws in ranked
-        ]
-
-    # ------------------------------------------------------------------
-    # FlashRank reranking
-    # ------------------------------------------------------------------
-
-    def _rerank(
-        self, query: str, candidates: list[NodeWithScore]
-    ) -> list[NodeWithScore]:
-        """Rerank *candidates* using the FlashRank cross-encoder."""
-        passages = [
-            {"id": nws.node.node_id, "text": nws.node.get_content()}
-            for nws in candidates
-        ]
-
-        rerank_request = RerankRequest(query=query, passages=passages)
-        reranked_passages = self._ranker.rerank(rerank_request)
-
-        # Build a lookup from node_id → NodeWithScore for reassembly
-        node_map: dict[str, NodeWithScore] = {
-            nws.node.node_id: nws for nws in candidates
-        }
-
-        return [
-            NodeWithScore(
-                node=node_map[p["id"]].node,
-                score=float(p["score"]),
-            )
-            for p in reranked_passages
-        ]

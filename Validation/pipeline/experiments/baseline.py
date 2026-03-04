@@ -22,7 +22,7 @@ if str(_PIPELINE_DIR) not in sys.path:
 
 from common.config import Config
 from experiments.runner import ExperimentSpec, parse_args, run_experiment
-from ingestion.chunker import FixedSizeChunker
+from ingestion.fixed_chunker import FixedSizeChunker
 from retrieval.vector_retriever import VectorRetriever
 
 # ---------------------------------------------------------------------------
