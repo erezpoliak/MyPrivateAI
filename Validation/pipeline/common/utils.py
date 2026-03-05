@@ -19,8 +19,14 @@ F = TypeVar("F", bound=Callable[..., Any])
 
 # ── Structured logging ──────────────────────────────────────────────────────
 
-def get_logger(name: str, level: int = logging.INFO) -> logging.Logger:
-    """Return a logger with a consistent format across the pipeline."""
+def get_logger(name: str, level: int | None = None) -> logging.Logger:
+    """Return a logger with a consistent format across the pipeline.
+
+    Level defaults to the ``LOG_LEVEL`` env var (e.g. ``LOG_LEVEL=DEBUG``),
+    falling back to ``INFO`` when unset.
+    """
+    if level is None:
+        level = getattr(logging, os.environ.get("LOG_LEVEL", "INFO").upper(), logging.INFO)
     logger = logging.getLogger(name)
     if not logger.handlers:
         handler = logging.StreamHandler(sys.stdout)
