@@ -9,7 +9,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Callable, Optional, Protocol
 
-from llama_index.core.schema import NodeWithScore, TextNode, VectorStoreIndex
+from llama_index.core import VectorStoreIndex
+from llama_index.core.schema import NodeWithScore, TextNode
 
 from common.config import Config
 from common.data_loader import QAPair

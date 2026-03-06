@@ -23,7 +23,7 @@ We use a 6-experiment design evaluated with [RAGAS](https://docs.ragas.io/) metr
 | 1 | **Closed Book** | Local LLM parametric knowledge alone — no retrieval |
 | 2 | **Baseline RAG** | Fixed-size chunking + basic vector search |
 | 3 | **Phase 1 — Optimized Retrieval** | Semantic chunking + hybrid BM25/vector search + FlashRank reranking |
-| 4 | **Phase 2 — Agentic RAG** | Multi-hop reasoning agent over the optimized retrieval pipeline |
+| 4 | **Phase 2 — Agentic RAG** | Critique-driven multi-hop agent over the optimized retrieval pipeline |
 | 5 | **Llama + Gold References** | Perfect retrieval (gold contexts injected) — isolates model capability ceiling |
 | 6 | **GPT-4o Ceiling** | GPT-4o with gold contexts — absolute upper bound |
 
@@ -44,6 +44,27 @@ GPT-4o       ────────────┘
 ```
 
 **Success criteria:** Phase 2 achieves >= 85% of the GPT-4o ceiling on answer correctness, and matches or exceeds Llama+Gold on complexity 3-4 questions (demonstrating that the agent's reasoning compensates for imperfect retrieval on hard questions).
+
+### Phase 2 — Agent Flow
+
+```
+Hop 1:  retrieve(original Q) ──> synthesize ──> critique
+          PASS ──> done
+          FAIL ──>
+
+Hop 2:  decompose(critique) ──> retrieve(sub-Q) ──> synthesize ──> critique
+          PASS ──> done
+          FAIL ──>
+
+Hop 3:  decompose(critique) ──> retrieve(sub-Q) ──> synthesize ──> critique
+          PASS ──> done
+          FAIL ──> correct ──> done
+```
+
+- **Hop 1** uses the original question directly — giving it a fair shot before decomposing
+- **Hop 2+** decomposes a targeted retrieval query based on the critique's feedback
+- **Synthesize** always answers the original question from all accumulated context
+- **Correct** is a last-resort rewrite when all hops are exhausted
 
 ---
 

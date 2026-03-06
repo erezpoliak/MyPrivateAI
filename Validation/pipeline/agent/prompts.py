@@ -1,19 +1,20 @@
-"""Versioned prompt templates for the agentic RAG workflow.
+"""Prompt templates for the critique-driven agentic RAG workflow.
 
-Four templates drive the decompose → retrieve → synthesize → citique → self-correct
-loop.  All are plain ``str.format`` templates with named placeholders.
+Four templates drive the retrieve → synthesize → critique loop, with
+decompose joining on hop 2+.  All are plain ``str.format`` templates
+with named placeholders.
 
 Placeholders per template
 -------------------------
-DECOMPOSE_PROMPT
-    {question}              — original user question
-    {hop}                   — current hop number (1-based)
-    {max_hops}              — maximum hops allowed
-    {intermediate_context}  — "" on hop 1; prior sub-Q/answer pairs on hop 2+
+DECOMPOSE_PROMPT (hop 2+ only)
+    {question}           — original user question
+    {prior_queries}      — retrieval queries already tried (so they aren't repeated)
+    {critique_feedback}  — critique text explaining why the previous answer
+                           was rejected
 
-SYNTHESIS_PROMPT
-    {sub_question}  — the sub-question being answered
-    {context}       — retrieved chunks joined by blank lines
+FINAL_SYNTHESIS_PROMPT
+    {question}  — original user question
+    {context}   — all accumulated context across hops
 
 CRITIQUE_PROMPT
     {question}  — original user question
@@ -30,32 +31,33 @@ CORRECTION_PROMPT
 from __future__ import annotations
 
 # ---------------------------------------------------------------------------
-# DECOMPOSE — break a complex question into a focused sub-question
+# DECOMPOSE — generate a targeted retrieval query to fill gaps (hop 2+ only)
 # ---------------------------------------------------------------------------
 DECOMPOSE_PROMPT = (
-    "You are a research assistant that decomposes complex questions into "
-    "simpler sub-questions for step-by-step retrieval.\n\n"
+    "You are a research assistant. A previous attempt to answer the question "
+    "below was not sufficient. Generate a focused retrieval query to find "
+    "the missing information.\n\n"
     "Original question: {question}\n\n"
-    "Hop {hop} of {max_hops}.\n"
-    "{intermediate_context}"
-    "Based on what is still unknown, produce exactly ONE focused "
-    "sub-question that will help answer the original question.\n"
+    "{prior_queries}"
+    "{critique_feedback}"
+    "Produce exactly ONE focused sub-question that targets the identified "
+    "gaps. Do NOT repeat previous queries.\n"
     "Output ONLY the sub-question, nothing else.\n\n"
     "Sub-question: "
 )
 
 # ---------------------------------------------------------------------------
-# SYNTHESIS — answer a sub-question given retrieved context
+# FINAL SYNTHESIS — answer the original question from all accumulated context
 # ---------------------------------------------------------------------------
-SYNTHESIS_PROMPT = (
+FINAL_SYNTHESIS_PROMPT = (
     "Context information is below.\n"
     "---------------------\n"
     "{context}\n"
     "---------------------\n"
-    "Using ONLY the provided context, answer the following sub-question. "
-    "Be concise and factual. If the context does not contain enough "
+    "Using ONLY the provided context, answer the following question. "
+    "Be comprehensive and factual. If the context does not contain enough "
     "information, state what is missing.\n\n"
-    "Sub-question: {sub_question}\n"
+    "Question: {question}\n"
     "Answer: "
 )
 
@@ -100,19 +102,16 @@ CORRECTION_PROMPT = (
 )
 
 
-def format_intermediate_context(
-    sub_questions: list[str],
-    answers: list[str],
-) -> str:
-    """Build the ``{intermediate_context}`` block for DECOMPOSE on hop 2+.
+def format_prior_queries(queries: list[str]) -> str:
+    """Build the ``{prior_queries}`` block for DECOMPOSE on hop 2+.
 
-    Returns an empty string when no prior hops exist (hop 1).
+    Lists retrieval queries already tried so decompose avoids repeating them.
+    Returns an empty string when no prior queries exist.
     """
-    if not sub_questions:
+    if not queries:
         return ""
-    lines = ["Information gathered so far:\n"]
-    for i, (sq, ans) in enumerate(zip(sub_questions, answers), 1):
-        lines.append(f"  Hop {i} sub-question: {sq}")
-        lines.append(f"  Hop {i} answer: {ans}\n")
-    lines.append("")
+    lines = ["Retrieval queries already tried:\n"]
+    for i, q in enumerate(queries, 1):
+        lines.append(f"  {i}. {q}")
+    lines.append("\n")
     return "\n".join(lines)
