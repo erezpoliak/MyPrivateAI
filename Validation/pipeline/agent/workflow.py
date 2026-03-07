@@ -269,7 +269,6 @@ class AgentWorkflow(Workflow):
         )
         corrected = (await self._llm.acomplete(correction_prompt)).text.strip()
         self.trajectory.log("correct", correction_prompt, corrected)
-        self.trajectory.success = True
         logger.info("Correction applied (%.120s)", corrected)
 
         return StopEvent(result=corrected)

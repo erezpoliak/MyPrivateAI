@@ -41,6 +41,8 @@ class GenerationResult:
     contexts: list[str]
     latency_s: float
     error: str | None
+    trajectory_steps: int = 0
+    trajectory_success: int = 1
 
 
 GenerateFn = Callable[
@@ -62,7 +64,8 @@ class ExperimentSpec:
     """Experiment name stored in the DB (e.g. 'baseline', 'phase1')."""
 
     prompt_template: str
-    """RAG prompt with ``{context}`` and ``{question}`` placeholders."""
+    """RAG prompt with ``{context}`` and ``{question}`` placeholders.
+    """
 
     collection_name: str
     """ChromaDB collection name for the vector index."""

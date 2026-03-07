@@ -270,6 +270,8 @@ def run_experiment(spec: ExperimentSpec, args: argparse.Namespace) -> int:
             context_precision=row["context_precision"],
             context_recall=row["context_recall"],
             answer_correctness=row["answer_correctness"],
+            trajectory_steps=r.trajectory_steps,
+            trajectory_success=r.trajectory_success,
             latency_s=r.latency_s,
             error=r.error,
         )
