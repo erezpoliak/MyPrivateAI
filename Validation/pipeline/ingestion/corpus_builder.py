@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Optional, Protocol
 
-from llama_index.core.schema import TextNode
+from llama_index.core.schema import Document, TextNode
 
 from ..common.config import Config, CorpusMode
 from ..common.data_loader import QAPair
@@ -29,10 +29,10 @@ logger = get_logger(__name__)
 # ── Chunker protocol ────────────────────────────────────────────────────────
 
 class Chunker(Protocol):
-    """Structural type satisfied by both FixedSizeChunker and SemanticChunker."""
+    """Structural type satisfied by FixedSizeChunker and CappedSemanticSplitter."""
 
-    def chunk(
-        self, text: str, metadata: dict[str, Any] | None = None
+    def get_nodes_from_documents(
+        self, documents: list[Document], **kwargs: Any
     ) -> list[TextNode]: ...
 
 
@@ -125,9 +125,8 @@ def _build_gold_ref(
             "source_idx": source_idx,
             "corpus_mode": "gold_ref",
         }
-        paper_nodes: list[TextNode] = []
-        for ref_text in refs:
-            paper_nodes.extend(chunker.chunk(ref_text, metadata))
+        docs = [Document(text=ref_text, metadata=metadata) for ref_text in refs]
+        paper_nodes = chunker.get_nodes_from_documents(docs)
 
         manifest.entries[source_idx] = PaperCorpusEntry(
             source_idx=source_idx,
@@ -194,7 +193,8 @@ def _build_fetched(
             "corpus_mode": "fetched",
             "doi": qa.paper.doi,
         }
-        paper_nodes = chunker.chunk(result.text, metadata)
+        doc = Document(text=result.text, metadata=metadata)
+        paper_nodes = chunker.get_nodes_from_documents([doc])
 
         manifest.entries[source_idx] = PaperCorpusEntry(
             source_idx=source_idx,
