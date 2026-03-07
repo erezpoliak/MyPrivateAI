@@ -32,6 +32,8 @@ from common.metrics import EvalSample, RAGASEvaluator
 from common.utils import get_logger
 from experiments.report import METRIC_KEYS, compute_summary, print_report
 from experiments.spec import ExperimentSpec, GenerationResult, Retriever
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+
 from ingestion.corpus_builder import build_corpus
 from ingestion.document_store import DocumentStore
 
@@ -153,8 +155,15 @@ def run_experiment(spec: ExperimentSpec, args: argparse.Namespace) -> int:
         qa_pairs = qa_pairs[: args.subset]
     logger.info("Loaded %d questions", len(qa_pairs))
 
+    # ── Shared embedding model ───────────────────────────────────────────
+    embed_model = HuggingFaceEmbedding(
+        model_name=config.embedding_model,
+        device=config.device,
+    )
+    logger.info("Shared embed_model: %s on %s", config.embedding_model, config.device)
+
     # ── Build corpus ─────────────────────────────────────────────────────
-    chunker = spec.create_chunker(config)
+    chunker = spec.create_chunker(config, embed_model)
     nodes, manifest = build_corpus(qa_pairs, chunker, config)
     logger.info(
         "Corpus: %d nodes from %d papers",
@@ -177,7 +186,7 @@ def run_experiment(spec: ExperimentSpec, args: argparse.Namespace) -> int:
         return -1
 
     # ── Build vector index ───────────────────────────────────────────────
-    store = DocumentStore(config, collection_name=spec.collection_name)
+    store = DocumentStore(config, collection_name=spec.collection_name, embed_model=embed_model)
     index = store.build_index(nodes)
     logger.info("Vector index ready (%d nodes)", len(nodes))
 
