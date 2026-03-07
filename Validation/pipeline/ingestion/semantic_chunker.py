@@ -5,8 +5,8 @@ SentenceSplitter to enforce a maximum token count per chunk
 """
 
 from __future__ import annotations
-from typing import Optional
 
+from llama_index.core.base.embeddings.base import BaseEmbedding
 from llama_index.core.node_parser import SemanticSplitterNodeParser, SentenceSplitter
 from llama_index.core.schema import TextNode, Document
 
@@ -25,10 +25,10 @@ class CappedSemanticSplitter:
        ``SentenceSplitter`` so nothing escapes the cap.
     """
 
-    def __init__(self, config: Optional[Config] = None) -> None:
+    def __init__(self, embed_model: BaseEmbedding, config: Config | None = None) -> None:
         config = config or Config()
         self._semantic = SemanticSplitterNodeParser(
-            embed_model=config.embed_model,
+            embed_model=embed_model,
             breakpoint_percentile_threshold=config.semantic_threshold_pct,
         )
         self._capper = SentenceSplitter(

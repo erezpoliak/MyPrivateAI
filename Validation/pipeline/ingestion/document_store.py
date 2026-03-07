@@ -1,7 +1,7 @@
 """Vector store backed by ChromaDB + LlamaIndex.
 
 Provides ``DocumentStore`` which:
-- Creates a ``HuggingFaceEmbedding`` on the GPU device detected by ``Config``
+- Accepts a ``BaseEmbedding`` instance (initialized by the caller)
 - ``build_index(nodes)`` — ingests TextNodes into a persistent ChromaDB
   collection and returns a ``VectorStoreIndex``
 - ``load_index()`` — loads an existing ChromaDB collection into a
@@ -11,8 +11,8 @@ Provides ``DocumentStore`` which:
 from __future__ import annotations
 
 from llama_index.core import StorageContext, VectorStoreIndex
+from llama_index.core.base.embeddings.base import BaseEmbedding
 from llama_index.core.schema import TextNode
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.vector_stores.chroma import ChromaVectorStore
 
 import chromadb
@@ -31,7 +31,7 @@ class DocumentStore:
 
     Usage::
 
-        store = DocumentStore(config)
+        store = DocumentStore(embed_model, config)
 
         # First run — build from corpus nodes
         index = store.build_index(nodes)
@@ -45,23 +45,14 @@ class DocumentStore:
 
     def __init__(
         self,
+        embed_model: BaseEmbedding,
         config: Config | None = None,
         collection_name: str = _DEFAULT_COLLECTION,
     ) -> None:
         self._config = config or Config()
         self._collection_name = collection_name
+        self.embed_model = embed_model
         self.index: VectorStoreIndex | None = None
-
-        # -- Embedding model (GPU-accelerated via config.device) ---------------
-        logger.info(
-            "Loading HuggingFaceEmbedding %s on %s",
-            self._config.embedding_model,
-            self._config.device,
-        )
-        self.embed_model = HuggingFaceEmbedding(
-            model_name=self._config.embedding_model,
-            device=self._config.device,
-        )
 
     # -- index lifecycle ------------------------------------------------------
 
