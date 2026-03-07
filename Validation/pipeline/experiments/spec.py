@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from typing import Any, Callable, Optional, Protocol
 
 from llama_index.core import VectorStoreIndex
+from llama_index.core.base.embeddings.base import BaseEmbedding
 from llama_index.core.schema import NodeWithScore, TextNode
 
 from common.config import Config
@@ -66,8 +67,8 @@ class ExperimentSpec:
     collection_name: str
     """ChromaDB collection name for the vector index."""
 
-    create_chunker: Callable[[Config], Chunker]
-    """Factory: config → Chunker instance."""
+    create_chunker: Callable[[Config, BaseEmbedding], Chunker]
+    """Factory: (config, embed_model) → Chunker instance."""
 
     create_retriever: Callable[[VectorStoreIndex, list[TextNode], Config], Retriever]
     """Factory: (index, nodes, config) → Retriever instance.
