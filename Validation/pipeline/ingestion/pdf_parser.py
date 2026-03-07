@@ -33,8 +33,6 @@ class ParseResult:
     path: Path
     success: bool
     text: str = ""
-    page_count: int = 0
-    page_texts: tuple[str, ...] = ()
     error: Optional[str] = None
 
 
@@ -94,7 +92,6 @@ def parse_pdf(path: Path) -> ParseResult:
         success=True,
         text=full_text,
         page_count=len(reader.pages),
-        page_texts=tuple(page_texts),
     )
 
 

@@ -1,6 +1,6 @@
 """Phase 1 experiment — semantic chunking + hybrid retrieval.
 
-Pipeline: SemanticChunker → HybridRetriever (RRF fusion + FlashRank rerank) → Ollama LLM.
+Pipeline: CappedSemanticSplitter → HybridRetriever (RRF fusion + FlashRankRerank) → Ollama LLM.
 
 CLI:
     python -m pipeline.experiments.phase1                     # scored run (fetched PDFs)
@@ -17,13 +17,11 @@ _PIPELINE_DIR = Path(__file__).resolve().parent.parent
 if str(_PIPELINE_DIR) not in sys.path:
     sys.path.insert(0, str(_PIPELINE_DIR))
 
-from common.config import Config
 from experiments.runner import parse_args, run_experiment
 from experiments.spec import ExperimentSpec
-from ingestion.semantic_chunker import SemanticChunker
-from retrieval.bm25_retriever import BM25Retriever
+from ingestion.semantic_chunker import CappedSemanticSplitter
+from llama_index.retrievers.bm25 import BM25Retriever as LlamaBM25Retriever
 from retrieval.hybrid_retriever import HybridRetriever
-from retrieval.vector_retriever import VectorRetriever
 
 RAG_PROMPT = (
     "Context information is below.\n"
@@ -41,10 +39,10 @@ spec = ExperimentSpec(
     name="phase1",
     prompt_template=RAG_PROMPT,
     collection_name="phase1",
-    create_chunker=lambda config: SemanticChunker(config),
+    create_chunker=lambda config, embed_model: CappedSemanticSplitter(embed_model, config),
     create_retriever=lambda index, nodes, config: HybridRetriever(
-        VectorRetriever(index, config),
-        BM25Retriever(nodes, config),
+        index.as_retriever(similarity_top_k=config.vector_top_k),
+        LlamaBM25Retriever.from_defaults(nodes=nodes, similarity_top_k=config.bm25_top_k),
         config,
     ),
 )

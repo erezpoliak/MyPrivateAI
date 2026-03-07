@@ -1,6 +1,6 @@
 """Baseline experiment — vector-only RAG with fixed 512-token chunks.
 
-Pipeline: FixedSizeChunker (512 tok) → VectorRetriever (k=5) → Ollama LLM.
+Pipeline: TokenTextSplitter (512 tok) → VectorIndexRetriever (k=5) → Ollama LLM.
 
 CLI:
     python -m pipeline.experiments.baseline                     # scored run (fetched PDFs)
@@ -24,7 +24,6 @@ from common.config import Config
 from experiments.runner import parse_args, run_experiment
 from experiments.spec import ExperimentSpec
 from ingestion.fixed_chunker import FixedSizeChunker
-from retrieval.vector_retriever import VectorRetriever
 
 # ---------------------------------------------------------------------------
 # Experiment definition
@@ -50,8 +49,8 @@ spec = ExperimentSpec(
     name="baseline",
     prompt_template=RAG_PROMPT,
     collection_name="baseline",
-    create_chunker=lambda config: FixedSizeChunker(config),
-    create_retriever=lambda index, nodes, config: VectorRetriever(index, config),
+    create_chunker=lambda config, embed_model: FixedSizeChunker(config),
+    create_retriever=lambda index, nodes, config: index.as_retriever(similarity_top_k=config.vector_top_k),
     apply_config_overrides=_apply_overrides,
 )
 
