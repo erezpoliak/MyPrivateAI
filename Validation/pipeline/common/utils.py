@@ -1,9 +1,8 @@
-"""Shared utilities: logging, retry, hashing, directory helpers, NLTK bootstrap."""
+"""Shared utilities: logging, retry, directory helpers, NLTK bootstrap."""
 
 from __future__ import annotations
 
 import functools
-import hashlib
 import logging
 import os
 import sys
@@ -73,13 +72,6 @@ def retry(
     return decorator
 
 
-# ── Hashing ─────────────────────────────────────────────────────────────────
-
-def hash_string(text: str) -> str:
-    """Return a stable SHA-256 hex digest for *text*."""
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
-
-
 # ── Directory helpers ───────────────────────────────────────────────────────
 
 def ensure_dir(path: Path) -> Path:
@@ -108,8 +100,7 @@ def _bootstrap_nltk(config: Config | None = None) -> None:
         nltk.data.path.insert(0, nltk_dir)
 
     ensure_dir(config.nltk_data_dir)
-    for pkg in ("punkt_tab", "stopwords"):
-        nltk.download(pkg, download_dir=nltk_dir, quiet=True)
+    nltk.download("punkt_tab", download_dir=nltk_dir, quiet=True)
 
 
 # Run once on import

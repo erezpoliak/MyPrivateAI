@@ -106,8 +106,6 @@ class RAGASEvaluator:
             OpenAIEmbeddings()
         )
 
-        log.info("RAGASEvaluator initialised — judge=%s", self._judge_model)
-
     # -- public API ----------------------------------------------------------
 
     def evaluate_batch(

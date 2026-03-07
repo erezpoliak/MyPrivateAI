@@ -6,5 +6,5 @@ Public API:
     db              — RunDB for persisting experiment runs and results to SQLite
     llm             — get_llm() factory for Ollama LLM instances
     metrics         — RAGASEvaluator for batch evaluation with GPT-4o-mini judge
-    utils           — get_logger(), @retry decorator, hash_string(), ensure_dir()
+    utils           — get_logger(), @retry decorator, ensure_dir()
 """
