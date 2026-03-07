@@ -2,29 +2,33 @@
 
 Provides ``HybridRetriever`` which:
 
-1. Queries both ``VectorRetriever`` (semantic) and ``BM25Retriever`` (lexical).
+1. Queries both a vector retriever (semantic) and BM25 retriever (lexical).
 2. Fuses results with weighted Reciprocal Rank Fusion (RRF).
-3. Reranks the fused candidates with FlashRank (cross-encoder).
+3. Reranks the fused candidates with FlashRankRerank (LlamaIndex built-in).
 4. Returns the top-N nodes after reranking.
-
 """
 
 from __future__ import annotations
 
-from flashrank import Ranker, RerankRequest
+from typing import Protocol
 
-from llama_index.core.schema import NodeWithScore, TextNode
+from llama_index.core.schema import NodeWithScore, QueryBundle
+from llama_index.postprocessor.flashrank_rerank import FlashRankRerank
 
 from ..common.config import Config
 from ..common.utils import get_logger
-from .bm25_retriever import BM25Retriever
-from .vector_retriever import VectorRetriever
 
 logger = get_logger(__name__)
 
 
+class _Retriever(Protocol):
+    """Structural type for any object with a .retrieve(query) method."""
+
+    def retrieve(self, query: str) -> list[NodeWithScore]: ...
+
+
 # ------------------------------------------------------------------
-# Pure functions — independently testable
+# Pure function — independently testable
 # ------------------------------------------------------------------
 
 def rrf_fuse(
@@ -41,7 +45,6 @@ def rrf_fuse(
     Nodes appearing in both lists accumulate scores from each.
     """
     k = config.rrf_k
-    # node_id → (accumulated_score, NodeWithScore)
     scores: dict[str, tuple[float, NodeWithScore]] = {}
 
     for rank, nws in enumerate(vector_results, start=1):
@@ -56,40 +59,10 @@ def rrf_fuse(
         prev_score, prev_nws = scores.get(node_id, (0.0, nws))
         scores[node_id] = (prev_score + rrf_score, prev_nws)
 
-    # Sort descending by fused score
     ranked = sorted(scores.values(), key=lambda x: x[0], reverse=True)
-
     return [
         NodeWithScore(node=nws.node, score=score)
         for score, nws in ranked
-    ]
-
-
-def rerank(
-    query: str,
-    candidates: list[NodeWithScore],
-    ranker: Ranker,
-) -> list[NodeWithScore]:
-    """Rerank *candidates* using a FlashRank cross-encoder."""
-    passages = [
-        {"id": nws.node.node_id, "text": nws.node.get_content()}
-        for nws in candidates
-    ]
-
-    rerank_request = RerankRequest(query=query, passages=passages)
-    reranked_passages = ranker.rerank(rerank_request)
-
-    # Build a lookup from node_id → NodeWithScore for reassembly
-    node_map: dict[str, NodeWithScore] = {
-        nws.node.node_id: nws for nws in candidates
-    }
-
-    return [
-        NodeWithScore(
-            node=node_map[p["id"]].node,
-            score=float(p["score"]),
-        )
-        for p in reranked_passages
     ]
 
 
@@ -102,32 +75,29 @@ class HybridRetriever:
 
     Usage::
 
-        from pipeline.ingestion.document_store import DocumentStore
-        from pipeline.retrieval.bm25_retriever import BM25Retriever
-        from pipeline.retrieval.vector_retriever import VectorRetriever
+        from llama_index_retrievers_bm25 import BM25Retriever as LlamaBM25Retriever
 
-        store = DocumentStore(config)
-        index = store.load_index()
+        vector_retriever = index.as_retriever(similarity_top_k=config.vector_top_k)
+        bm25_retriever = LlamaBM25Retriever.from_defaults(nodes=nodes, similarity_top_k=config.bm25_top_k)
 
-        vector_ret = VectorRetriever(index, config)
-        bm25_ret = BM25Retriever(nodes, config)
-
-        hybrid = HybridRetriever(vector_ret, bm25_ret, config)
+        hybrid = HybridRetriever(vector_retriever, bm25_retriever, config)
         results = hybrid.retrieve("What is gradient descent?")
     """
 
     def __init__(
         self,
-        vector_retriever: VectorRetriever,
-        bm25_retriever: BM25Retriever,
+        vector_retriever: _Retriever,
+        bm25_retriever: _Retriever,
         config: Config | None = None,
     ) -> None:
         self._config = config or Config()
         self._vector = vector_retriever
         self._bm25 = bm25_retriever
 
-        # FlashRank cross-encoder reranker (runs on CPU — ONNX)
-        self._ranker = Ranker(model_name=self._config.reranker_model)
+        self._reranker = FlashRankRerank(
+            model=self._config.reranker_model,
+            top_n=self._config.hybrid_top_n,
+        )
 
         logger.info(
             "HybridRetriever initialised (rrf_k=%d, bm25_w=%.2f, "
@@ -141,29 +111,25 @@ class HybridRetriever:
 
     def retrieve(self, query: str) -> list[NodeWithScore]:
         """Return top-N reranked nodes for *query*."""
-        # 1. Retrieve from both sources
         vector_results = self._vector.retrieve(query)
         bm25_results = self._bm25.retrieve(query)
 
-        # 2. Fuse via weighted RRF
         fused = rrf_fuse(vector_results, bm25_results, self._config)
 
         if not fused:
             logger.warning("RRF fusion produced zero candidates for %r", query)
             return []
 
-        # 3. Rerank with FlashRank
-        reranked = rerank(query, fused, self._ranker)
-
-        # 4. Trim to top-N
-        top_n = reranked[: self._config.hybrid_top_n]
+        reranked = self._reranker.postprocess_nodes(
+            fused, query_bundle=QueryBundle(query_str=query)
+        )
 
         logger.debug(
-            "Hybrid search for %r: %d vector + %d bm25 → %d fused → %d reranked",
+            "Hybrid search for %r: %d vector + %d bm25 -> %d fused -> %d reranked",
             query,
             len(vector_results),
             len(bm25_results),
             len(fused),
-            len(top_n),
+            len(reranked),
         )
-        return top_n
+        return reranked

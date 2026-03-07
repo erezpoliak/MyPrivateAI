@@ -1,10 +1,9 @@
 """Retrieval strategies — from query to ranked document nodes.
 
 Public API (plugged into experiments via ExperimentSpec):
-    vector_retriever    — VectorRetriever: cosine similarity search over the vector index
-    hybrid_retriever    — HybridRetriever: RRF fusion + FlashRank reranking
-                          Also exports rrf_fuse() and rerank() as standalone pure functions
+    hybrid_retriever    — HybridRetriever: RRF fusion + FlashRankRerank reranking
+                          Also exports rrf_fuse() as a standalone pure function
 
-Internal (used by HybridRetriever):
-    bm25_retriever      — BM25Retriever: sparse keyword retrieval via BM25Okapi
+Vector retrieval uses index.as_retriever() directly (LlamaIndex built-in).
+BM25 retrieval uses llama-index-retrievers-bm25 (LlamaBM25Retriever).
 """
