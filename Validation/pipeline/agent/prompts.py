@@ -55,8 +55,7 @@ FINAL_SYNTHESIS_PROMPT = (
     "{context}\n"
     "---------------------\n"
     "Using ONLY the provided context, answer the following question. "
-    "Be comprehensive and factual. If the context does not contain enough "
-    "information, state what is missing.\n\n"
+    "Be comprehensive and factual.\n\n"
     "Question: {question}\n"
     "Answer: "
 )

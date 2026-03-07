@@ -1,7 +1,7 @@
 """Retrieval tools exposed to agent workflow steps.
 
 Wraps the ``Retriever`` protocol (satisfied by ``HybridRetriever``,
-``VectorRetriever``, etc.) into structured helpers the agentic workflow
+``VectorIndexRetriever``, etc.) into structured helpers the agentic workflow
 consumes at each hop.
 
 Usage::
