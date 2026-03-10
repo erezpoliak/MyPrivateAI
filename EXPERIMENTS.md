@@ -9,7 +9,7 @@
 | 3 | **Phase 1** | Semantic | Hybrid BM25+Vector (RRF) | FlashRank top-3 | Llama 3.1 8B | GPT-4o-mini | CR > 0.92, Faith > 0.98 |
 | 4 | **Phase 2** | Semantic | Multi-hop agent using Hybrid BM25+Vector (RRF) | FlashRank top-3 | Llama 3.1 8B | GPT-4o-mini | AC > 85% ceiling, Traj > 0.80, AC(cplx 3-4) ≥ Llama+Gold_REF |
 | 5 | **Llama+Gold_REF** | N/A | Gold_REF injected | None | Llama 3.1 8B | GPT-4o-mini | Llama comprehension ceiling |
-| 6 | **Ceiling (GPT-4o)** | N/A | Gold_REF injected | None | GPT-4o | GPT-4o-mini | Upper bound anchor |
+| 6 | **GPT-4o RAG (Ceiling)** | Semantic | Multi-hop agent using Hybrid BM25+Vector (RRF) | FlashRank top-3 | GPT-4o | GPT-4o-mini | Upper bound anchor — identical pipeline to Phase 2, only LLM differs |
 
 ---
 
@@ -24,11 +24,11 @@ Each transition between experiments isolates a single variable:
                               ├─ Better retrieval + semantic chunking
 3. Phase 1              ─────┘──┐
                                  ├─ Agentic multi-hop reasoning
-4. Phase 2              ────────┘──┐
-                                    ├─ Retrieval gap (pipeline can close this)
-5. Llama+Gold_REF       ──────────┘──┐
-                                      ├─ Model gap (pipeline cannot close this)
-6. Ceiling (GPT-4o)     ────────────┘
+4. Phase 2              ────────┘──┬─── Retrieval quality gap (Llama only)
+                                    │              └──> 5. Llama+Gold_REF
+                                    │
+                                    ├─ HYPOTHESIS TEST (target: ≥85%)
+6. GPT-4o RAG (Ceiling) ──────────┘
 ```
 
 | Gap | What it measures | Why it matters |
@@ -36,8 +36,8 @@ Each transition between experiments isolates a single variable:
 | Closed Book → Baseline | How much value RAG adds over parametric knowledge | Validates that retrieval is worth doing at all |
 | Baseline → Phase 1 | Impact of semantic chunking + hybrid search + reranking | Quantifies retrieval optimization gains |
 | Phase 1 → Phase 2 | Impact of agentic multi-hop reasoning | Quantifies value of the ReAct agent |
-| Phase 2 → Llama+Gold_REF | Performance lost to imperfect retrieval | Shows how much room the pipeline has to improve |
-| Llama+Gold_REF → Ceiling | Performance lost to model capability | Hard ceiling that no pipeline optimization can overcome |
+| Phase 2 → Llama+Gold_REF | Performance lost to imperfect retrieval (Llama) | Shows how much headroom better retrieval could unlock |
+| Phase 2 → GPT-4o RAG | Model capability gap — direct hypothesis test | LLM is the only variable; ≤15% gap confirms the hypothesis |
 
 ---
 
@@ -70,7 +70,7 @@ Not all RAGAS metrics are meaningful for every experiment:
 | Phase 1 | `fetched` | Real PDFs for scored runs |
 | Phase 2 | `fetched` | Real PDFs for scored runs |
 | Llama+Gold_REF | `gold_ref` | Gold_REF text injected directly as context |
-| Ceiling | `gold_ref` | Gold_REF text injected directly as context |
+| GPT-4o RAG (Ceiling) | `fetched` | Same fetched PDFs and pipeline as Phase 2 — only LLM differs |
 
 ---
 
@@ -80,8 +80,6 @@ Not all RAGAS metrics are meaningful for every experiment:
 
 The 6-experiment design lets us decompose this hypothesis precisely:
 
-- **Phase 2 AC / Ceiling AC ≥ 85%** → Hypothesis supported (pipeline closes the gap)
-- **Phase 2 AC on complexity 3-4 ≥ Llama+Gold_REF AC on complexity 3-4** → Agent's reasoning layer compensates for imperfect retrieval on hard questions
-- **Llama+Gold_REF AC / Ceiling AC** → Isolates how much of the gap is model vs retrieval
-- If **Llama+Gold_REF ≈ Ceiling**: the model is capable enough; retrieval quality is the bottleneck
-- If **Llama+Gold_REF << Ceiling**: the 8B model itself is a limiting factor regardless of retrieval
+- **Phase 2 AC / GPT-4o RAG AC ≥ 85%** → Hypothesis supported — the pipeline closes the model gap (LLM is the only variable)
+- **Phase 2 AC on complexity 3-4 ≥ Llama+Gold_REF AC on complexity 3-4** → Agent's reasoning compensates for imperfect retrieval on hard questions
+- **Phase 2 vs Llama+Gold_REF** → Isolates how much of the remaining gap to GPT-4o RAG is retrieval quality vs model capability

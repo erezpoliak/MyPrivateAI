@@ -24,26 +24,26 @@ We use a 6-experiment design evaluated with [RAGAS](https://docs.ragas.io/) metr
 | 2 | **Baseline RAG** | Fixed-size chunking + basic vector search |
 | 3 | **Phase 1 — Optimized Retrieval** | Semantic chunking + hybrid BM25/vector search + FlashRank reranking |
 | 4 | **Phase 2 — Agentic RAG** | Critique-driven multi-hop agent over the optimized retrieval pipeline |
-| 5 | **Llama + Gold References** | Perfect retrieval (gold contexts injected) — isolates model capability ceiling |
-| 6 | **GPT-4o Ceiling** | GPT-4o with gold contexts — absolute upper bound |
+| 5 | **Llama + Gold References** | Perfect retrieval (gold contexts injected) — isolates Llama's comprehension ceiling |
+| 6 | **GPT-4o RAG (Ceiling)** | GPT-4o running the identical Phase 2 pipeline — LLM is the only variable |
 
 ### Gap Analysis
 
 ```
-Closed Book  ──┐
-                ├─ RAG value-add
-Baseline     ──┘──┐
-                   ├─ Better retrieval + semantic chunking
-Phase 1      ─────┘──┐
-                      ├─ Agentic multi-hop reasoning
-Phase 2      ────────┘──┐
-                         ├─ Retrieval gap 
-Llama+Gold   ──────────┘──┐
-                            ├─ Model gap 
-GPT-4o       ────────────┘
+1. Closed Book          ──┐
+                          ├─ RAG value-add
+2. Baseline             ──┘──┐
+                              ├─ Better retrieval + semantic chunking
+3. Phase 1              ─────┘──┐
+                                 ├─ Agentic multi-hop reasoning
+4. Phase 2              ────────┘──┬─── Retrieval quality gap (Llama only)
+                                    │              └──> 5. Llama+Gold_REF
+                                    │
+                                    ├─ HYPOTHESIS TEST (target: ≥85%)
+6. GPT-4o RAG (Ceiling) ──────────┘
 ```
 
-**Success criteria:** Phase 2 achieves >= 85% of the GPT-4o ceiling on answer correctness, and matches or exceeds Llama+Gold on complexity 3-4 questions (demonstrating that the agent's reasoning compensates for imperfect retrieval on hard questions).
+**Success criteria:** Phase 2 achieves ≥ 85% of the GPT-4o RAG ceiling on answer correctness (LLM is the only variable), and matches or exceeds Llama+Gold on complexity 3-4 questions (demonstrating that the agent's reasoning compensates for imperfect retrieval on hard questions).
 
 ### Phase 2 — Agent Flow
 
