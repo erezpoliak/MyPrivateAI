@@ -6,6 +6,9 @@ retriever factory, prompt, config overrides) and delegates to
 
     load dataset → build corpus → build index → generate answers
     → RAGAS evaluation → persist to SQLite → print report
+
+The lifecycle is decomposed into reusable functions so that experiments
+without a corpus (e.g. Closed Book) can call them directly.
 """
 
 from __future__ import annotations
@@ -15,7 +18,7 @@ import json
 import sys
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 # ---------------------------------------------------------------------------
 # Ensure pipeline root is importable when running as a script
@@ -47,8 +50,19 @@ logger = get_logger(__name__)
 def parse_args(
     description: str = "Run an experiment.",
     argv: list[str] | None = None,
+    corpus_choices: list[str] | None = ("gold_ref", "fetched"),
+    corpus_default: str = "fetched",
 ) -> argparse.Namespace:
-    """Shared CLI parser used by all experiment entry points."""
+    """Shared CLI parser used by all experiment entry points.
+
+    Parameters
+    ----------
+    corpus_choices : list[str] | None
+        Allowed ``--corpus-mode`` values. Pass ``None`` to omit the flag
+        entirely (e.g. Closed Book always uses ``none``).
+    corpus_default : str
+        Default corpus mode when the flag is present.
+    """
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument(
         "--smoke-test",
@@ -56,13 +70,14 @@ def parse_args(
         default=False,
         help="Quick pipeline check: sets corpus-mode to gold_ref and subset to 5.",
     )
-    parser.add_argument(
-        "--corpus-mode",
-        type=str,
-        choices=["gold_ref", "fetched"],
-        default="fetched",
-        help="Corpus source (default: fetched). Overridden to gold_ref by --smoke-test.",
-    )
+    if corpus_choices is not None:
+        parser.add_argument(
+            "--corpus-mode",
+            type=str,
+            choices=corpus_choices,
+            default=corpus_default,
+            help=f"Corpus source (default: {corpus_default}). Overridden to gold_ref by --smoke-test.",
+        )
     parser.add_argument(
         "--subset",
         type=int,
@@ -76,6 +91,131 @@ def parse_args(
         help="Free-text notes stored with the run.",
     )
     return parser.parse_args(argv)
+
+
+# ---------------------------------------------------------------------------
+# Reusable lifecycle steps
+# ---------------------------------------------------------------------------
+
+def setup_config(
+    experiment_name: str,
+    corpus_mode: CorpusMode,
+    subset: int | None,
+    apply_overrides: Callable[[Config], None] | None = None,
+) -> Config:
+    """Create a Config, set corpus mode, apply optional overrides, and log."""
+    config = Config()
+    config.corpus_mode = corpus_mode
+    if apply_overrides is not None:
+        apply_overrides(config)
+
+    logger.info(
+        "Experiment: %s | corpus_mode=%s | subset=%s",
+        experiment_name,
+        config.corpus_mode.value,
+        subset,
+    )
+    return config
+
+
+def load_qa_pairs(config: Config, subset: int | None) -> list[QAPair]:
+    """Load the dataset and optionally truncate to *subset* questions."""
+    qa_pairs = load_dataset(config)
+    if subset:
+        qa_pairs = qa_pairs[:subset]
+    logger.info("Loaded %d questions", len(qa_pairs))
+    return qa_pairs
+
+
+def evaluate_results(
+    gen_results: list[GenerationResult],
+    config: Config,
+) -> list[dict]:
+    """Run RAGAS evaluation and return scored rows (one dict per question)."""
+    logger.info("Running RAGAS evaluation …")
+    successful = [r for r in gen_results if r.error is None]
+    samples = [
+        EvalSample(
+            question=r.qa.question,
+            generated_answer=r.generated_answer,
+            reference_answer=r.qa.answer,
+            contexts=r.contexts,
+        )
+        for r in successful
+    ]
+    eval_results = (
+        RAGASEvaluator(config).evaluate_batch(samples) if samples else []
+    )
+
+    eval_iter = iter(eval_results)
+    scored_rows: list[dict] = []
+    for r in gen_results:
+        if r.error is None:
+            ev = next(eval_iter)
+            scores = {
+                "faithfulness": ev.faithfulness,
+                "answer_relevancy": ev.answer_relevancy,
+                "context_precision": ev.context_precision,
+                "context_recall": ev.context_recall,
+                "answer_correctness": ev.answer_correctness,
+            }
+        else:
+            scores = {k: None for k in METRIC_KEYS}
+
+        scored_rows.append({
+            "complexity": r.qa.complexity,
+            "latency_s": r.latency_s,
+            **scores,
+        })
+
+    return scored_rows
+
+
+def persist_and_report(
+    experiment_name: str,
+    config: Config,
+    gen_results: list[GenerationResult],
+    scored_rows: list[dict],
+    notes: str,
+) -> int:
+    """Persist results to SQLite, compute summary, print report. Returns run_id."""
+    db = RunDB(config)
+    config_snapshot = json.loads(json.dumps(config.__dict__, default=str))
+    run_id = db.start_run(
+        experiment_name,
+        config.corpus_mode.value,
+        config_snapshot,
+        notes,
+    )
+    logger.info("Run ID: %d", run_id)
+
+    for r, row in zip(gen_results, scored_rows):
+        db.insert_result(
+            run_id,
+            question_id=r.qa.id,
+            source_idx=r.qa.source_idx,
+            complexity=r.qa.complexity,
+            answer_type=r.qa.answer_type,
+            generated_answer=r.generated_answer,
+            contexts_json=r.contexts,
+            faithfulness=row["faithfulness"],
+            answer_relevancy=row["answer_relevancy"],
+            context_precision=row["context_precision"],
+            context_recall=row["context_recall"],
+            answer_correctness=row["answer_correctness"],
+            trajectory_steps=r.trajectory_steps,
+            trajectory_success=r.trajectory_success,
+            latency_s=r.latency_s,
+            error=r.error,
+        )
+
+    summary = compute_summary(scored_rows)
+    db.save_summary(run_id, summary)
+    db.finish_run(run_id)
+
+    print_report(experiment_name, run_id, summary)
+
+    return run_id
 
 
 # ---------------------------------------------------------------------------
@@ -124,11 +264,11 @@ def _default_generate(
 
 
 # ---------------------------------------------------------------------------
-# Main pipeline
+# RAG experiment pipeline
 # ---------------------------------------------------------------------------
 
 def run_experiment(spec: ExperimentSpec, args: argparse.Namespace) -> int:
-    """Execute an experiment defined by *spec* and return the run_id."""
+    """Execute a RAG experiment defined by *spec* and return the run_id."""
 
     # ── Smoke-test override ─────────────────────────────────────────────
     if args.smoke_test:
@@ -136,24 +276,14 @@ def run_experiment(spec: ExperimentSpec, args: argparse.Namespace) -> int:
         args.subset = args.subset or 5
         args.notes = args.notes or "smoke-test"
 
-    # ── Config ───────────────────────────────────────────────────────────
-    config = Config()
-    config.corpus_mode = CorpusMode(args.corpus_mode)
-    if spec.apply_config_overrides is not None:
-        spec.apply_config_overrides(config)
-
-    logger.info(
-        "Experiment: %s | corpus_mode=%s | subset=%s",
+    # ── Config + dataset ────────────────────────────────────────────────
+    config = setup_config(
         spec.name,
-        config.corpus_mode.value,
+        CorpusMode(args.corpus_mode),
         args.subset,
+        spec.apply_config_overrides,
     )
-
-    # ── Load dataset ─────────────────────────────────────────────────────
-    qa_pairs = load_dataset(config)
-    if args.subset:
-        qa_pairs = qa_pairs[: args.subset]
-    logger.info("Loaded %d questions", len(qa_pairs))
+    qa_pairs = load_qa_pairs(config, args.subset)
 
     # ── Shared embedding model ───────────────────────────────────────────
     embed_model = HuggingFaceEmbedding(
@@ -207,81 +337,6 @@ def run_experiment(spec: ExperimentSpec, args: argparse.Namespace) -> int:
         if i % 10 == 0 or i == len(qa_pairs):
             logger.info("Generated %d/%d answers", i, len(qa_pairs))
 
-    # ── RAGAS evaluation ─────────────────────────────────────────────────
-    logger.info("Running RAGAS evaluation …")
-    successful = [r for r in gen_results if r.error is None]
-    samples = [
-        EvalSample(
-            question=r.qa.question,
-            generated_answer=r.generated_answer,
-            reference_answer=r.qa.answer,
-            contexts=r.contexts,
-        )
-        for r in successful
-    ]
-    eval_results = (
-        RAGASEvaluator(config).evaluate_batch(samples) if samples else []
-    )
-
-    # Build scored rows: merge generation results with eval scores
-    eval_iter = iter(eval_results)
-    scored_rows: list[dict] = []
-    for r in gen_results:
-        if r.error is None:
-            ev = next(eval_iter)
-            scores = {
-                "faithfulness": ev.faithfulness,
-                "answer_relevancy": ev.answer_relevancy,
-                "context_precision": ev.context_precision,
-                "context_recall": ev.context_recall,
-                "answer_correctness": ev.answer_correctness,
-            }
-        else:
-            scores = {k: None for k in METRIC_KEYS}
-
-        scored_rows.append({
-            "complexity": r.qa.complexity,
-            "latency_s": r.latency_s,
-            **scores,
-        })
-
-    # ── Persist to DB ────────────────────────────────────────────────────
-    db = RunDB(config)
-    config_snapshot = json.loads(json.dumps(config.__dict__, default=str))
-    run_id = db.start_run(
-        spec.name,
-        config.corpus_mode.value,
-        config_snapshot,
-        args.notes,
-    )
-    logger.info("Run ID: %d", run_id)
-
-    for r, row in zip(gen_results, scored_rows):
-        db.insert_result(
-            run_id,
-            question_id=r.qa.id,
-            source_idx=r.qa.source_idx,
-            complexity=r.qa.complexity,
-            answer_type=r.qa.answer_type,
-            generated_answer=r.generated_answer,
-            contexts_json=r.contexts,
-            faithfulness=row["faithfulness"],
-            answer_relevancy=row["answer_relevancy"],
-            context_precision=row["context_precision"],
-            context_recall=row["context_recall"],
-            answer_correctness=row["answer_correctness"],
-            trajectory_steps=r.trajectory_steps,
-            trajectory_success=r.trajectory_success,
-            latency_s=r.latency_s,
-            error=r.error,
-        )
-
-    # ── Summary ──────────────────────────────────────────────────────────
-    summary = compute_summary(scored_rows)
-    db.save_summary(run_id, summary)
-    db.finish_run(run_id)
-
-    # ── Print report ─────────────────────────────────────────────────────
-    print_report(spec.name, run_id, summary)
-
-    return run_id
+    # ── Evaluate + persist ───────────────────────────────────────────────
+    scored_rows = evaluate_results(gen_results, config)
+    return persist_and_report(spec.name, config, gen_results, scored_rows, args.notes)
