@@ -18,9 +18,9 @@ from typing import Any, Optional, Protocol
 
 from llama_index.core.schema import Document, TextNode
 
-from ..common.config import Config
-from ..common.data_loader import QAPair
-from ..common.utils import doi_to_path, get_logger
+from common.config import Config
+from common.data_loader import QAPair
+from common.utils import doi_to_path, get_logger
 from .pdf_parser import parse_pdf
 
 logger = get_logger(__name__)

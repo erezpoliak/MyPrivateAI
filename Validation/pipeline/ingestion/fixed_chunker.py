@@ -10,7 +10,7 @@ from llama_index.core.node_parser import TokenTextSplitter
 
 from llama_index.core.schema import TextNode, Document
 
-from ..common.config import Config
+from common.config import Config
 
 
 

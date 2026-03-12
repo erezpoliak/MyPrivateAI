@@ -18,8 +18,8 @@ from llama_index.vector_stores.chroma import ChromaVectorStore
 import chromadb
 from chromadb.errors import NotFoundError
 
-from ..common.config import Config
-from ..common.utils import ensure_dir, get_logger
+from common.config import Config
+from common.utils import ensure_dir, get_logger
 
 logger = get_logger(__name__)
 

@@ -320,7 +320,7 @@ def run_experiment(spec: ExperimentSpec, args: argparse.Namespace) -> int:
     logger.info("Vector index ready (%d nodes)", len(nodes))
 
     # ── LLM + Retriever ──────────────────────────────────────────────────
-    llm = get_llm(config)
+    llm = spec.create_llm(config) if spec.create_llm else get_llm(config)
     retriever = spec.create_retriever(index, nodes, config)
 
     # ── Generate answers ─────────────────────────────────────────────────

@@ -29,10 +29,10 @@ from llama_index.core.workflow import (
     step,
 )
 
-from ..common.config import Config
-from ..common.data_loader import QAPair
-from ..common.utils import get_logger
-from ..experiments.spec import GenerationResult, Retriever
+from common.config import Config
+from common.data_loader import QAPair
+from common.utils import get_logger
+from experiments.spec import GenerationResult, Retriever
 from .prompts import (
     CORRECTION_PROMPT,
     CRITIQUE_PROMPT,

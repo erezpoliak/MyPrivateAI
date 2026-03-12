@@ -13,8 +13,8 @@ from typing import Optional
 
 import requests
 
-from ..common.config import Config
-from ..common.utils import doi_to_path, ensure_dir, get_logger, retry
+from common.config import Config
+from common.utils import doi_to_path, ensure_dir, get_logger, retry
 
 logger = get_logger(__name__)
 

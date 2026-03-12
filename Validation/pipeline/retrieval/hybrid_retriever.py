@@ -15,8 +15,8 @@ from typing import Protocol
 from llama_index.core.schema import NodeWithScore, QueryBundle
 from llama_index.postprocessor.flashrank_rerank import FlashRankRerank
 
-from ..common.config import Config
-from ..common.utils import get_logger
+from common.config import Config
+from common.utils import get_logger
 
 logger = get_logger(__name__)
 

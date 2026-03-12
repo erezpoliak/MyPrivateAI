@@ -21,7 +21,7 @@ from typing import Optional
 from pypdf import PdfReader
 from pypdf.errors import PdfReadError
 
-from ..common.utils import get_logger
+from common.utils import get_logger
 
 logger = get_logger(__name__)
 

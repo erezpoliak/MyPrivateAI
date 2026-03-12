@@ -10,8 +10,8 @@ from llama_index.core.base.embeddings.base import BaseEmbedding
 from llama_index.core.node_parser import SemanticSplitterNodeParser, SentenceSplitter
 from llama_index.core.schema import TextNode, Document
 
-from ..common.config import Config
-from ..common.utils import get_logger
+from common.config import Config
+from common.utils import get_logger
 
 logger = get_logger(__name__)
 

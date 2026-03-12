@@ -87,3 +87,6 @@ class ExperimentSpec:
 
     When ``None``, the default retrieve → prompt → complete loop is used.
     """
+
+    create_llm: Optional[Callable[[Config], Any]] = None
+    """Optional: custom LLM factory. When ``None``, the default Ollama LLM is used."""

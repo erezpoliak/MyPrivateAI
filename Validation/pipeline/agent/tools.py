@@ -22,8 +22,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ..common.utils import get_logger
-from ..experiments.spec import Retriever
+from common.utils import get_logger
+from experiments.spec import Retriever
 
 logger = get_logger(__name__)
 
