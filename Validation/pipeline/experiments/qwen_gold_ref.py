@@ -1,13 +1,13 @@
-"""Llama Gold-REF experiment — Gold_REF as sole context, Llama 3.1 8B.
+"""Qwen Gold-REF experiment — Gold_REF as sole context, Qwen-3.5 9B.
 
 Injects each question's Gold_REF text as the only context and sends it to
-Llama 3.1 8B via Ollama.  GPT-4o-mini as RAGAS judge.  All RAGAS metrics
+Qwen-3.5 9B via Ollama.  GPT-4o-mini as RAGAS judge.  All RAGAS metrics
 apply (context is present).  Corpus mode: ``gold_ref``.
 
 CLI:
-    python -m pipeline.experiments.llama_gold_ref                     # full run
-    python -m pipeline.experiments.llama_gold_ref --smoke-test        # quick check (5 Qs)
-    python -m pipeline.experiments.llama_gold_ref --subset 20 --notes "test run"
+    python -m pipeline.experiments.qwen_gold_ref                     # full run
+    python -m pipeline.experiments.qwen_gold_ref --smoke-test        # quick check (5 Qs)
+    python -m pipeline.experiments.qwen_gold_ref --subset 20 --notes "test run"
 """
 
 from __future__ import annotations
@@ -37,7 +37,7 @@ from experiments.spec import GenerationResult
 
 logger = get_logger(__name__)
 
-EXPERIMENT_NAME = "llama_gold_ref"
+EXPERIMENT_NAME = "qwen_gold_ref"
 
 GOLD_REF_PROMPT = (
     "Context information is below.\n"
@@ -55,8 +55,8 @@ GOLD_REF_PROMPT = (
 # Main pipeline
 # ---------------------------------------------------------------------------
 
-def run_llama_gold_ref(args) -> int:
-    """Execute the Llama Gold-REF experiment and return the run_id."""
+def run_qwen_gold_ref(args) -> int:
+    """Execute the Qwen Gold-REF experiment and return the run_id."""
 
     if args.smoke_test:
         args.subset = args.subset or 5
@@ -113,10 +113,10 @@ def run_llama_gold_ref(args) -> int:
 
 def main() -> None:
     args = parse_args(
-        description="Llama Gold-REF experiment: Gold_REF as sole context, Llama 3.1 8B.",
+        description="Qwen Gold-REF experiment: Gold_REF as sole context, Qwen-3.5 9B.",
         corpus_choices=None,  # no --corpus-mode flag; always uses CorpusMode.GOLD_REF
     )
-    run_llama_gold_ref(args)
+    run_qwen_gold_ref(args)
 
 
 if __name__ == "__main__":
