@@ -13,7 +13,7 @@ import torch
 class CorpusMode(str, Enum):
     """Which corpus source to use for a run."""
     NONE = "none"
-    GOLD_REF = "gold_ref"
+    GOLD_REF = "gold_ref"   # used by llama_gold_ref experiment (no corpus built)
     FETCHED = "fetched"
 
 
@@ -81,7 +81,7 @@ class Config:
     reranker_model: str = "ms-marco-MiniLM-L-12-v2"
 
     # -- Corpus mode ---------------------------------------------------------
-    corpus_mode: CorpusMode = CorpusMode.GOLD_REF
+    corpus_mode: CorpusMode = CorpusMode.FETCHED
 
     # -- RAGAS ---------------------------------------------------------------
     ragas_judge_model: str = "gpt-4o-mini"

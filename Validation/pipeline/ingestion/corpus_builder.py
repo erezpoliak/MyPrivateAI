@@ -1,4 +1,4 @@
-"""Two-mode corpus orchestrator: gold_ref or fetched.
+"""Corpus builder — parse fetched PDFs into chunked TextNodes.
 
 Calls the ingestion layer (pdf_parser, chunker) to produce a flat list of
 LlamaIndex TextNodes, plus a CorpusManifest tracking per-paper status.
@@ -18,7 +18,7 @@ from typing import Any, Optional, Protocol
 
 from llama_index.core.schema import Document, TextNode
 
-from ..common.config import Config, CorpusMode
+from ..common.config import Config
 from ..common.data_loader import QAPair
 from ..common.utils import doi_to_path, get_logger
 from .pdf_parser import parse_pdf
@@ -41,7 +41,6 @@ class Chunker(Protocol):
 class CorpusTier(str, Enum):
     """Outcome of corpus construction for a single paper."""
 
-    GOLD_REF = "gold_ref"
     FETCHED = "fetched"
     FAILED = "failed"
 
@@ -62,7 +61,6 @@ class PaperCorpusEntry:
 class CorpusManifest:
     """Summary produced by a corpus build run."""
 
-    mode: CorpusMode
     entries: dict[str, PaperCorpusEntry] = field(default_factory=dict)
     total_nodes: int = 0
 
@@ -91,71 +89,13 @@ def build_corpus(
     chunker: Chunker,
     config: Config,
 ) -> tuple[list[TextNode], CorpusManifest]:
-    """Build corpus nodes based on ``config.corpus_mode``."""
-    mode = config.corpus_mode
-    if mode == CorpusMode.GOLD_REF:
-        return _build_gold_ref(qa_pairs, chunker)
-    if mode == CorpusMode.FETCHED:
-        return _build_fetched(qa_pairs, chunker, config)
-    raise ValueError(
-        f"build_corpus does not handle mode {mode!r} "
-        "(use CorpusMode.GOLD_REF or CorpusMode.FETCHED)"
-    )
-
-
-def _build_gold_ref(
-    qa_pairs: list[QAPair],
-    chunker: Chunker,
-) -> tuple[list[TextNode], CorpusManifest]:
-    """Chunk the Gold_REF passages grouped by paper."""
-    # Collect unique gold_ref texts per paper
-    paper_refs: dict[str, list[str]] = {}
-    for qa in qa_pairs:
-        if not qa.gold_ref:
-            continue
-        refs = paper_refs.setdefault(qa.source_idx, [])
-        if qa.gold_ref not in refs:
-            refs.append(qa.gold_ref)
-
-    manifest = CorpusManifest(mode=CorpusMode.GOLD_REF)
-    all_nodes: list[TextNode] = []
-
-    for source_idx, refs in paper_refs.items():
-        metadata = {
-            "source_idx": source_idx,
-            "corpus_mode": "gold_ref",
-        }
-        docs = [Document(text=ref_text, metadata=metadata) for ref_text in refs]
-        paper_nodes = chunker.get_nodes_from_documents(docs)
-
-        manifest.entries[source_idx] = PaperCorpusEntry(
-            source_idx=source_idx,
-            tier=CorpusTier.GOLD_REF,
-            node_count=len(paper_nodes),
-        )
-        all_nodes.extend(paper_nodes)
-
-    manifest.total_nodes = len(all_nodes)
-    logger.info(
-        "Gold-ref corpus: %d papers, %d nodes",
-        len(manifest.entries),
-        manifest.total_nodes,
-    )
-    return all_nodes, manifest
-
-
-def _build_fetched(
-    qa_pairs: list[QAPair],
-    chunker: Chunker,
-    config: Config,
-) -> tuple[list[TextNode], CorpusManifest]:
     """Parse and chunk fetched PDFs. Papers without a PDF are marked FAILED."""
     # Deduplicate papers — keep first QAPair per source_idx for metadata
     papers: dict[str, QAPair] = {}
     for qa in qa_pairs:
         papers.setdefault(qa.source_idx, qa)
 
-    manifest = CorpusManifest(mode=CorpusMode.FETCHED)
+    manifest = CorpusManifest()
     all_nodes: list[TextNode] = []
 
     for source_idx, qa in papers.items():

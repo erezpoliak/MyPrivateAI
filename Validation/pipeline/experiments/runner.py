@@ -50,7 +50,7 @@ logger = get_logger(__name__)
 def parse_args(
     description: str = "Run an experiment.",
     argv: list[str] | None = None,
-    corpus_choices: list[str] | None = ("gold_ref", "fetched"),
+    corpus_choices: list[str] | None = ("fetched",),
     corpus_default: str = "fetched",
 ) -> argparse.Namespace:
     """Shared CLI parser used by all experiment entry points.
@@ -68,7 +68,7 @@ def parse_args(
         "--smoke-test",
         action="store_true",
         default=False,
-        help="Quick pipeline check: sets corpus-mode to gold_ref and subset to 5.",
+        help="Quick pipeline check: subset to 5 questions.",
     )
     if corpus_choices is not None:
         parser.add_argument(
@@ -76,7 +76,7 @@ def parse_args(
             type=str,
             choices=corpus_choices,
             default=corpus_default,
-            help=f"Corpus source (default: {corpus_default}). Overridden to gold_ref by --smoke-test.",
+            help=f"Corpus source (default: {corpus_default}).",
         )
     parser.add_argument(
         "--subset",
@@ -272,7 +272,6 @@ def run_experiment(spec: ExperimentSpec, args: argparse.Namespace) -> int:
 
     # ── Smoke-test override ─────────────────────────────────────────────
     if args.smoke_test:
-        args.corpus_mode = "gold_ref"
         args.subset = args.subset or 5
         args.notes = args.notes or "smoke-test"
 
@@ -301,12 +300,12 @@ def run_experiment(spec: ExperimentSpec, args: argparse.Namespace) -> int:
         len(manifest.succeeded),
     )
 
-    # In fetched mode, drop questions whose papers have no corpus
-    if config.corpus_mode == CorpusMode.FETCHED:
-        before = len(qa_pairs)
-        qa_pairs = [q for q in qa_pairs if manifest.has_corpus(q.source_idx)]
+    # Drop questions whose papers have no corpus
+    before = len(qa_pairs)
+    qa_pairs = [q for q in qa_pairs if manifest.has_corpus(q.source_idx)]
+    if before != len(qa_pairs):
         logger.info(
-            "Filtered %d → %d questions (fetched-mode coverage)",
+            "Filtered %d → %d questions (corpus coverage)",
             before,
             len(qa_pairs),
         )

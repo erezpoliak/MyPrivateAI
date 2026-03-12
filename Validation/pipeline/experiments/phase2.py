@@ -5,7 +5,7 @@ Pipeline: CappedSemanticSplitter → HybridRetriever → AgentWorkflow
 
 CLI:
     python -m pipeline.experiments.phase2                     # scored run (fetched PDFs)
-    python -m pipeline.experiments.phase2 --smoke-test        # quick pipeline check (gold_ref, 5 Qs)
+    python -m pipeline.experiments.phase2 --smoke-test        # quick pipeline check (fetched, 5 Qs)
     python -m pipeline.experiments.phase2 --subset 20 --notes "test run"
 """
 

@@ -4,7 +4,7 @@ Pipeline: CappedSemanticSplitter → HybridRetriever (RRF fusion + FlashRankRera
 
 CLI:
     python -m pipeline.experiments.phase1                     # scored run (fetched PDFs)
-    python -m pipeline.experiments.phase1 --smoke-test        # quick pipeline check (gold_ref, 5 Qs)
+    python -m pipeline.experiments.phase1 --smoke-test        # quick pipeline check (fetched, 5 Qs)
     python -m pipeline.experiments.phase1 --subset 20 --notes "test run"
 """
 

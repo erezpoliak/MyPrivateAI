@@ -4,7 +4,7 @@ Pipeline: TokenTextSplitter (512 tok) → VectorIndexRetriever (k=5) → Ollama 
 
 CLI:
     python -m pipeline.experiments.baseline                     # scored run (fetched PDFs)
-    python -m pipeline.experiments.baseline --smoke-test        # quick pipeline check (gold_ref, 5 Qs)
+    python -m pipeline.experiments.baseline --smoke-test        # quick pipeline check (fetched, 5 Qs)
     python -m pipeline.experiments.baseline --subset 20 --notes "test run"
 """
 

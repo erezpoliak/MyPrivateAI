@@ -1,7 +1,7 @@
 """Corpus ingestion — from raw documents to chunked TextNodes.
 
 Public API (used by experiments):
-    corpus_builder      — build_corpus() orchestrates chunking for gold_ref or fetched mode
+    corpus_builder      — build_corpus() parses fetched PDFs into chunked TextNodes
     document_store      — DocumentStore manages ChromaDB vector index (accepts BaseEmbedding)
 
 Internal (used by corpus_builder or experiment specs):
