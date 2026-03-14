@@ -88,23 +88,6 @@ class PDFFetcher:
             error=result.error or "No open-access PDF found from any source",
         )
 
-    def fetch_batch(self, dois: list[str]) -> list[FetchResult]:
-        """Fetch PDFs for a list of DOIs, logging progress."""
-        results: list[FetchResult] = []
-        total = len(dois)
-        for i, doi in enumerate(dois, 1):
-            logger.info("[%d/%d] Fetching %s", i, total, doi)
-            results.append(self.fetch(doi))
-
-        succeeded = sum(1 for r in results if r.success)
-        logger.info(
-            "Batch complete: %d/%d succeeded (%.0f%%)",
-            succeeded,
-            total,
-            100 * succeeded / total if total else 0,
-        )
-        return results
-
     # -- Source-specific fetchers ---------------------------------------------
 
     def _try_unpaywall(self, doi: str) -> FetchResult:
