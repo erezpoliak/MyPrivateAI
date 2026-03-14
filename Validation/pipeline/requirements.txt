@@ -1,36 +1,36 @@
 # Core
-torch>=2.1.0
+torch==2.10.0
 # NOTE: NVIDIA users should install the CUDA wheel separately:
-#   pip install torch --index-url https://download.pytorch.org/whl/cu121
+#   pip install torch==2.10.0 --index-url https://download.pytorch.org/whl/cu121
 
 # LlamaIndex
-llama-index-core>=0.12.0
-llama-index-llms-ollama>=0.5.0
-llama-index-llms-openai>=0.6.0
-llama-index-embeddings-huggingface>=0.5.0
+llama-index-core==0.14.15
+llama-index-llms-ollama==0.9.1
+llama-index-llms-openai==0.6.26
+llama-index-embeddings-huggingface==0.6.1
 
 # Vector DB
-chromadb>=0.6.0
+chromadb==1.5.1
 
 # Hybrid search
-llama-index-retrievers-bm25>=0.4.0
-llama-index-postprocessor-flashrank-rerank>=0.3.0
-FlashRank>=0.2.0
+llama-index-retrievers-bm25==0.6.5
+llama-index-postprocessor-flashrank-rerank==0.2.1
+FlashRank==0.2.10
 
 # PDF
-pypdf>=4.0.0
+pypdf==6.7.3
 
 # Evaluation
-ragas>=0.2.0
+ragas==0.4.3
 
 # NLP
-nltk>=3.9.0
+nltk==3.9.3
 
 # HTTP (for PDF fetching)
-requests>=2.32.0
+requests==2.32.5
 
 # Env
-python-dotenv>=1.0.0
+python-dotenv==1.2.1
 
 # Dev / test
-pytest>=8.0.0
+pytest==9.0.2
