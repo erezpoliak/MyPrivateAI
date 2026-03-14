@@ -12,8 +12,6 @@ logger = get_logger(__name__)
 
 METRIC_KEYS = [
     "faithfulness",
-    "answer_relevancy",
-    "context_precision",
     "context_recall",
     "answer_correctness",
 ]
@@ -60,8 +58,6 @@ def print_report(name: str, run_id: int, summary: dict) -> None:
     logger.info("Questions evaluated:    %d", summary["num_questions"])
     logger.info("Avg latency:            %s s", _fmt(summary["avg_latency_s"]))
     logger.info("Avg faithfulness:       %s", _fmt(summary["avg_faithfulness"]))
-    logger.info("Avg answer_relevancy:   %s", _fmt(summary["avg_answer_relevancy"]))
-    logger.info("Avg context_precision:  %s", _fmt(summary["avg_context_precision"]))
     logger.info("Avg context_recall:     %s", _fmt(summary["avg_context_recall"]))
     logger.info("Avg answer_correctness: %s", _fmt(summary["avg_answer_correctness"]))
     logger.info("-" * 60)

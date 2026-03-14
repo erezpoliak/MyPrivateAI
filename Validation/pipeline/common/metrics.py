@@ -20,9 +20,7 @@ from ragas import EvaluationDataset, SingleTurnSample, evaluate
 from ragas.embeddings import LangchainEmbeddingsWrapper
 from ragas.llms import LangchainLLMWrapper
 from ragas.metrics._answer_correctness import AnswerCorrectness
-from ragas.metrics._answer_relevance import AnswerRelevancy
 from ragas.metrics._answer_similarity import AnswerSimilarity
-from ragas.metrics._context_precision import ContextPrecision
 from ragas.metrics._context_recall import ContextRecall
 from ragas.metrics._faithfulness import Faithfulness
 
@@ -55,8 +53,6 @@ class EvalResult:
     """
 
     faithfulness: Optional[float] = None
-    answer_relevancy: Optional[float] = None
-    context_precision: Optional[float] = None
     context_recall: Optional[float] = None
     answer_correctness: Optional[float] = None
     answer_similarity: Optional[float] = None
@@ -150,8 +146,6 @@ class RAGASEvaluator:
             results.append(
                 EvalResult(
                     faithfulness=_nan_to_none(row.get("faithfulness")) if has_ctx else None,
-                    answer_relevancy=_nan_to_none(row.get("answer_relevancy")) if has_ctx else None,
-                    context_precision=_nan_to_none(row.get("context_precision")) if has_ctx else None,
                     context_recall=_nan_to_none(row.get("context_recall")) if has_ctx else None,
                     answer_correctness=_nan_to_none(row.get("answer_correctness")),
                     answer_similarity=_nan_to_none(row.get("answer_similarity")),
@@ -174,12 +168,7 @@ class RAGASEvaluator:
         answer_metrics = [AnswerCorrectness(), AnswerSimilarity()]
         if not has_ctx:
             return answer_metrics
-        context_metrics = [
-            Faithfulness(),
-            AnswerRelevancy(),
-            ContextPrecision(),
-            ContextRecall(),
-        ]
+        context_metrics = [Faithfulness(), ContextRecall()]
         return context_metrics + answer_metrics
 
     @staticmethod

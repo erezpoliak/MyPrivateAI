@@ -34,8 +34,6 @@ CREATE TABLE IF NOT EXISTS question_results (
     generated_answer    TEXT,
     contexts_json       TEXT,                  -- JSON list of retrieved chunks
     faithfulness        REAL,
-    answer_relevancy    REAL,
-    context_precision   REAL,
     context_recall      REAL,
     answer_correctness  REAL,
     trajectory_steps    INTEGER DEFAULT 0,     -- agent hops (phase2 only)
@@ -49,8 +47,6 @@ CREATE TABLE IF NOT EXISTS run_summary (
     run_id              INTEGER NOT NULL UNIQUE REFERENCES runs(run_id),
     num_questions       INTEGER NOT NULL,
     avg_faithfulness    REAL,
-    avg_answer_relevancy REAL,
-    avg_context_precision REAL,
     avg_context_recall  REAL,
     avg_answer_correctness REAL,
     avg_latency_s       REAL,

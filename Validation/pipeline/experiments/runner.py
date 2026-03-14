@@ -154,8 +154,6 @@ def evaluate_results(
             ev = next(eval_iter)
             scores = {
                 "faithfulness": ev.faithfulness,
-                "answer_relevancy": ev.answer_relevancy,
-                "context_precision": ev.context_precision,
                 "context_recall": ev.context_recall,
                 "answer_correctness": ev.answer_correctness,
             }
@@ -199,8 +197,6 @@ def persist_and_report(
             generated_answer=r.generated_answer,
             contexts_json=r.contexts,
             faithfulness=row["faithfulness"],
-            answer_relevancy=row["answer_relevancy"],
-            context_precision=row["context_precision"],
             context_recall=row["context_recall"],
             answer_correctness=row["answer_correctness"],
             trajectory_steps=r.trajectory_steps,

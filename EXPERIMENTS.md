@@ -51,8 +51,6 @@ Not all RAGAS metrics are meaningful for every experiment:
 | answer_similarity | Yes | Yes | Yes | Yes | Yes | Yes |
 | context_recall | N/A | Yes | Yes | Yes | Yes | Yes |
 | faithfulness | N/A | Yes | Yes | Yes | Yes | Yes |
-| context_precision | N/A | Yes | Yes | Yes | Yes | Yes |
-| answer_relevancy | N/A | Yes | Yes | Yes | Yes | Yes |
 | trajectory_success | N/A | N/A | N/A | Yes | N/A | N/A |
 | trajectory_steps | N/A | N/A | N/A | Yes | N/A | N/A |
 
