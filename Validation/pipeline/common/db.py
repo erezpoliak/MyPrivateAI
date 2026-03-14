@@ -50,6 +50,8 @@ CREATE TABLE IF NOT EXISTS run_summary (
     avg_context_recall  REAL,
     avg_answer_correctness REAL,
     avg_latency_s       REAL,
+    avg_trajectory_steps REAL,
+    trajectory_success_rate REAL,              -- fraction that converged (1=all)
     breakdown_json      TEXT                   -- per-complexity averages
 );
 """

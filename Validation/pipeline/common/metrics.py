@@ -4,8 +4,7 @@ Provides ``RAGASEvaluator`` which runs GPT-4o-mini as LLM judge for **all**
 experiments for consistent evaluation across the board. 
 
 Closed-book mode (empty contexts) returns ``None`` for context-dependent
-metrics (faithfulness, answer_relevancy, context_precision, context_recall)
-and only computes answer_correctness + answer_similarity.
+metrics (faithfulness, context_recall) and only computes answer_correctness.
 """
 
 from __future__ import annotations
@@ -20,7 +19,6 @@ from ragas import EvaluationDataset, SingleTurnSample, evaluate
 from ragas.embeddings import LangchainEmbeddingsWrapper
 from ragas.llms import LangchainLLMWrapper
 from ragas.metrics._answer_correctness import AnswerCorrectness
-from ragas.metrics._answer_similarity import AnswerSimilarity
 from ragas.metrics._context_recall import ContextRecall
 from ragas.metrics._faithfulness import Faithfulness
 
@@ -55,7 +53,6 @@ class EvalResult:
     faithfulness: Optional[float] = None
     context_recall: Optional[float] = None
     answer_correctness: Optional[float] = None
-    answer_similarity: Optional[float] = None
 
 
 # ---------------------------------------------------------------------------
@@ -112,8 +109,8 @@ class RAGASEvaluator:
 
         For batches **with** retrieved contexts every metric is computed.
         For batches **without** contexts (Closed Book) only
-        ``answer_correctness`` and ``answer_similarity`` are computed;
-        context-dependent metrics are returned as ``None``.
+        ``answer_correctness`` is computed; context-dependent metrics
+        are returned as ``None``.
 
         Returns one :class:`EvalResult` per input sample, in the same order.
         """
@@ -148,7 +145,6 @@ class RAGASEvaluator:
                     faithfulness=_nan_to_none(row.get("faithfulness")) if has_ctx else None,
                     context_recall=_nan_to_none(row.get("context_recall")) if has_ctx else None,
                     answer_correctness=_nan_to_none(row.get("answer_correctness")),
-                    answer_similarity=_nan_to_none(row.get("answer_similarity")),
                 )
             )
 
@@ -165,7 +161,7 @@ class RAGASEvaluator:
     @staticmethod
     def _select_metrics(has_ctx: bool) -> list:
         """Return the appropriate RAGAS metric instances."""
-        answer_metrics = [AnswerCorrectness(), AnswerSimilarity()]
+        answer_metrics = [AnswerCorrectness()]
         if not has_ctx:
             return answer_metrics
         context_metrics = [Faithfulness(), ContextRecall()]

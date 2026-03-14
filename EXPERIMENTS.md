@@ -48,7 +48,6 @@ Not all RAGAS metrics are meaningful for every experiment:
 | Metric | Closed Book | Baseline | Phase 1 | Phase 2 | Qwen+Gold_REF | Ceiling |
 |---|---|---|---|---|---|---|
 | answer_correctness | Yes | Yes | Yes | Yes | Yes | Yes |
-| answer_similarity | Yes | Yes | Yes | Yes | Yes | Yes |
 | context_recall | N/A | Yes | Yes | Yes | Yes | Yes |
 | faithfulness | N/A | Yes | Yes | Yes | Yes | Yes |
 | trajectory_success | N/A | N/A | N/A | Yes | N/A | N/A |

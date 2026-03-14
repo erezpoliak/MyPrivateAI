@@ -1,8 +1,8 @@
 """Closed Book experiment — parametric knowledge only, no retrieval.
 
 Sends each question directly to Llama 3.1 8B with no context.
-GPT-4o-mini as RAGAS judge. Only answer_correctness and answer_similarity
-are computed; context-dependent metrics are ``None``.
+GPT-4o-mini as RAGAS judge. Only answer_correctness is computed;
+context-dependent metrics are ``None``.
 
 CLI:
     python -m pipeline.experiments.closed_book                     # full run

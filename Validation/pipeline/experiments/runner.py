@@ -163,6 +163,8 @@ def evaluate_results(
         scored_rows.append({
             "complexity": r.qa.complexity,
             "latency_s": r.latency_s,
+            "trajectory_steps": r.trajectory_steps,
+            "trajectory_success": r.trajectory_success,
             **scores,
         })
 

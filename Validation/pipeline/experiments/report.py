@@ -26,6 +26,12 @@ def _fmt(value: float | None) -> str:
     return f"{value:.4f}" if value is not None else "—"
 
 
+def _success_rate(results: list[dict]) -> float | None:
+    """Fraction of questions where the agent converged (trajectory_success=1)."""
+    vals = [r["trajectory_success"] for r in results if r.get("trajectory_success") is not None]
+    return mean(vals) if vals else None
+
+
 def compute_summary(results: list[dict]) -> dict:
     """Aggregate metrics + per-complexity breakdown for DB persistence."""
     summary: dict = {
@@ -34,6 +40,9 @@ def compute_summary(results: list[dict]) -> dict:
     }
     for key in METRIC_KEYS:
         summary[f"avg_{key}"] = safe_mean([r[key] for r in results])
+
+    summary["avg_trajectory_steps"] = safe_mean([r["trajectory_steps"] for r in results])
+    summary["trajectory_success_rate"] = _success_rate(results)
 
     by_complexity: dict[int, list[dict]] = defaultdict(list)
     for r in results:
@@ -44,6 +53,8 @@ def compute_summary(results: list[dict]) -> dict:
         breakdown[str(complexity)] = {
             "count": len(group),
             "avg_latency_s": safe_mean([r["latency_s"] for r in group]),
+            "avg_trajectory_steps": safe_mean([r["trajectory_steps"] for r in group]),
+            "trajectory_success_rate": _success_rate(group),
             **{f"avg_{k}": safe_mean([r[k] for r in group]) for k in METRIC_KEYS},
         }
 
@@ -60,16 +71,19 @@ def print_report(name: str, run_id: int, summary: dict) -> None:
     logger.info("Avg faithfulness:       %s", _fmt(summary["avg_faithfulness"]))
     logger.info("Avg context_recall:     %s", _fmt(summary["avg_context_recall"]))
     logger.info("Avg answer_correctness: %s", _fmt(summary["avg_answer_correctness"]))
+    logger.info("Avg trajectory_steps:  %s", _fmt(summary.get("avg_trajectory_steps")))
+    logger.info("Trajectory success:    %s", _fmt(summary.get("trajectory_success_rate")))
     logger.info("-" * 60)
 
     breakdown = json.loads(summary["breakdown_json"])
     for complexity, stats in sorted(breakdown.items()):
         logger.info(
-            "  Complexity %s  (n=%d):  correctness=%s  faithfulness=%s  latency=%s s",
+            "  Complexity %s  (n=%d):  correctness=%s  faithfulness=%s  steps=%s  latency=%s s",
             complexity,
             stats["count"],
             _fmt(stats["avg_answer_correctness"]),
             _fmt(stats["avg_faithfulness"]),
+            _fmt(stats.get("avg_trajectory_steps")),
             _fmt(stats["avg_latency_s"]),
         )
     logger.info("=" * 60)
