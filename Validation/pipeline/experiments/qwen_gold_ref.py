@@ -1,7 +1,7 @@
 """Qwen Gold-REF experiment — Gold_REF as sole context, Qwen-3.5 9B.
 
 Injects each question's Gold_REF text as the only context and sends it to
-Qwen-3.5 9B via Ollama.  GPT-4o-mini as RAGAS judge.  All RAGAS metrics
+Qwen-3.5 9B via Ollama.  GPT-4.1-mini as RAGAS judge.  All RAGAS metrics
 apply (context is present).  Corpus mode: ``gold_ref``.
 
 CLI:

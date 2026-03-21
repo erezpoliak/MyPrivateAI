@@ -1,7 +1,7 @@
 """Closed Book experiment — parametric knowledge only, no retrieval.
 
 Sends each question directly to Llama 3.1 8B with no context.
-GPT-4o-mini as RAGAS judge. Only answer_correctness is computed;
+GPT-4.1-mini as RAGAS judge. Only answer_correctness is computed;
 context-dependent metrics are ``None``.
 
 CLI:

@@ -198,7 +198,7 @@ class TestRAGASEvaluatorInit:
         monkeypatch.setenv("OPENAI_API_KEY", "test-key")
         from common.config import Config
         cfg = Config()
-        cfg.ragas_judge_model = "gpt-4o-mini"
+        cfg.ragas_judge_model = "gpt-4.1-mini"
         with (
             patch("common.metrics.ChatOpenAI") as mock_llm_cls,
             patch("common.metrics.OpenAIEmbeddings"),
@@ -206,7 +206,7 @@ class TestRAGASEvaluatorInit:
             patch("common.metrics.LangchainEmbeddingsWrapper"),
         ):
             RAGASEvaluator(config=cfg)
-            mock_llm_cls.assert_called_once_with(model="gpt-4o-mini")
+            mock_llm_cls.assert_called_once_with(model="gpt-4.1-mini")
 
 
 # ---------------------------------------------------------------------------

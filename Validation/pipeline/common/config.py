@@ -84,7 +84,7 @@ class Config:
     corpus_mode: CorpusMode = CorpusMode.FETCHED
 
     # -- RAGAS ---------------------------------------------------------------
-    ragas_judge_model: str = "gpt-4o-mini"
+    ragas_judge_model: str = "gpt-4.1-mini"
 
     # -- Agent (Phase 2) -----------------------------------------------------
     max_agent_hops: int = 3

@@ -1,6 +1,6 @@
 """RAGAS evaluation wrapper for the validation pipeline.
 
-Provides ``RAGASEvaluator`` which runs GPT-4o-mini as LLM judge for **all**
+Provides ``RAGASEvaluator`` which runs GPT-4.1-mini as LLM judge for **all**
 experiments for consistent evaluation across the board. 
 
 Closed-book mode (empty contexts) returns ``None`` for context-dependent

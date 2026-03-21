@@ -4,12 +4,12 @@
 
 | # | Experiment | Chunking | Retrieval | Reranking | LLM | RAGAS Judge | Key Targets |
 |---|---|---|---|---|---|---|---|
-| 1 | **Closed Book** | N/A | None | None | Qwen-3.5 9B | GPT-4o-mini | Reference floor (no targets) |
-| 2 | **Baseline** | Fixed 512 | Vector k=5 | None | Qwen-3.5 9B | GPT-4o-mini | AC > Closed Book |
-| 3 | **Phase 1** | Semantic | Hybrid BM25+Vector (RRF) | FlashRank top-3 | Qwen-3.5 9B | GPT-4o-mini | CR > 0.92, Faith > 0.98 |
-| 4 | **Phase 2** | Semantic | Multi-hop agent using Hybrid BM25+Vector (RRF) | FlashRank top-3 | Qwen-3.5 9B | GPT-4o-mini | AC > 85% ceiling, Traj > 0.80, AC(cplx 3-4) ≥ Qwen+Gold_REF |
-| 5 | **Qwen+Gold_REF** | N/A | Gold_REF injected | None | Qwen-3.5 9B | GPT-4o-mini | Qwen comprehension ceiling |
-| 6 | **GPT-4o RAG (Ceiling)** | Semantic | Multi-hop agent using Hybrid BM25+Vector (RRF) | FlashRank top-3 | GPT-4o | GPT-4o-mini | Upper bound anchor — identical pipeline to Phase 2, only LLM differs |
+| 1 | **Closed Book** | N/A | None | None | Qwen-3.5 9B | GPT-4.1-mini | Reference floor (no targets) |
+| 2 | **Baseline** | Fixed 512 | Vector k=5 | None | Qwen-3.5 9B | GPT-4.1-mini | AC > Closed Book |
+| 3 | **Phase 1** | Semantic | Hybrid BM25+Vector (RRF) | FlashRank top-3 | Qwen-3.5 9B | GPT-4.1-mini | CR > 0.92, Faith > 0.98 |
+| 4 | **Phase 2** | Semantic | Multi-hop agent using Hybrid BM25+Vector (RRF) | FlashRank top-3 | Qwen-3.5 9B | GPT-4.1-mini | AC > 85% ceiling, Traj > 0.80, AC(cplx 3-4) ≥ Qwen+Gold_REF |
+| 5 | **Qwen+Gold_REF** | N/A | Gold_REF injected | None | Qwen-3.5 9B | GPT-4.1-mini | Qwen comprehension ceiling |
+| 6 | **GPT-4o RAG (Ceiling)** | Semantic | Multi-hop agent using Hybrid BM25+Vector (RRF) | FlashRank top-3 | GPT-4o | GPT-4.1-mini | Upper bound anchor — identical pipeline to Phase 2, only LLM differs |
 
 ---
 
