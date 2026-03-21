@@ -56,7 +56,7 @@ class Config:
     # -- LLM -----------------------------------------------------------------
     ollama_model: str = "qwen3.5:9b"
     ollama_base_url: str = "http://localhost:11434"
-    ollama_timeout: float = 120.0
+    ollama_timeout: float = 300.0
     ollama_temperature: float = 0.1
 
     # -- Embeddings ----------------------------------------------------------

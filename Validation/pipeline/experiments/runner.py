@@ -313,12 +313,12 @@ def run_experiment(spec: ExperimentSpec, args: argparse.Namespace) -> int:
         return -1
 
     # ── Build vector index ───────────────────────────────────────────────
-    store = DocumentStore(config, collection_name=spec.collection_name, embed_model=embed_model)
+    store = DocumentStore(embed_model, config=config, collection_name=spec.collection_name)
     index = store.build_index(nodes)
     logger.info("Vector index ready (%d nodes)", len(nodes))
 
     # ── LLM + Retriever ──────────────────────────────────────────────────
-    llm = spec.create_llm(config) if spec.create_llm else get_llm(config)
+    llm = spec.create_llm(config) if spec.create_llm else get_llm(config, thinking=False)
     retriever = spec.create_retriever(index, nodes, config)
 
     # ── Generate answers ─────────────────────────────────────────────────

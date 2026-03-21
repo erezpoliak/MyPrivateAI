@@ -69,7 +69,7 @@ def run_qwen_gold_ref(args) -> int:
         logger.error("No questions to evaluate — aborting.")
         return -1
 
-    llm = get_llm(config)
+    llm = get_llm(config, thinking=False)
 
     # ── Generate answers (Gold_REF as sole context) ──────────────────────
     gen_results: list[GenerationResult] = []

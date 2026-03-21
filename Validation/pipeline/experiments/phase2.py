@@ -22,6 +22,7 @@ if str(_PIPELINE_DIR) not in sys.path:
 from agent.workflow import run_agent_workflow
 from common.config import Config
 from common.data_loader import QAPair
+from common.llm import get_llm
 from experiments.runner import parse_args, run_experiment
 from experiments.spec import ExperimentSpec, GenerationResult, Retriever
 from ingestion.semantic_chunker import CappedSemanticSplitter
@@ -36,8 +37,13 @@ def _agent_generate(
     prompt_template: str,
     config: Config,
 ) -> GenerationResult:
-    """Run the agentic workflow and map trajectory data onto GenerationResult."""
-    result = run_agent_workflow(qa, retriever, llm, config)
+    """Run the agentic workflow and map trajectory data onto GenerationResult.
+
+    ``llm`` (from the runner) is the synthesis LLM (thinking=False).
+    A separate thinking LLM is created here for decompose and critique steps.
+    """
+    thinking_llm = get_llm(config, thinking=True)
+    result = run_agent_workflow(qa, retriever, thinking_llm, llm, config)
     return GenerationResult(
         qa=result.generation.qa,
         generated_answer=result.generation.generated_answer,
