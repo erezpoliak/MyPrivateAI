@@ -34,6 +34,7 @@ class ParseResult:
     success: bool
     text: str = ""
     error: Optional[str] = None
+    page_count: int = 0
 
 
 def parse_pdf(path: Path) -> ParseResult:
