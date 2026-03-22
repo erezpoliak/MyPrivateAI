@@ -14,7 +14,7 @@ MyPrivateAI will deliver a "cloud LLM experience" locally — completely free, p
 
 Before building the full application, we rigorously validate our core hypothesis:
 
-> *An Optimized Agentic RAG pipeline can compensate for a 9B model's limitations and achieve performance close to GPT-4o on complex mutli-paper private document tasks.*
+> *An Optimized Agentic RAG pipeline can compensate for an 8B model's limitations and achieve performance close to GPT-4o on complex mutli-paper private document tasks.*
 
 We use a 6-experiment design evaluated with [RAGAS](https://docs.ragas.io/) metrics on the **SciRAG-QA** benchmark. Each transition between experiments isolates a single variable, letting us decompose exactly where performance gains (and losses) come from.
 
@@ -24,7 +24,7 @@ We use a 6-experiment design evaluated with [RAGAS](https://docs.ragas.io/) metr
 | 2 | **Baseline RAG** | Fixed-size chunking + basic vector search |
 | 3 | **Phase 1 — Optimized Retrieval** | Semantic chunking + hybrid BM25/vector search + FlashRank reranking |
 | 4 | **Phase 2 — Agentic RAG** | Critique-driven multi-hop agent over the optimized retrieval pipeline |
-| 5 | **Qwen + Gold References** | Perfect retrieval (gold contexts injected) — isolates Qwen's comprehension ceiling |
+| 5 | **Llama + Gold References** | Perfect retrieval (gold contexts injected) — isolates Llama's comprehension ceiling |
 | 6 | **GPT-4o RAG (Ceiling)** | GPT-4o running the identical Phase 2 pipeline — LLM is the only variable |
 
 ### Gap Analysis
@@ -37,13 +37,13 @@ We use a 6-experiment design evaluated with [RAGAS](https://docs.ragas.io/) metr
 3. Phase 1              ─────┘──┐
                                  ├─ Agentic multi-hop reasoning
 4. Phase 2              ────────┘──┬─── Retrieval quality gap (Llama only)
-                                    │              └──> 5. Qwen+Gold_REF
+                                    │              └──> 5. Llama+Gold_REF
                                     │
                                     ├─ HYPOTHESIS TEST (target: ≥85%)
 6. GPT-4o RAG (Ceiling) ──────────┘
 ```
 
-**Success criteria:** Phase 2 achieves ≥ 85% of the GPT-4o RAG ceiling on answer correctness (LLM is the only variable), and matches or exceeds Qwen+Gold on complexity 3-4 questions (demonstrating that the agent's reasoning compensates for imperfect retrieval on hard questions).
+**Success criteria:** Phase 2 achieves ≥ 85% of the GPT-4o RAG ceiling on answer correctness (LLM is the only variable), and matches or exceeds Llama+Gold on complexity 3-4 questions (demonstrating that the agent's reasoning compensates for imperfect retrieval on hard questions).
 
 ### Phase 2 — Agent Flow
 

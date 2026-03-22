@@ -40,7 +40,7 @@ EXPERIMENT_ORDER = [
     "baseline",
     "phase1",
     "phase2",
-    "qwen_gold_ref",
+    "llama_gold_ref",
     "gpt4o_rag",
 ]
 
@@ -50,7 +50,7 @@ EXPERIMENT_LABELS = {
     "baseline": "Baseline (Fixed / Vector)",
     "phase1": "Phase 1 (Semantic / Hybrid)",
     "phase2": "Phase 2 (Agentic RAG)",
-    "qwen_gold_ref": "Qwen + Gold Ref",
+    "llama_gold_ref": "Llama + Gold Ref",
     "gpt4o_rag": "GPT-4o RAG (Ceiling)",
 }
 

@@ -13,7 +13,7 @@ import torch
 class CorpusMode(str, Enum):
     """Which corpus source to use for a run."""
     NONE = "none"
-    GOLD_REF = "gold_ref"   # used by qwen_gold_ref experiment (no corpus built)
+    GOLD_REF = "gold_ref"   # used by llama_gold_ref experiment (no corpus built)
     FETCHED = "fetched"
 
 
@@ -54,7 +54,7 @@ class Config:
     nltk_data_dir: Path = _PIPELINE_DIR / "data" / "nltk_data"
 
     # -- LLM -----------------------------------------------------------------
-    ollama_model: str = "qwen3.5:9b"
+    ollama_model: str = "llama3.1:8b-instruct-q4_K_M"
     ollama_base_url: str = "http://localhost:11434"
     ollama_timeout: float = 300.0
     ollama_temperature: float = 0.1

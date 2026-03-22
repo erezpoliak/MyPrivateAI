@@ -2,7 +2,7 @@
 
 Same retrieval pipeline as Phase 2 (fetched PDFs, semantic chunking,
 hybrid BM25+vector RRF, FlashRank rerank, agent workflow).  The only
-variable is the LLM: GPT-4o instead of Qwen-3.5 9B.
+variable is the LLM: GPT-4o instead of Llama 3.1 8B.
 
 Requires ``OPENAI_API_KEY`` environment variable.
 

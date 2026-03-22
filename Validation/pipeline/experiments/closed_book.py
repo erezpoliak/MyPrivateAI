@@ -64,7 +64,7 @@ def run_closed_book(args) -> int:
         logger.error("No questions to evaluate — aborting.")
         return -1
 
-    llm = get_llm(config, thinking=False)
+    llm = get_llm(config)
 
     # ── Generate answers (no retrieval) ──────────────────────────────────
     gen_results: list[GenerationResult] = []

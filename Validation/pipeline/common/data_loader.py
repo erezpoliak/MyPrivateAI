@@ -91,7 +91,7 @@ def load_dataset(config: Config | None = None) -> list[QAPair]:
             QAPair(
                 id=row["ID"],
                 question=row["Question"],
-                answer=row["Answer"],
+                answer=str(row["Answer"]) if row["Answer"] is not None else "",
                 answer_type=row["Type"],
                 complexity=row["Complexity"],
                 source_idx=idx,
