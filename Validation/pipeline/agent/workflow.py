@@ -126,19 +126,12 @@ class AgentWorkflow(Workflow):
     Each instance is single-use (one question). State lives on instance
     attributes so callers can inspect ``trajectory`` after the run.
 
-    Parameters
-    ----------
-    thinking_llm :
-        LLM with thinking ON — used for decompose and critique steps.
-    synthesis_llm :
-        LLM with thinking OFF — used for synthesize and correct steps.
     """
 
     def __init__(
         self,
         question: str,
-        thinking_llm: Any,
-        synthesis_llm: Any,
+        llm: Any,
         retriever: Retriever,
         config: Config,
         timeout: float | None = None,
@@ -146,8 +139,7 @@ class AgentWorkflow(Workflow):
     ) -> None:
         super().__init__(timeout=timeout, verbose=verbose)
         self._question = question
-        self._thinking_llm = thinking_llm
-        self._synthesis_llm = synthesis_llm
+        self._llm = llm
         self._retriever = retriever
         self._config = config
 
@@ -197,7 +189,7 @@ class AgentWorkflow(Workflow):
                 prior_queries=prior_queries,
                 critique_feedback=critique_feedback,
             )
-            query = (await self._thinking_llm.acomplete(decompose_prompt)).text.strip()
+            query = (await self._llm.acomplete(decompose_prompt)).text.strip()
             self.trajectory.log("decompose", decompose_prompt, query)
             logger.info("Hop %d/%d sub-question: %s", hop, max_hops, query)
 
@@ -228,7 +220,7 @@ class AgentWorkflow(Workflow):
             question=self._question,
             context=all_context,
         )
-        answer = (await self._synthesis_llm.acomplete(final_prompt)).text.strip()
+        answer = (await self._llm.acomplete(final_prompt)).text.strip()
         self.trajectory.log("synthesize_final", final_prompt, answer)
         logger.info("Final synthesis complete (%.120s)", answer)
 
@@ -244,7 +236,7 @@ class AgentWorkflow(Workflow):
             answer=ev.answer,
             context=ev.all_context,
         )
-        verdict = (await self._thinking_llm.acomplete(critique_prompt)).text.strip()
+        verdict = (await self._llm.acomplete(critique_prompt)).text.strip()
         self.trajectory.log("critique", critique_prompt, verdict)
 
         passed = verdict.upper().startswith("PASS")
@@ -276,7 +268,7 @@ class AgentWorkflow(Workflow):
             context=ev.all_context,
             critique=ev.critique,
         )
-        corrected = (await self._synthesis_llm.acomplete(correction_prompt)).text.strip()
+        corrected = (await self._llm.acomplete(correction_prompt)).text.strip()
         self.trajectory.log("correct", correction_prompt, corrected)
         logger.info("Correction applied (%.120s)", corrected)
 
@@ -290,15 +282,13 @@ class AgentWorkflow(Workflow):
 async def _run_async(
     qa: QAPair,
     retriever: Retriever,
-    thinking_llm: Any,
-    synthesis_llm: Any,
+    llm: Any,
     config: Config,
 ) -> AgentResult:
     """Async implementation of the agent workflow."""
     workflow = AgentWorkflow(
         question=qa.question,
-        thinking_llm=thinking_llm,
-        synthesis_llm=synthesis_llm,
+        llm=llm,
         retriever=retriever,
         config=config,
     )
@@ -333,8 +323,7 @@ async def _run_async(
 def run_agent_workflow(
     qa: QAPair,
     retriever: Retriever,
-    thinking_llm: Any,
-    synthesis_llm: Any,
+    llm: Any,
     config: Config,
 ) -> AgentResult:
     """Run the critique-driven agent workflow synchronously.
@@ -342,12 +331,5 @@ def run_agent_workflow(
     Creates an ``AgentWorkflow``, executes the critique-driven loop
     (retrieve → synthesize → critique, with decompose on hop 2+),
     and returns the generation result together with a full trajectory log.
-
-    Parameters
-    ----------
-    thinking_llm :
-        LLM with thinking ON — used for decompose and critique.
-    synthesis_llm :
-        LLM with thinking OFF — used for synthesize and correct.
     """
-    return asyncio.run(_run_async(qa, retriever, thinking_llm, synthesis_llm, config))
+    return asyncio.run(_run_async(qa, retriever, llm, config))

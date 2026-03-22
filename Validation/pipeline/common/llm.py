@@ -23,5 +23,5 @@ def get_llm(config: Config | None = None, thinking: bool = True) -> Ollama:
         base_url=config.ollama_base_url,
         request_timeout=config.ollama_timeout,
         temperature=config.ollama_temperature,
-        additional_kwargs={"think": thinking},
+        thinking=thinking,
     )
