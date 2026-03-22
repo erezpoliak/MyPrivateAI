@@ -14,7 +14,8 @@ import os
 from dataclasses import dataclass, field
 from typing import Optional, Sequence
 
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_openai import ChatOpenAI
 from ragas import EvaluationDataset, SingleTurnSample, evaluate
 from ragas.embeddings import LangchainEmbeddingsWrapper
 from ragas.llms import LangchainLLMWrapper
@@ -96,7 +97,10 @@ class RAGASEvaluator:
             ChatOpenAI(model=self._judge_model)
         )
         self._embeddings = LangchainEmbeddingsWrapper(
-            OpenAIEmbeddings()
+            HuggingFaceEmbeddings(
+                model_name=self._config.embedding_model,
+                model_kwargs={"device": self._config.device},
+            )
         )
 
     # -- public API ----------------------------------------------------------

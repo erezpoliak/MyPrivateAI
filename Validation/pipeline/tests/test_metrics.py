@@ -187,7 +187,7 @@ class TestRAGASEvaluatorInit:
         monkeypatch.setenv("OPENAI_API_KEY", "test-key")
         with (
             patch("common.metrics.ChatOpenAI"),
-            patch("common.metrics.OpenAIEmbeddings"),
+            patch("common.metrics.HuggingFaceEmbeddings"),
             patch("common.metrics.LangchainLLMWrapper"),
             patch("common.metrics.LangchainEmbeddingsWrapper"),
         ):
@@ -201,7 +201,7 @@ class TestRAGASEvaluatorInit:
         cfg.ragas_judge_model = "gpt-4.1-mini"
         with (
             patch("common.metrics.ChatOpenAI") as mock_llm_cls,
-            patch("common.metrics.OpenAIEmbeddings"),
+            patch("common.metrics.HuggingFaceEmbeddings"),
             patch("common.metrics.LangchainLLMWrapper"),
             patch("common.metrics.LangchainEmbeddingsWrapper"),
         ):
@@ -218,7 +218,7 @@ def _make_evaluator(monkeypatch) -> RAGASEvaluator:
     monkeypatch.setenv("OPENAI_API_KEY", "test-key")
     with (
         patch("common.metrics.ChatOpenAI"),
-        patch("common.metrics.OpenAIEmbeddings"),
+        patch("common.metrics.HuggingFaceEmbeddings"),
         patch("common.metrics.LangchainLLMWrapper"),
         patch("common.metrics.LangchainEmbeddingsWrapper"),
     ):
