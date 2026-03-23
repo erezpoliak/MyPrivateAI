@@ -1,8 +1,8 @@
-"""PDF text extraction via pypdf.
+"""PDF text extraction via pymupdf4llm.
 
-Extracts and cleans text from PDF files downloaded by :mod:`pdf_fetcher`.
-Handles common PDF artefacts (hyphenation, excess whitespace, headers/footers)
-so the output is ready for chunking.
+Extracts text from PDF files downloaded by :mod:`pdf_fetcher`, preserving
+table structure as markdown. Handles multi-column academic paper layouts
+better than plain text extraction.
 
 Usage::
 
@@ -18,8 +18,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-from pypdf import PdfReader
-from pypdf.errors import PdfReadError
+import pymupdf4llm
+import pymupdf
 
 from common.utils import get_logger
 
@@ -38,61 +38,45 @@ class ParseResult:
 
 
 def parse_pdf(path: Path) -> ParseResult:
-    """Extract text from a single PDF at *path*."""
+    """Extract markdown text from a single PDF at *path*."""
     if not path.exists():
         return ParseResult(
             path=path, success=False, error=f"File not found: {path}"
         )
 
     try:
-        reader = PdfReader(path)
-    except PdfReadError as exc:
-        logger.warning("Failed to read PDF %s: %s", path.name, exc)
-        return ParseResult(
-            path=path, success=False, error=f"PDF read error: {exc}"
-        )
+        doc = pymupdf.open(str(path))
+        page_count = len(doc)
+        doc.close()
+        text = pymupdf4llm.to_markdown(str(path))
     except Exception as exc:
-        logger.warning("Unexpected error reading %s: %s", path.name, exc)
+        logger.warning("Failed to parse PDF %s: %s", path.name, exc)
         return ParseResult(
-            path=path, success=False, error=f"Unexpected error: {exc}"
+            path=path, success=False, error=f"Parse error: {exc}"
         )
 
-    page_texts: list[str] = []
-    for page_num, page in enumerate(reader.pages):
-        try:
-            raw = page.extract_text() or ""
-        except Exception as exc:
-            logger.debug(
-                "Could not extract text from page %d of %s: %s",
-                page_num + 1,
-                path.name,
-                exc,
-            )
-            raw = ""
-        page_texts.append(_clean_page(raw))
+    text = _clean_markdown(text)
 
-    full_text = "\n\n".join(t for t in page_texts if t)
-
-    if not full_text.strip():
+    if not text.strip():
         logger.warning("No extractable text in %s", path.name)
         return ParseResult(
             path=path,
             success=False,
-            page_count=len(reader.pages),
+            page_count=page_count,
             error="No extractable text (likely a scanned/image-only PDF)",
         )
 
     logger.info(
         "Parsed %s: %d pages, %d chars",
         path.name,
-        len(reader.pages),
-        len(full_text),
+        page_count,
+        len(text),
     )
     return ParseResult(
         path=path,
         success=True,
-        text=full_text,
-        page_count=len(reader.pages),
+        text=text,
+        page_count=page_count,
     )
 
 
@@ -119,17 +103,12 @@ def parse_all_pdfs(papers_dir: Path) -> list[ParseResult]:
     return results
 
 
-def _clean_page(text: str) -> str:
-    """Normalise raw page text extracted by pypdf."""
+def _clean_markdown(text: str) -> str:
+    """Normalise markdown output from pymupdf4llm."""
     if not text:
         return ""
 
-    # Rejoin hyphenated words split across lines
-    text = re.sub(r"(\w)-\n(\w)", r"\1\2", text)
-
-    # Collapse runs of whitespace (but preserve paragraph breaks)
-    text = re.sub(r"[^\S\n]+", " ", text)          # spaces/tabs → single space
-    text = re.sub(r"\n{3,}", "\n\n", text)          # 3+ newlines → double
-    text = re.sub(r"(?<!\n)\n(?!\n)", " ", text)    # lone newlines → space
+    # Collapse runs of blank lines (keep max 2)
+    text = re.sub(r"\n{3,}", "\n\n", text)
 
     return text.strip()
