@@ -66,7 +66,7 @@ class Config:
     # -- Chunking ------------------------------------------------------------
     fixed_chunk_size: int = 512          # tokens
     fixed_chunk_overlap: int = 50        # tokens
-    semantic_threshold_pct: int = 95     # percentile for cosine dissimilarity spike
+    semantic_threshold_pct: int = 85     # percentile for cosine dissimilarity spike
     semantic_max_tokens: int = 512       # sub-split semantic chunks exceeding this limit, BGE-small max context is 512 tokens
 
     # -- Retrieval -----------------------------------------------------------
