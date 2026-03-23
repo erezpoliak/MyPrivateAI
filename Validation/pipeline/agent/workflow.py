@@ -335,9 +335,12 @@ def run_agent_workflow(
     (retrieve → synthesize → critique, with decompose on hop 2+),
     and returns the generation result together with a full trajectory log.
     """
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
     try:
-        return loop.run_until_complete(_run_async(qa, retriever, llm, config))
-    finally:
-        loop.close()
+        loop = asyncio.get_event_loop()
+        if loop.is_closed():
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    return loop.run_until_complete(_run_async(qa, retriever, llm, config))
