@@ -72,7 +72,7 @@ class Config:
     # -- Retrieval -----------------------------------------------------------
     vector_top_k: int = 10
     bm25_top_k: int = 10
-    hybrid_top_n: int = 10              # after rerank
+    hybrid_top_n: int = 5               # after rerank
     rrf_k: int = 60
     rrf_bm25_weight: float = 0.4
     rrf_vector_weight: float = 0.6
