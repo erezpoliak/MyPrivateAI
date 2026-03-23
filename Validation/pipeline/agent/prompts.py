@@ -34,16 +34,16 @@ from __future__ import annotations
 # DECOMPOSE — generate a targeted retrieval query to fill gaps (hop 2+ only)
 # ---------------------------------------------------------------------------
 DECOMPOSE_PROMPT = (
-    "You are a research assistant. A previous attempt to answer the question "
-    "below was not sufficient. Generate a focused retrieval query to find "
-    "the missing information.\n\n"
+    "A previous attempt to answer the question below was rejected because "
+    "specific information was missing.\n\n"
     "Original question: {question}\n\n"
-    "{prior_queries}"
     "{critique_feedback}"
-    "Produce exactly ONE focused sub-question that targets the identified "
-    "gaps. Do NOT repeat previous queries.\n"
-    "Output ONLY the sub-question, nothing else.\n\n"
-    "Sub-question: "
+    "{prior_queries}"
+    "Write ONE retrieval query that will directly find the missing information "
+    "identified above. Do NOT repeat previous queries. Do NOT elaborate beyond "
+    "what is needed.\n"
+    "Output ONLY the query, nothing else.\n\n"
+    "Query: "
 )
 
 # ---------------------------------------------------------------------------
@@ -64,21 +64,20 @@ FINAL_SYNTHESIS_PROMPT = (
 # CRITIQUE — evaluate an answer for completeness and faithfulness
 # ---------------------------------------------------------------------------
 CRITIQUE_PROMPT = (
-    "You are a strict evaluator. Assess whether the answer below fully and "
-    "faithfully answers the original question based on the provided context.\n\n"
+    "You are a fair evaluator. Assess whether the answer below reasonably "
+    "answers the original question based on the provided context.\n\n"
     "Context:\n"
     "---------------------\n"
     "{context}\n"
     "---------------------\n"
     "Original question: {question}\n"
     "Answer to evaluate: {answer}\n\n"
-    "Check for:\n"
-    "1. Completeness — does the answer address every part of the question?\n"
-    "2. Faithfulness — is every claim supported by the context?\n"
-    "3. Accuracy — are there any factual errors?\n\n"
-    "If the answer is satisfactory, respond with exactly: PASS\n"
-    "Otherwise, respond with: FAIL\n"
-    "Then on the next line explain the specific deficiencies.\n\n"
+    "If the answer addresses the core of the question and is supported by "
+    "the context, respond with exactly: PASS\n"
+    "Only respond with FAIL if a specific, clearly identifiable piece of "
+    "information is missing from the answer. In that case respond with: FAIL\n"
+    "Then on the next line write ONE sentence naming exactly what specific "
+    "information is missing (e.g. 'Missing: the exact percentage of X').\n\n"
     "Verdict: "
 )
 

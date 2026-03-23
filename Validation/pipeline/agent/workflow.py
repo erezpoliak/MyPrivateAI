@@ -248,7 +248,10 @@ class AgentWorkflow(Workflow):
 
         # Hops remaining → feed critique into next decompose
         if self._hop < self._config.max_agent_hops:
-            self._last_critique = verdict
+            # Extract just the gap line ("Missing: ...") if present
+            lines = verdict.strip().splitlines()
+            gap_lines = [l for l in lines if l.strip() and not l.upper().startswith("FAIL")]
+            self._last_critique = gap_lines[0] if gap_lines else verdict
             logger.info("Critique failed, triggering hop %d", self._hop + 1)
             return DecomposeEvent()
 
@@ -332,4 +335,9 @@ def run_agent_workflow(
     (retrieve → synthesize → critique, with decompose on hop 2+),
     and returns the generation result together with a full trajectory log.
     """
-    return asyncio.run(_run_async(qa, retriever, llm, config))
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        return loop.run_until_complete(_run_async(qa, retriever, llm, config))
+    finally:
+        loop.close()
