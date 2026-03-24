@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS question_results (
     contexts_json       TEXT,                  -- JSON list of retrieved chunks
     faithfulness        REAL,
     context_recall      REAL,
+    context_precision   REAL,
     answer_correctness  REAL,
     trajectory_steps    INTEGER DEFAULT 0,     -- agent hops (phase2 only)
     trajectory_success  INTEGER DEFAULT 1,     -- 1=converged, 0=gave up
@@ -46,9 +47,10 @@ CREATE TABLE IF NOT EXISTS run_summary (
     summary_id          INTEGER PRIMARY KEY AUTOINCREMENT,
     run_id              INTEGER NOT NULL UNIQUE REFERENCES runs(run_id),
     num_questions       INTEGER NOT NULL,
-    avg_faithfulness    REAL,
-    avg_context_recall  REAL,
-    avg_answer_correctness REAL,
+    avg_faithfulness        REAL,
+    avg_context_recall      REAL,
+    avg_context_precision   REAL,
+    avg_answer_correctness  REAL,
     avg_latency_s       REAL,
     avg_trajectory_steps REAL,
     trajectory_success_rate REAL,              -- fraction that converged (1=all)
@@ -86,6 +88,22 @@ class RunDB:
     def _init_schema(self) -> None:
         with self._connect() as conn:
             conn.executescript(_SCHEMA)
+        self._migrate_schema()
+
+    def _migrate_schema(self) -> None:
+        """Add columns introduced after initial schema creation."""
+        migrations = [
+            ("question_results", "context_precision", "REAL"),
+            ("run_summary", "avg_context_precision", "REAL"),
+        ]
+        with self._connect() as conn:
+            for table, column, col_type in migrations:
+                existing = {
+                    row[1]
+                    for row in conn.execute(f"PRAGMA table_info({table})").fetchall()
+                }
+                if column not in existing:
+                    conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {col_type}")
 
     # ── runs ────────────────────────────────────────────────────────────────
 

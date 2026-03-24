@@ -54,10 +54,10 @@ EXPERIMENT_LABELS = {
     "gpt4o_rag": "GPT-4o RAG (Ceiling)",
 }
 
-METRIC_KEYS = ["faithfulness", "context_recall", "answer_correctness"]
+METRIC_KEYS = ["faithfulness", "context_recall", "context_precision", "answer_correctness"]
 
 # Metrics that are meaningless for closed-book runs
-CONTEXT_METRICS = {"faithfulness", "context_recall"}
+CONTEXT_METRICS = {"faithfulness", "context_recall", "context_precision"}
 
 # Experiments that use the agentic workflow (trajectory data is meaningful)
 AGENTIC_EXPERIMENTS = {"phase2", "gpt4o_rag"}
@@ -123,6 +123,7 @@ def _gather_data(
             "num_questions": summary["num_questions"],
             "avg_faithfulness": summary["avg_faithfulness"],
             "avg_context_recall": summary["avg_context_recall"],
+            "avg_context_precision": summary.get("avg_context_precision"),
             "avg_answer_correctness": summary["avg_answer_correctness"],
             "avg_latency_s": summary["avg_latency_s"],
             "avg_trajectory_steps": summary.get("avg_trajectory_steps"),
@@ -151,6 +152,7 @@ def build_overall_table(rows: list[dict]) -> Table:
     table.add_column("N", justify="right")
     table.add_column("Faithfulness", justify="right")
     table.add_column("Ctx Recall", justify="right")
+    table.add_column("Ctx Precision", justify="right")
     table.add_column("Ans Correct", justify="right")
     table.add_column("Avg Steps", justify="right")
     table.add_column("Success Rate", justify="right")
@@ -165,6 +167,7 @@ def build_overall_table(rows: list[dict]) -> Table:
             str(r["num_questions"]),
             _fmt(r["avg_faithfulness"], dash, "faithfulness"),
             _fmt(r["avg_context_recall"], dash, "context_recall"),
+            _fmt(r["avg_context_precision"], dash, "context_precision"),
             _fmt(r["avg_answer_correctness"]),
             _fmt(r["avg_trajectory_steps"], traj_dash, "avg_trajectory_steps"),
             _fmt(r["trajectory_success_rate"], traj_dash, "trajectory_success_rate"),
@@ -185,6 +188,7 @@ def build_breakdown_table(rows: list[dict]) -> Table:
     table.add_column("N", justify="right")
     table.add_column("Faithfulness", justify="right")
     table.add_column("Ctx Recall", justify="right")
+    table.add_column("Ctx Precision", justify="right")
     table.add_column("Ans Correct", justify="right")
     table.add_column("Avg Steps", justify="right")
     table.add_column("Success Rate", justify="right")
@@ -202,6 +206,7 @@ def build_breakdown_table(rows: list[dict]) -> Table:
                 str(stats["count"]),
                 _fmt(stats.get("avg_faithfulness"), dash, "faithfulness"),
                 _fmt(stats.get("avg_context_recall"), dash, "context_recall"),
+                _fmt(stats.get("avg_context_precision"), dash, "context_precision"),
                 _fmt(stats.get("avg_answer_correctness")),
                 _fmt(stats.get("avg_trajectory_steps"), traj_dash, "avg_trajectory_steps"),
                 _fmt(stats.get("trajectory_success_rate"), traj_dash, "trajectory_success_rate"),
@@ -220,7 +225,7 @@ def export_csv(rows: list[dict], output_path: Path) -> None:
 
     fieldnames = [
         "experiment", "complexity", "n", "faithfulness",
-        "context_recall", "answer_correctness",
+        "context_recall", "context_precision", "answer_correctness",
         "avg_trajectory_steps", "trajectory_success_rate", "latency_s",
     ]
     with open(output_path, "w", newline="") as f:
@@ -238,6 +243,7 @@ def export_csv(rows: list[dict], output_path: Path) -> None:
                 "n": r["num_questions"],
                 "faithfulness": _fmt(r["avg_faithfulness"], dash, "faithfulness"),
                 "context_recall": _fmt(r["avg_context_recall"], dash, "context_recall"),
+                "context_precision": _fmt(r["avg_context_precision"], dash, "context_precision"),
                 "answer_correctness": _fmt(r["avg_answer_correctness"]),
                 "avg_trajectory_steps": _fmt(r["avg_trajectory_steps"], traj_dash, "avg_trajectory_steps"),
                 "trajectory_success_rate": _fmt(r["trajectory_success_rate"], traj_dash, "trajectory_success_rate"),
@@ -252,6 +258,7 @@ def export_csv(rows: list[dict], output_path: Path) -> None:
                     "n": stats["count"],
                     "faithfulness": _fmt(stats.get("avg_faithfulness"), dash, "faithfulness"),
                     "context_recall": _fmt(stats.get("avg_context_recall"), dash, "context_recall"),
+                    "context_precision": _fmt(stats.get("avg_context_precision"), dash, "context_precision"),
                     "answer_correctness": _fmt(stats.get("avg_answer_correctness")),
                     "avg_trajectory_steps": _fmt(stats.get("avg_trajectory_steps"), traj_dash, "avg_trajectory_steps"),
                     "trajectory_success_rate": _fmt(stats.get("trajectory_success_rate"), traj_dash, "trajectory_success_rate"),
