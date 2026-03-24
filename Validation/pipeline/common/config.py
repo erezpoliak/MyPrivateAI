@@ -60,14 +60,14 @@ class Config:
     ollama_temperature: float = 0.1
 
     # -- Embeddings ----------------------------------------------------------
-    embedding_model: str = "BAAI/bge-small-en-v1.5"
-    embedding_dim: int = 384
+    embedding_model: str = "allenai/specter2_base"
+    embedding_dim: int = 768
 
     # -- Chunking ------------------------------------------------------------
     fixed_chunk_size: int = 512          # tokens
     fixed_chunk_overlap: int = 50        # tokens
     semantic_threshold_pct: int = 95     # percentile for cosine dissimilarity spike
-    semantic_max_tokens: int = 512       # sub-split semantic chunks exceeding this limit, BGE-small max context is 512 tokens
+    semantic_max_tokens: int = 768       # sub-split semantic chunks exceeding this limit, SPECTER2 max context is 768 tokens
 
     # -- Retrieval -----------------------------------------------------------
     vector_top_k: int = 10

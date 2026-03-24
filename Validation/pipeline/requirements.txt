@@ -18,7 +18,7 @@ llama-index-postprocessor-flashrank-rerank==0.2.1
 FlashRank==0.2.10
 
 # PDF
-pymupdf4llm==1.27.2.2
+pypdf==6.7.3
 
 # Evaluation
 ragas==0.4.3
