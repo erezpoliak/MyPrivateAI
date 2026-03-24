@@ -60,22 +60,22 @@ class Config:
     ollama_temperature: float = 0.1
 
     # -- Embeddings ----------------------------------------------------------
-    embedding_model: str = "allenai/specter2_base"
-    embedding_dim: int = 768
+    embedding_model: str = "BAAI/bge-small-en-v1.5"
+    embedding_dim: int = 384
 
     # -- Chunking ------------------------------------------------------------
     fixed_chunk_size: int = 512          # tokens
     fixed_chunk_overlap: int = 50        # tokens
     semantic_threshold_pct: int = 95     # percentile for cosine dissimilarity spike
-    semantic_max_tokens: int = 768       # sub-split semantic chunks exceeding this limit, SPECTER2 max context is 768 tokens
+    semantic_max_tokens: int = 512       # sub-split semantic chunks exceeding this limit, BGE-small max context is 512 tokens
 
     # -- Retrieval -----------------------------------------------------------
     vector_top_k: int = 10
     bm25_top_k: int = 10
     hybrid_top_n: int = 5               # after rerank
     rrf_k: int = 60
-    rrf_bm25_weight: float = 0.4
-    rrf_vector_weight: float = 0.6
+    rrf_bm25_weight: float = 0.6
+    rrf_vector_weight: float = 0.4
 
     # -- Reranker ------------------------------------------------------------
     reranker_model: str = "ms-marco-MiniLM-L-12-v2"
