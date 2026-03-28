@@ -49,6 +49,7 @@ class Config:
     metadata_csv: Path = _DATASET_DIR / "metadata.csv"
     papers_dir: Path = _PIPELINE_DIR / "data" / "papers"
     chroma_dir: Path = _PIPELINE_DIR / "data" / "chroma"
+    reranker_cache_dir: Path = _PIPELINE_DIR / "data" / "reranker_models"
     results_dir: Path = _PIPELINE_DIR / "results"
     db_path: Path = _PIPELINE_DIR / "results" / "runs.db"
     nltk_data_dir: Path = _PIPELINE_DIR / "data" / "nltk_data"
@@ -60,8 +61,8 @@ class Config:
     ollama_temperature: float = 0.1
 
     # -- Embeddings ----------------------------------------------------------
-    embedding_model: str = "BAAI/bge-small-en-v1.5"
-    embedding_dim: int = 384
+    embedding_model: str = "allenai/specter2_base"
+    embedding_dim: int = 768
 
     # -- Chunking ------------------------------------------------------------
     fixed_chunk_size: int = 512          # tokens

@@ -12,8 +12,25 @@ from __future__ import annotations
 
 from typing import Protocol
 
+from typing import Any
+
+from flashrank import Ranker as _Ranker
+from llama_index.core.bridge.pydantic import Field
 from llama_index.core.schema import NodeWithScore, QueryBundle
 from llama_index.postprocessor.flashrank_rerank import FlashRankRerank
+
+
+class _PersistentFlashRankRerank(FlashRankRerank):
+    """FlashRankRerank with a configurable cache_dir so models survive reboots."""
+
+    cache_dir: str = Field(default="/tmp")
+
+    def model_post_init(self, context: Any, /) -> None:
+        self._reranker = _Ranker(
+            model_name=self.model,
+            max_length=self.max_length,
+            cache_dir=self.cache_dir,
+        )
 
 from common.config import Config
 from common.utils import get_logger
@@ -94,9 +111,11 @@ class HybridRetriever:
         self._vector = vector_retriever
         self._bm25 = bm25_retriever
 
-        self._reranker = FlashRankRerank(
+        self._config.reranker_cache_dir.mkdir(parents=True, exist_ok=True)
+        self._reranker = _PersistentFlashRankRerank(
             model=self._config.reranker_model,
             top_n=self._config.hybrid_top_n,
+            cache_dir=str(self._config.reranker_cache_dir),
         )
 
         logger.info(
