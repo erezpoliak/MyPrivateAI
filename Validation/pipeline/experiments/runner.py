@@ -27,6 +27,9 @@ _PIPELINE_DIR = Path(__file__).resolve().parent.parent
 if str(_PIPELINE_DIR) not in sys.path:
     sys.path.insert(0, str(_PIPELINE_DIR))
 
+from dotenv import load_dotenv
+load_dotenv(_PIPELINE_DIR / ".env")
+
 from common.config import Config, CorpusMode
 from common.data_loader import QAPair, load_dataset
 from common.db import RunDB

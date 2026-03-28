@@ -186,10 +186,9 @@ class TestRAGASEvaluatorInit:
     def test_init_succeeds_with_api_key(self, monkeypatch):
         monkeypatch.setenv("OPENAI_API_KEY", "test-key")
         with (
-            patch("common.metrics.ChatOpenAI"),
+            patch("common.metrics.llm_factory"),
             patch("common.metrics.HuggingFaceEmbeddings"),
-            patch("common.metrics.LangchainLLMWrapper"),
-            patch("common.metrics.LangchainEmbeddingsWrapper"),
+            patch("common.metrics.OpenAI"),
         ):
             evaluator = RAGASEvaluator()
         assert evaluator is not None
@@ -200,13 +199,12 @@ class TestRAGASEvaluatorInit:
         cfg = Config()
         cfg.ragas_judge_model = "gpt-4.1-mini"
         with (
-            patch("common.metrics.ChatOpenAI") as mock_llm_cls,
+            patch("common.metrics.llm_factory") as mock_llm_factory,
             patch("common.metrics.HuggingFaceEmbeddings"),
-            patch("common.metrics.LangchainLLMWrapper"),
-            patch("common.metrics.LangchainEmbeddingsWrapper"),
+            patch("common.metrics.OpenAI"),
         ):
             RAGASEvaluator(config=cfg)
-            mock_llm_cls.assert_called_once_with(model="gpt-4.1-mini")
+            assert mock_llm_factory.call_args[0][0] == "gpt-4.1-mini"
 
 
 # ---------------------------------------------------------------------------
@@ -217,10 +215,9 @@ def _make_evaluator(monkeypatch) -> RAGASEvaluator:
     """Build a RAGASEvaluator with all external dependencies mocked."""
     monkeypatch.setenv("OPENAI_API_KEY", "test-key")
     with (
-        patch("common.metrics.ChatOpenAI"),
+        patch("common.metrics.llm_factory"),
         patch("common.metrics.HuggingFaceEmbeddings"),
-        patch("common.metrics.LangchainLLMWrapper"),
-        patch("common.metrics.LangchainEmbeddingsWrapper"),
+        patch("common.metrics.OpenAI"),
     ):
         return RAGASEvaluator()
 
