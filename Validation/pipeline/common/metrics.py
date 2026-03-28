@@ -182,7 +182,7 @@ class RAGASEvaluator:
                 user_input=s.question,
                 response=s.generated_answer or "",
                 reference=s.reference_answer,
-                retrieved_contexts=s.contexts if s.contexts else None,
+                retrieved_contexts=[c for c in s.contexts if c is not None] or None if s.contexts else None,
             )
             for s in samples
         ]
