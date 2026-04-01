@@ -16,6 +16,7 @@ from typing import Optional, Sequence
 
 from openai import OpenAI
 from ragas import EvaluationDataset, SingleTurnSample, evaluate
+from ragas.run_config import RunConfig
 from ragas.embeddings import HuggingFaceEmbeddings
 from ragas.llms import llm_factory
 from ragas.metrics._answer_correctness import AnswerCorrectness
@@ -135,6 +136,7 @@ class RAGASEvaluator:
             llm=self._llm,
             embeddings=self._embeddings,
             raise_exceptions=False,
+            run_config=RunConfig(max_workers=4),
         )
 
         df = result.to_pandas()
@@ -177,7 +179,7 @@ class RAGASEvaluator:
                 user_input=s.question,
                 response=s.generated_answer or "",
                 reference=s.reference_answer,
-                retrieved_contexts=[c for c in s.contexts if c is not None] or None if s.contexts else None,
+                retrieved_contexts=[c for c in s.contexts if c is not None] if s.contexts else [],
             )
             for s in samples
         ]
