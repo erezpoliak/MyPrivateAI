@@ -132,8 +132,21 @@ def build_corpus(
             "source_idx": source_idx,
             "corpus_mode": "fetched",
             "doi": qa.paper.doi,
+            "title": qa.paper.title or "",
+            "topic": qa.paper.topic or "",
         }
-        doc = Document(text=result.text, metadata=metadata)
+        # title+topic always excluded from LLM context (avoids prompt noise).
+        # They are excluded from embeddings too unless embed_paper_metadata=True,
+        # in which case they enrich the chunk vector with paper-level signal.
+        excluded_from_embed = ["source_idx", "corpus_mode", "doi"]
+        if not config.embed_paper_metadata:
+            excluded_from_embed += ["title", "topic"]
+        doc = Document(
+            text=result.text,
+            metadata=metadata,
+            excluded_embed_metadata_keys=excluded_from_embed,
+            excluded_llm_metadata_keys=["source_idx", "corpus_mode", "doi"],
+        )
         paper_nodes = chunker.get_nodes_from_documents([doc])
 
         manifest.entries[source_idx] = PaperCorpusEntry(

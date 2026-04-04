@@ -43,6 +43,7 @@ RAG_PROMPT = (
 
 def _apply_overrides(config: Config) -> None:
     config.vector_top_k = 5
+    config.embed_paper_metadata = False
 
 
 spec = ExperimentSpec(

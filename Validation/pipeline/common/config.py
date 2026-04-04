@@ -81,6 +81,9 @@ class Config:
     # -- Reranker ------------------------------------------------------------
     reranker_model: str = "ms-marco-MiniLM-L-12-v2"
 
+    # -- Metadata enrichment -------------------------------------------------
+    embed_paper_metadata: bool = True    # prepend title+topic to chunk embeddings
+
     # -- Corpus mode ---------------------------------------------------------
     corpus_mode: CorpusMode = CorpusMode.FETCHED
 
