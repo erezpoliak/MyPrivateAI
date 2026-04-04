@@ -44,8 +44,8 @@ GOLD_REF_PROMPT = (
     "---------------------\n"
     "{context}\n"
     "---------------------\n"
-    "Using the provided context, answer the following question. "
-    "If the context does not contain enough information, say so.\n\n"
+    "Using the provided context, answer the following question concisely. "
+    "If the answer is truly absent from the context, say 'Not mentioned'.\n\n"
     "Question: {question}\n"
     "Answer: "
 )
