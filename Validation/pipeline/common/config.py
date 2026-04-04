@@ -61,7 +61,7 @@ class Config:
     ollama_temperature: float = 0.1
 
     # -- Embeddings ----------------------------------------------------------
-    embedding_model: str = "allenai/specter2_base"
+    embedding_model: str = "BAAI/bge-base-en-v1.5"
     embedding_dim: int = 768
 
     # -- Chunking ------------------------------------------------------------
