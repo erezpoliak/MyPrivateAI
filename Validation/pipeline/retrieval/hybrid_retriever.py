@@ -1,10 +1,10 @@
-"""Hybrid retriever combining vector and BM25 results via RRF + FlashRank.
+"""Hybrid retriever combining vector and BM25 results via RRF + BGE reranker.
 
 Provides ``HybridRetriever`` which:
 
 1. Queries both a vector retriever (semantic) and BM25 retriever (lexical).
 2. Fuses results with weighted Reciprocal Rank Fusion (RRF).
-3. Reranks the fused candidates with FlashRankRerank (LlamaIndex built-in).
+3. Reranks the fused candidates with a CrossEncoder (BAAI/bge-reranker-base).
 4. Returns the top-N nodes after reranking.
 """
 
@@ -12,25 +12,8 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from typing import Any
-
-from flashrank import Ranker as _Ranker
-from llama_index.core.bridge.pydantic import Field
 from llama_index.core.schema import NodeWithScore, QueryBundle
-from llama_index.postprocessor.flashrank_rerank import FlashRankRerank
-
-
-class _PersistentFlashRankRerank(FlashRankRerank):
-    """FlashRankRerank with a configurable cache_dir so models survive reboots."""
-
-    cache_dir: str = Field(default="/tmp")
-
-    def model_post_init(self, context: Any, /) -> None:
-        self._reranker = _Ranker(
-            model_name=self.model,
-            max_length=self.max_length,
-            cache_dir=self.cache_dir,
-        )
+from sentence_transformers import CrossEncoder
 
 from common.config import Config
 from common.utils import get_logger
@@ -42,6 +25,34 @@ class _Retriever(Protocol):
     """Structural type for any object with a .retrieve(query) method."""
 
     def retrieve(self, query: str) -> list[NodeWithScore]: ...
+
+
+class _CrossEncoderReranker:
+    """Thin wrapper around sentence-transformers CrossEncoder."""
+
+    def __init__(self, model_name: str, top_n: int, device: str, cache_folder: str) -> None:
+        self._model = CrossEncoder(
+            model_name,
+            device=device,
+            cache_folder=cache_folder,
+        )
+        self._top_n = top_n
+
+    def postprocess_nodes(
+        self,
+        nodes: list[NodeWithScore],
+        query_bundle: QueryBundle,
+    ) -> list[NodeWithScore]:
+        if not nodes:
+            return []
+        query = query_bundle.query_str
+        pairs = [(query, n.node.get_content()) for n in nodes]
+        scores = self._model.predict(pairs)
+        ranked = sorted(zip(scores, nodes), key=lambda x: x[0], reverse=True)
+        return [
+            NodeWithScore(node=n.node, score=float(s))
+            for s, n in ranked[: self._top_n]
+        ]
 
 
 # ------------------------------------------------------------------
@@ -112,10 +123,11 @@ class HybridRetriever:
         self._bm25 = bm25_retriever
 
         self._config.reranker_cache_dir.mkdir(parents=True, exist_ok=True)
-        self._reranker = _PersistentFlashRankRerank(
-            model=self._config.reranker_model,
+        self._reranker = _CrossEncoderReranker(
+            model_name=self._config.reranker_model,
             top_n=self._config.hybrid_top_n,
-            cache_dir=str(self._config.reranker_cache_dir),
+            device=self._config.device,
+            cache_folder=str(self._config.reranker_cache_dir),
         )
 
         logger.info(

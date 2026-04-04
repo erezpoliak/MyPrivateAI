@@ -79,7 +79,7 @@ class Config:
     rrf_vector_weight: float = 0.6
 
     # -- Reranker ------------------------------------------------------------
-    reranker_model: str = "ms-marco-MiniLM-L-12-v2"
+    reranker_model: str = "BAAI/bge-reranker-base"
 
     # -- Metadata enrichment -------------------------------------------------
     embed_paper_metadata: bool = True    # prepend title+topic to chunk embeddings
