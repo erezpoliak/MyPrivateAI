@@ -14,11 +14,11 @@ import os
 from dataclasses import dataclass, field
 from typing import Optional, Sequence
 
-from openai import OpenAI
+from langchain_openai import ChatOpenAI
 from ragas import EvaluationDataset, SingleTurnSample, evaluate
 from ragas.run_config import RunConfig
 from ragas.embeddings import HuggingFaceEmbeddings
-from ragas.llms import llm_factory
+from ragas.llms import LangchainLLMWrapper
 from ragas.metrics._answer_correctness import AnswerCorrectness
 from ragas.metrics._context_precision import ContextPrecision
 from ragas.metrics._context_recall import ContextRecall
@@ -95,7 +95,9 @@ class RAGASEvaluator:
                 "OPENAI_API_KEY must be set for RAGAS evaluation"
             )
 
-        self._llm = llm_factory(self._judge_model, client=OpenAI())
+        self._llm = LangchainLLMWrapper(
+            ChatOpenAI(model=self._judge_model, max_tokens=4096)
+        )
         self._embeddings = HuggingFaceEmbeddings(
             model=self._config.embedding_model,
             device=self._config.device,

@@ -1,974 +1,848 @@
 [
-    {
-        "ID": "2621d5f87055a10f3e9c40c01694fd44",
-        "Question": "What is the WPE of most C/L/O band lasers?",
-        "Answer": "10%",
-        "Type": "Percentage",
-        "Complexity": 1,
-        "Source_IDX": "[0][0][0][0]",
-        "Gold_REF": "The wall-plug efficiency (WPE) of most of the C/L/O band lasers is only about 10%"
-    },
-    {
-        "ID": "0e19b21f8aa94e09d751210bd8980ae8",
-        "Question": "Is the soil thawing-freezing model applicable only to soil?",
-        "Answer": "No",
-        "Type": "Binary",
-        "Complexity": 1,
-        "Source_IDX": "[0][0][1][0]",
-        "Gold_REF": "the proposed model can be applied to various conditions and to other types of porous media (such as rock or concrete) that undergo freezing-thawing processes."
-    },
-    {
-        "ID": "a6bc1c59a778aee0e2d5290918975a3e",
-        "Question": "How many orders can saturated hydraulic conductivity decrease during the dehydration process of soil?",
-        "Answer": "10",
-        "Type": "Integer",
-        "Complexity": 3,
-        "Source_IDX": "[0][0][1][0]",
-        "Gold_REF": "In that case, kw is considered its saturated hydraulic conductivity It can be seen that kw can decrease over 10 orders during the dehydration process"
-    },
-    {
-        "ID": "a8dd85f83c294726e160966aa0246776",
-        "Question": "What is the most efficient thermodynamic cycle for pyroelectric energy conversion?",
-        "Answer": "Olsen Cycle ",
-        "Type": "Text (Multi-word)",
-        "Complexity": 1,
-        "Source_IDX": "[0][1][0][0]",
-        "Gold_REF": null
-    },
-    {
-        "ID": "11c63b7ba82449f79ab75d476c74b6aa",
-        "Question": "Which conscientiousness faces the largest effect among chronic cannabis users?",
-        "Answer": "Self-control, r=0.34",
-        "Type": "Scientific Notation",
-        "Complexity": 1,
-        "Source_IDX": "[1][0][0][0]",
-        "Gold_REF": null
-    },
-    {
-        "ID": "70e313112258669f35c838602deaab0a",
-        "Question": "What is the effect size of Neighbourhood crime on psychosis in an individual?",
-        "Answer": "0.04",
-        "Type": "Float",
-        "Complexity": 2,
-        "Source_IDX": "[1][0][1][0]",
-        "Gold_REF": "neighbourhood crime-psychosis associations (r = 0.04…..."
-    },
-    {
-        "ID": "068c2494dbc3081f31e8ac8642b2dd38",
-        "Question": "Are young men more likely to engage in gambling than the elder group in Finland?",
-        "Answer": "Yes",
-        "Type": "Binary",
-        "Complexity": 3,
-        "Source_IDX": "[1][1][1][0]",
-        "Gold_REF": "In 2019, the prevalence of lower-risk gambling among men was of lowest among 60–74-years-olds (25.1%; 95% CI 21.8–28.5) (Fig. 1; Supplementary File 1). The prevalence of lower-risk gambling among men increased especially among 18–29-years-olds, being 15.9% (95% CI 12.4–19.3) in 2011 and 34.6% (95% CI 29.7–39.4) in 2019."
-    },
-    {
-        "ID": "ec7c8ecd0e6bc7716bdae1ddc0c5e768",
-        "Question": "What is the maximum range of carbon footprint of microbially produced milk protein?",
-        "Answer": "17.6 tons",
-        "Type": "Scientific Notation",
-        "Complexity": 2,
-        "Source_IDX": "[2][0][0][0]",
-        "Gold_REF": "The carbon footprint results varied between 5.5 and17.6 t CO2e/t protein"
-    },
-    {
-        "ID": "49b4d8217529c5c62017d1a80f0d01d1",
-        "Question": "What demographic is more susceptible to misinformation?",
-        "Answer": "Younger",
-        "Type": "Text (Single-word)",
-        "Complexity": 2,
-        "Source_IDX": "[2][0][0][1]",
-        "Gold_REF": "With respect to demographics, we find that participants who are younger, live in less urban areas, have higher subjective socio-economic status (driven particularly by the highest status participants; Supplementary Section 3.3), and identify as members of ethnic minorities in their respective countries show lower truth discernment on average, while sex and willingness to take risks are not consistently associated"
-    },
-    {
-        "ID": "74a185fd13458e26350691ac2e80e4af",
-        "Question": "What is the meta-analytic estimate (b) for truth discernment using vaccine-related false headlines?",
-        "Answer": "0.064",
-        "Type": "Float",
-        "Complexity": 1,
-        "Source_IDX": "[2][0][0][1]",
-        "Gold_REF": "Truth discernment using vaccine-related false headlines (meta-analytic b = 0.064"
-    },
-    {
-        "ID": "af6ded23a5623e9a388cd6a20f8d3246",
-        "Question": "Is the observed relationship between truth discernment and vaccination intentions correlational or causal?",
-        "Answer": "Correlational",
-        "Type": "Text (Single-word)",
-        "Complexity": 1,
-        "Source_IDX": "[2][0][0][1]",
-        "Gold_REF": "We also find a weaker—but still pronounced and fairly consistently signed—positive association between truth discernment and the extent to which participants believe that others will get vaccinated (that is, their perception of the descriptive norm regarding vaccination). These observations, although only correlational, give some reason to believe that the causal link between misinformation and vaccine hesitancy demonstrated in the United States and the United Kingdom10 may extend more broadly"
-    },
-    {
-        "ID": "3c3cde82b2956d1789944595f1e32a87",
-        "Question": "What technique confirmed the uniform dispersion of ZnO@gal in the chitosan matrix?",
-        "Answer": "Scanning Electron Microscopy (SEM)",
-        "Type": "Scientific Notation",
-        "Complexity": 2,
-        "Source_IDX": "[2][0][1][0]",
-        "Gold_REF": "The surface morphology study by SEM of the prepared ZnO@gal and chitosan films are shown in Figs. 5(A) and 5(B). In Fig. 5(A) at some areas the agglomeration of ZnO@gal can also be noticed. However in the films ZnO@gal nearly rod in shape and homogeneously distributed in the matrix where chitosan played a good binding agent otherwise, surface of pristine chitosan films seemed to be coarse. The surface of bionanocomposite films appears with good size of uniformity of the nanoparticles (Fig.5(B)) as well as good degree of dispersion of ZnO@ gal in the films"
-    },
-    {
-        "ID": "d0d71c7949f863092ebffd8df6f5e50c",
-        "Question": "Was Ch-ZnO@gal1 film not tested for for antibacterial activity?",
-        "Answer": "No",
-        "Type": "Binary",
-        "Complexity": 3,
-        "Source_IDX": "[2][0][1][0]",
-        "Gold_REF": "The films evaluated against both bacterial strains i.e. gram positive bacteria B. subtilis and gram negative bacteria E. coli"
-    },
-    {
-        "ID": "4544497b59182dd445c0c19de7048817",
-        "Question": "In the study of Chitosan based ZnO nanoparticles loaded gallic-acid films for active food packaging, are the gallic acid films electrically conductive?",
-        "Answer": "Not mentioned",
-        "Type": "N/A",
-        "Complexity": 3,
-        "Source_IDX": "[2][0][1][0]",
-        "Gold_REF": null
-    },
-    {
-        "ID": "ff019d60ca155798625a5d7403774eec",
-        "Question": "In the study of Chitosan based ZnO nanoparticles loaded gallic-acid films for active food packaging which chitosan ZnO film has the strongest antibacterial effects?",
-        "Answer": "Ch-ZnO@gal3",
-        "Type": "Scientific Notation",
-        "Complexity": 2,
-        "Source_IDX": "[2][0][1][0]",
-        "Gold_REF": "The results of antibacterial activity of the composite films also revealed that the antimicrobial activity is linearly related to the amount of ZnO@gal in the composite films. Hence Ch-ZnO@gal3 is the most efficient composite film against both B. subtilis and E. coli"
-    },
-    {
-        "ID": "98a3ad852245779eb11d98ae461d603e",
-        "Question": "Were hydrolyzable polyphenols absent in the pigments extracted from RA corn?",
-        "Answer": "No",
-        "Type": "Binary",
-        "Complexity": 2,
-        "Source_IDX": "[2][0][1][2]",
-        "Gold_REF": "In particular, the pigment obtained from RA by the hybrid technique (HM-UE) presented a higher content of condensed tannins (1.49 ± 0.04 mg Cat Eq/g sample) and hydrolyzable polyphenols (0.33 ± 0.05 mg GA Eq/g sample) compared to the rest of the pigments.\""
-    },
-    {
-        "ID": "136ac5598e92f68c88d777b92b6679c2",
-        "Question": "In the study on pigment extraction from red corn, which method was found to yield the highest extraction efficiency for pigments?",
-        "Answer": "Microwave-ultrasound hybrid extraction (HM-UE)",
-        "Type": "Scientific Notation",
-        "Complexity": 2,
-        "Source_IDX": "[2][0][1][2]",
-        "Gold_REF": "Results indicated that the hybrid-assisted extraction (HM-UE) yields higher yields (p < 0.05). Overall, the HM-UE method obtained on average yields of 0.60 %, which is up to 25 % more pigments compared to the individual technologies. MAE and UAE showed yields of 0.48 % for both."
-    },
-    {
-        "ID": "8368949123e4a4e8e2b6e4c55b1e518a",
-        "Question": "Was the same system used to determine color of pigment in both the 2022 and 2023 study on the microwave-ultrasound extraction of red corn pigments?",
-        "Answer": "Yes (CieLab)",
-        "Type": "Scientific Notation",
-        "Complexity": 4,
-        "Source_IDX": "[2][0][1][2]",
-        "Gold_REF": "Paper 1: Table 4 Color of red corn measured in the cielab system Paper 2: The extracts were placed in cylindrical plates of 300 μL (7 × 10 mm) where the color was determined using the CIELab system"
-    },
-    {
-        "ID": "5f202716eb0018ca3b76091c695657b7",
-        "Question": "What is the largest disturbance spot according to the findings of the paper on the bark beetle outbreak in Central Europe?",
-        "Answer": "C4",
-        "Type": "Text (Single-word)",
-        "Complexity": 1,
-        "Source_IDX": "[2][1][0][1]",
-        "Gold_REF": "Notably, the major hotspot C4 spanned 9,000 km"
-    },
-    {
-        "ID": "fb6a2426c02808a2a6dffacb02305bb4",
-        "Question": "According to the findings of the paper on the bark beetle outbreak in Central Europe, what percentage of the total forest area was lost in C4?",
-        "Answer": "38%",
-        "Type": "Percentage",
-        "Complexity": 2,
-        "Source_IDX": "[2][1][0][1]",
-        "Gold_REF": "In the main outbreak area C4 (Fig. 4b), the forest area affected represented 38% of the total forest and 49% of the initial spruce cover."
-    },
-    {
-        "ID": "8e87b43ff45315af67a1e85994a1631e",
-        "Question": "According to the findings of the paper on the bark beetle outbreak in Central Europe, what percentage of the spruce forest area was lost in C4?",
-        "Answer": "49%",
-        "Type": "Percentage",
-        "Complexity": 2,
-        "Source_IDX": "[2][1][0][1]",
-        "Gold_REF": "In the main outbreak area C4 (Fig. 4b), the forest area affected represented 38% of the total forest and 49% of the initial spruce cover."
-    },
-    {
-        "ID": "57eb238af101252088ece98aa2e3c622",
-        "Question": "According to the findings of the paper on the bark beetle outbreak in Central Europe, which type of forest area faced more loss in C4, total or spruce?",
-        "Answer": "Spruce",
-        "Type": "Text (Single-word)",
-        "Complexity": 3,
-        "Source_IDX": "[2][1][0][1]",
-        "Gold_REF": "In the main outbreak area C4 (Fig. 4b), the forest area affected represented 38% of the total forest and 49% of the initial spruce cover."
-    },
-    {
-        "ID": "506113489ec64c59597ea09a65d00cab",
-        "Question": "Do both R50 and R75 strategies result in increased high-suitability habitats and biodiversity benefits?",
-        "Answer": "Yes",
-        "Type": "Binary",
-        "Complexity": 3,
-        "Source_IDX": "[2][1][0][3]",
-        "Gold_REF": "Suitability values for the R75 and R50 strategies were significantly higher than the suitability values for the other strategies (p < 0.05), and the suitability value for the R50 strategy was (non-significantly) higher than the suit- ability value for the R75 strategy (p > 0.05)."
-    },
-    {
-        "ID": "c6c8fadadba23f94f56a8d37ba99192f",
-        "Question": "Which river basin has the largest concentration of highly suitable bird habitat in Taiwan?",
-        "Answer": "Zhuoshui",
-        "Type": "Text (Single-word)",
-        "Complexity": 1,
-        "Source_IDX": "[2][1][0][3]",
-        "Gold_REF": "Farmland habitats characterized by high suitability are concentrated in the western region of the Zhuoshui River basin, accounting for 2289 hectares"
-    },
-    {
-        "ID": "ecbc4a1df74e8a30c57e2381b16029b8",
-        "Question": "What is the land area of highly suitable farmland habitat in the Zhuoshui river basin?",
-        "Answer": " 2289 hectares",
-        "Type": "Text (Multi-word)",
-        "Complexity": 1,
-        "Source_IDX": "[2][1][0][3]",
-        "Gold_REF": "Farmland habitats characterized by high suitability are concentrated in the western region of the Zhuoshui River basin, accounting for 2289 hectares"
-    },
-    {
-        "ID": "a693f1023ea657e1e093b8c3cd437941",
-        "Question": "Are changes in farmland habitats under R75 expected to benefit biodiversity more than under R0?",
-        "Answer": "Yes",
-        "Type": "Binary",
-        "Complexity": 2,
-        "Source_IDX": "[2][1][0][3]",
-        "Gold_REF": "Inference of: significant increase in moderate and high-suitability habitats under R75 with the negative trends in suitability under R0"
-    },
-    {
-        "ID": "a2ae400fe5e6e63672d4ee690dde121b",
-        "Question": "Which AI framework supports the generation of legal decisions in the proposed auditing system?",
-        "Answer": "MAKER",
-        "Type": "Text (Single-word)",
-        "Complexity": 2,
-        "Source_IDX": "[3][0][0][0]",
-        "Gold_REF": "Introduction to Legal Knowledge Representation by MAKER"
-    },
-    {
-        "ID": "11e3144445c7289713711582ec67e4ba",
-        "Question": "What type of law is the case study focused on?",
-        "Answer": "Tort",
-        "Type": "Text (Single-word)",
-        "Complexity": 1,
-        "Source_IDX": "[3][0][0][0]",
-        "Gold_REF": "The framework is applied to a case study on tort liability, focusing on ambiguous evidence scenarios in workplace accidents"
-    },
-    {
-        "ID": "f7cf5559708106516182128b8bab9667",
-        "Question": "What theory underpins both legal reasoning using MAKER framework and decentralized data integrity in blockchain-based systems?",
-        "Answer": "Dempster-Shafer",
-        "Type": "Scientific Notation",
-        "Complexity": 4,
-        "Source_IDX": "[3][0][0][0]",
-        "Gold_REF": "The I-MAKER framework utilizes the Dempster-Shafer theory of evidence to establish a causal relationship between ambiguous evidence and the final legal hypothesis or decision. The integrity of data repositories is ensured using blockchain technology, which incorporates probabilistic methods for verifying data integrity. These methods are influenced by foundational probabilistic reasoning theories like Dempster-Shafer"
-    },
-    {
-        "ID": "e27c34d44717898d3d31386efc2212c0",
-        "Question": "What type of law demonstrates the use of both evidential reasoning and blockchain-based accountability systems?",
-        "Answer": "Tort",
-        "Type": "Text (Single-word)",
-        "Complexity": 4,
-        "Source_IDX": "[3][0][0][1]",
-        "Gold_REF": "Paper 1: The framework is applied to a case study on tort liability, focusing on ambiguous evidence scenarios in workplace accidents Paper2 : A case study on vicarious liability arising from workplace accidents under tort law demonstrates the implementation of the blockchain-based auditing framework."
-    },
-    {
-        "ID": "ad6e29b6822c194956b7c6643b1cdb57",
-        "Question": "Using which validation technique can the tampering of off-chain data be detected?",
-        "Answer": "Merkle root",
-        "Type": "Text (Multi-word)",
-        "Complexity": 2,
-        "Source_IDX": "[3][0][0][1]",
-        "Gold_REF": "The key principle of the algorithm is to compare the locally recomputed Merkle roots of the files in off-chain storage facilities (IPFS and Cloud) with their corresponding Merkle root stored on the blockchain Any discrepancies between the newly computed Merkle root and its blockchain counterpart indicate potential data tampering with the off-chain data, indicating a breach of data integrity"
-    },
-    {
-        "ID": "ffac66577d6cdee63bd2d504c4cf9ef8",
-        "Question": "Can tampering of off-chain data be detected through Merkle root validation?",
-        "Answer": "Yes",
-        "Type": "Binary",
-        "Complexity": 2,
-        "Source_IDX": "[3][0][0][1]",
-        "Gold_REF": "The key principle of the algorithm is to compare the locally recomputed Merkle roots of the files in off-chain storage facilities (IPFS and Cloud) with their corresponding Merkle root stored on the blockchain Any discrepancies between the newly computed Merkle root and its blockchain counterpart indicate potential data tampering with the off-chain data, indicating a breach of data integrity"
-    },
-    {
-        "ID": "ef2b39836a281f3f33443f79b1085824",
-        "Question": "Besides Ethereum, which blockchain platform is utilized in the system for blockchain implementations?",
-        "Answer": "Hyperledger",
-        "Type": "Text (Single-word)",
-        "Complexity": 1,
-        "Source_IDX": "[3][0][0][1]",
-        "Gold_REF": "The blockchain-based auditing framework is evaluated on two blockchain platforms: Ethereum (a public platform) and Hyperledger Fabric (a private platform)"
-    },
-    {
-        "ID": "e589dd8ca17ef82c2fecccc95364bcce",
-        "Question": "Which dataset was used for training and testing the Lung-EffNet model?",
-        "Answer": "IQ-OTH/NCCD",
-        "Type": "Scientific Notation",
-        "Complexity": 1,
-        "Source_IDX": "[3][0][1][0]",
-        "Gold_REF": "The experiments are carried out on the 'Iraq-Oncology Teaching Hospital/National Center for Cancer Diseases (IQ-OTH/NCCD)' lung cancer dataset.\""
-    },
-    {
-        "ID": "31841a46e9df2d75887c9c064db79f8b",
-        "Question": "Which experimental split ratio yielded the best results in the study of Lung-EffNet model?",
-        "Answer": "80-20",
-        "Type": "Scientific Notation",
-        "Complexity": 1,
-        "Source_IDX": "[3][0][1][0]",
-        "Gold_REF": "Based on our experiments, we found that the model’s performance is comparatively better with the originally proposed split of 80:20 compared to the other splits."
-    },
-    {
-        "ID": "75697ba306d9474eb24b72d6732bb6c6",
-        "Question": "Which neural network approach is shared across both the Lung-EffNet and CCDC-HNN frameworks for enhanced lung cancer detection?",
-        "Answer": "RNN",
-        "Type": "Text (Single-word)",
-        "Complexity": 4,
-        "Source_IDX": "[3][0][1][0]",
-        "Gold_REF": "The feature refinement process involves the use of recurrent neural networks (RNNs) to improve the representation of critical features for accurate classification Recurrent connections in the hybrid network are designed to refine predictions by capturing sequential dependencies in the data."
-    },
-    {
-        "ID": "42d696eccbf0d3acf4ee195f2d22359f",
-        "Question": "In the study titled “Enhancing Intrusion Detection in IoT Systems,” what feature selection technique combines Harris Hawk Optimization and a mathematical operator to improve intrusion detection?",
-        "Answer": "HHO-EFDM",
-        "Type": "Scientific Notation",
-        "Complexity": 2,
-        "Source_IDX": "[3][1][0][0]",
-        "Gold_REF": "This paper employed the Harris Hawk Optimization-based elite fractional derivative mutation (HHO-EFDM) method for feature selection. Feature selection is efficiently performed by the HHO-EFDM algorithm, which combines the Harris Hawk Optimization (HHO) algorithm and the elite fractional derivative mutation (EFDM) operator."
-    },
-    {
-        "ID": "c81001c787e72de8ca31a5664f52ced0",
-        "Question": "What attack from the IoT-23 dataset were most effectively classified by the MM-WMVEDL model, based on the findings in “Enhancing Intrusion Detection in IoT Systems”?",
-        "Answer": "DoS/XSS",
-        "Type": "Scientific Notation",
-        "Complexity": 2,
-        "Source_IDX": "[3][1][0][0]",
-        "Gold_REF": "The proposed MM-WMVEDL scheme attained the highest accuracy of 98.12% on the IoT-23 dataset, outperforming all other state-of-the-art intrusion detection systems. The work also accomplished a high AUC-ROC of 0.9982, indicating its ability to discriminate between normal and attack traffic, including specific types like DoS and XSS."
-    },
-    {
-        "ID": "a6987337f98fe915b2fb730696d98a65",
-        "Question": "How many attack types were tested using the proposed Hybrid CNN-LSTM model in the paper “A Deep Learning-Based Novel Hybrid CNN-LSTM Architecture for Efficient Detection of Threats in the IoT Ecosystem”?",
-        "Answer": "14",
-        "Type": "Integer",
-        "Complexity": 1,
-        "Source_IDX": "[3][1][0][1]",
-        "Gold_REF": "The proposed model underwent rigorous testing and validation, encompassing an extensive range of attack types, surpassing a total of 14 distinct categories"
-    },
-    {
-        "ID": "9c85c05f66c614bb9288647ee4626ab5",
-        "Question": "According to the paper “A Deep Learning-Based Novel Hybrid CNN-LSTM Architecture for Efficient Detection of Threats in the IoT Ecosystem”, what was the accuracy achieved by the Hybrid CNN-LSTM model on the IoT-23 dataset?",
-        "Answer": "95%",
-        "Type": "Percentage",
-        "Complexity": 1,
-        "Source_IDX": "[3][1][0][1]",
-        "Gold_REF": "The outcomes of our research showcase remarkable accuracy, with the models achieving 95% accuracy on the IoT-23 dataset."
-    },
-    {
-        "ID": "3d6ef8a9e31c7a7f076d5385a758f63e",
-        "Question": "Which dataset achieved the highest precision and recall metrics for the Hybrid CNN-LSTM model, as mentioned in “A Deep Learning-Based Novel Hybrid CNN-LSTM Architecture for Efficient Detection of Threats in the IoT Ecosystem”?",
-        "Answer": "CICIDS2017",
-        "Type": "Scientific Notation",
-        "Complexity": 2,
-        "Source_IDX": "[3][1][0][1]",
-        "Gold_REF": null
-    },
-    {
-        "ID": "5d7b088612e3586cdae383fa5d15ed11",
-        "Question": "Is the accuracy of the Hybrid CNN-LSTM model on the IoT-23 dataset higher compare to the MM-WMVEDL model discussed in “Enhancing Intrusion Detection in IoT Systems”?",
-        "Answer": "No",
-        "Type": "Binary",
-        "Complexity": 4,
-        "Source_IDX": "[3][1][0][1]",
-        "Gold_REF": "The Hybrid CNN-LSTM model achieved a notable accuracy of 95% on the IoT-23 dataset The MM-WMVEDL framework delivered an outstanding accuracy of 98.12% on the IoT-23 dataset"
-    },
-    {
-        "ID": "c22a4389bd3b6465e17516ad0a884179",
-        "Question": "How does the number of attack types classified by the Hybrid CNN-LSTM model in “A Deep Learning-Based Novel Hybrid CNN-LSTM Architecture for Efficient Detection of Threats in the IoT Ecosystem” compare to those addressed by the MM-WMVEDL framework in “Enhancing Intrusion Detection in IoT Systems: A Hybrid Metaheuristics-Deep Learning Approach with Ensemble of Recurrent Neural Networks”?",
-        "Answer": "Equal",
-        "Type": "Text (Single-word)",
-        "Complexity": 4,
-        "Source_IDX": "[3][1][0][1]",
-        "Gold_REF": "The Hybrid CNN-LSTM model was tested on 14 distinct attack types, ensuring comprehensive evaluation across diverse IoT threat scenarios The proposed MM-WMVEDL model demonstrated its capacity by accurately classifying 14 different types of attacks, showcasing its robustness"
-    },
-    {
-        "ID": "4bc480dd74d872d7a1eab674d3a4daff",
-        "Question": "What is the predicted mean increase in the number of species of conservation concern in grazed SNGs compared to ley fields on former SNGs found in the research on semi-natural grassland habitats in northern Europe?",
-        "Answer": "574%",
-        "Type": "Percentage",
-        "Complexity": 1,
-        "Source_IDX": "[4][0][0][1]",
-        "Gold_REF": "The predicted mean number of species of conservation concern on grazed SNGs was >15 times (574%) higher than the one for ley fields on former SNGs"
-    },
-    {
-        "ID": "33edeb71430968f7aeea12dedbd7b85f",
-        "Question": "What is the β-diversity turnover component (βJTU) for plant community dissimilarity among habitat types in the research on semi-natural grassland habitats in northern Europe?",
-        "Answer": "0.929",
-        "Type": "Float",
-        "Complexity": 1,
-        "Source_IDX": "[4][0][0][1]",
-        "Gold_REF": "Overall, the differences in community composition among habitats were mainly explained by species turnover (βJTU = 0.929), and not nestedness (βJNE = 0.03)"
-    },
-    {
-        "ID": "6ecf21451bacc56565b90f57151dd001",
-        "Question": "Does the research on semi-natural grassland habitats in northern Europe show that ley fields and afforested grasslands differ significantly from grazed and abandoned SNGs in terms of species richness, conservation species, and community composition?",
-        "Answer": "Yes",
-        "Type": "Binary",
-        "Complexity": 3,
-        "Source_IDX": "[4][0][0][1]",
-        "Gold_REF": "Our results showed that SNGs that had been afforested or converted to ley fields held lower local plant species richness and diversity than grazed or abandoned SNGs. Grazed SNGs were significantly more species-rich than all other habitats, while abandoned SNGs had a higher species richness than older spruce plantations and improved grasslands"
-    },
-    {
-        "ID": "05d57837429b116dbeaffd25bfe03b04",
-        "Question": "Does the research on northern European semi-natural grasslands identify specific habitat factors (e.g., SNG cover, cropland) that influence plant species richness, and are their impacts significant for conservation strategies?",
-        "Answer": "Yes",
-        "Type": "Binary",
-        "Complexity": 2,
-        "Source_IDX": "[4][0][0][1]",
-        "Gold_REF": "The species richness and Shannon diversity were higher in sites surrounded by a high cover of SNGs, while a higher cover of cropland around a site was associated with lower species richness and diversity. The landscape effect was small compared to the local effect of habitat type, but interactions between landscape context and habitat type were not significant"
-    },
-    {
-        "ID": "b5424b80880c9a37fdee3620283b2f6f",
-        "Question": "How many bird species were recorded in the study on semi-natural grassland habitats in northern Europe?",
-        "Answer": null,
-        "Type": "N/A",
-        "Complexity": 3,
-        "Source_IDX": "[4][0][0][1]",
-        "Gold_REF": "Negative example"
-    },
-    {
-        "ID": "4f0d46e7747c3ef71471c38f0f6939d7",
-        "Question": "Is the contribution of wildland fire PM2.5 to total PM2.5 consistent between the studies \"Pregnancy exposure to PM2.5 from wildland fire smoke and preterm birth in California\" and \"Associations between wildfire smoke exposure during pregnancy and risk of preterm birth in California\"?",
-        "Answer": "No",
-        "Type": "Binary",
-        "Complexity": 4,
-        "Source_IDX": "[4][1][2][0]",
-        "Gold_REF": "Wildland fire PM2.5 contributed 17.7% of total PM2.5 during 2018 Wildfire-specific PM2.5 was estimated to contribute approximately 50% of total PM2.5 on days with wildfire smoke influence"
-    },
-    {
-        "ID": "c64915359fcc9ee6e34bd98b41715bea",
-        "Question": "What was the OR for preterm birth associated with a 10 µg/m³ increase in California wildland fire PM2.5 exposure during gestational week 23?",
-        "Answer": "1.034",
-        "Type": "Float",
-        "Complexity": 1,
-        "Source_IDX": "[4][1][2][1]",
-        "Gold_REF": "For example, a 10 µg/m³ increase in wildland fire PM2.5 in week 23 of pregnancy was associated with a higher risk of preterm birth (OR = 1.034; 95% CI: 1.019, 1.049)."
-    },
-    {
-        "ID": "abec4011944e2b96818cde62950de5b0",
-        "Question": "Is the odds ratio for preterm birth lower for a 10 µg/m³ increase in wildland fire PM2.5 during gestational week 23 compared to week 35?",
-        "Answer": "No",
-        "Type": "Binary",
-        "Complexity": 3,
-        "Source_IDX": "[4][1][2][1]",
-        "Gold_REF": "For example, a 10 µg/m³ increase in wildland fire PM2.5 in week 23 of pregnancy was associated with a higher risk of preterm birth (OR = 1.034; 95% CI: 1.019, 1.049) In weeks 35–37... the odds ratios were lower, with no specific critical week identified"
-    },
-    {
-        "ID": "1c6d3ddd781e6f0f9447f3c4b97d8efb",
-        "Question": "What was the average fractional error (%) for weekly PM2.5 concentrations after bias correction, as reported in the study on pregnancy exposure to wildland fire smoke and preterm birth in California?",
-        "Answer": "31%",
-        "Type": "Percentage",
-        "Complexity": 1,
-        "Source_IDX": "[4][1][2][1]",
-        "Gold_REF": "The bias, error, and coefficient of determination (R²) for the weekly PM2.5 exposure concentrations determined by leave-one-out cross-validation are listed (Table 1)... The mean fractional error was reduced from 45% to 31% after bias correction"
-    },
-    {
-        "ID": "228a57aebe0dfc862799c65967573c3e",
-        "Question": "How many cases of low birth weight were recorded in the study \"Pregnancy exposure to PM2.5 from wildland fire smoke and preterm birth in California\"?",
-        "Answer": null,
-        "Type": "N/A",
-        "Complexity": 3,
-        "Source_IDX": "[4][1][2][1]",
-        "Gold_REF": "Negative example"
-    },
-    {
-        "ID": "af91d6ab3c9f0c8b0f3b00e123462dd6",
-        "Question": "Between Croatia and Portugal, sediment samples from which country shows higher pesticide concentrations in the findings of the pesticide residue in European sediment study?",
-        "Answer": "Portugal",
-        "Type": "Text (Single-word)",
-        "Complexity": 2,
-        "Source_IDX": "[4][2][0][0]",
-        "Gold_REF": "The lowest total pesticide concentrations were found in Slovenia, Switzerland, Croatia, and Denmark, ranging between 80 and 120 μg/kg, whereas Portuguese, French, and Dutch samples showed higher concentrations, ranging between 200 and 800 μg/kg"
-    },
-    {
-        "ID": "6bbb500471d924ed51e9df63005c25d0",
-        "Question": "Is Slovenia identified as the country with the lowest pesticide residue levels, including a sample that was pesticide-free?",
-        "Answer": "Yes",
-        "Type": "Binary",
-        "Complexity": 1,
-        "Source_IDX": "[4][2][0][0]",
-        "Gold_REF": "The lowest number of compounds was found in Slovenia (min: 0, max: 6, average and median: 2). Sample 15, from Slovenia, was the only ‘pesticide-free’ sample."
-    },
-    {
-        "ID": "f255f5bb02bbb9551515d531121bcc1d",
-        "Question": "Which country has the highest total pesticide concentrations according to the pesticide residue in European sediment study?",
-        "Answer": "Czech Republic",
-        "Type": "Text (Multi-word)",
-        "Complexity": 1,
-        "Source_IDX": "[4][2][0][0]",
-        "Gold_REF": "The Czech Republic exhibited the highest total pesticide concentrations (600–1200 μg/kg) and the most complex mixtures, including a wide range of pesticide residues across all sediment samples."
-    },
-    {
-        "ID": "f2aea9f85c790af34bd828f4b2d9593e",
-        "Question": "Which pesticide is identified as the most frequently detected in \"Assessing pesticide residues occurrence and risks in water systems: A Pan-European and Argentina perspective\" and \"Pesticide residues in European sediments\"?",
-        "Answer": "Glyphosate",
-        "Type": "Text (Single-word)",
-        "Complexity": 4,
-        "Source_IDX": "[4][2][0][1]",
-        "Gold_REF": "Glyphosate (approved herbicide) and its main metabolite AMPA were the two most frequently detected compounds Glyphosate (98 % Df), its degradation product AMPA (80 %), and terbuthylazine (70 %) were found in most water samples, highlighting their ubiquitous presence and the dominance of herbicides among detected pesticides in aquatic environments"
-    },
-    {
-        "ID": "6907c702ccb6af470d2ab1800d10be11",
-        "Question": "Which pesticide type is dominant in the Pan-European and Argentina pesticide study but not in the European sediment pesticide residue study?",
-        "Answer": "Herbicides",
-        "Type": "Text (Single-word)",
-        "Complexity": 4,
-        "Source_IDX": "[4][2][0][1]",
-        "Gold_REF": "Glyphosate was the contaminant with the highest median concentration (114 ng/L), followed by herbicides like 2,4-D and MCPA, while fungicides showed much lower median concentrations (e.g., 31.4 ng/L for azoles) The sediments showed dominance of persistent residues, including fungicides such as azoxystrobin and boscalid, highlighting a stronger presence of fungicides in sediment samples compared to water systems"
-    },
-    {
-        "ID": "5ad57567f9de9ca2b488ebda3848c348",
-        "Question": "What is the percentage of variance in tourists’ intention to return, as reflected in their willingness to consider subsequent stays after experiencing augmented and virtual reality in hotels, explained by perceived usefulness, ease of use, and innovativeness?",
-        "Answer": "73.30%",
-        "Type": "Percentage",
-        "Complexity": 3,
-        "Source_IDX": "[5][0][0][0]",
-        "Gold_REF": "The conceptual model and hypotheses explicitly connect perceived usefulness, ease of use, and innovativeness to satisfaction as key predictors​asurement Model Data"
-    },
-    {
-        "ID": "b23418edb0a04b892188f44f24d073f9",
-        "Question": "Name one of the factors extended in the conceptual model based on the Technology Acceptance Model, as applied in the study of AR/VR technologies in hotels.",
-        "Answer": "Perceived Innovativeness",
-        "Type": "Text (Multi-word)",
-        "Complexity": 1,
-        "Source_IDX": "[5][0][0][0]",
-        "Gold_REF": "Perceived Innovativeness and Perceived Risk are the two extended factors added to the Technology Acceptance Model (TAM) to account for the unique aspects of AR and VR in the hotel industry​​."
-    },
-    {
-        "ID": "28b620b5092a77d43537e88d1ee1bd73",
-        "Question": "How many main themes emerged from the systematic review of VR in tourism and hospitality?",
-        "Answer": "5",
-        "Type": "Integer",
-        "Complexity": 2,
-        "Source_IDX": "[5][0][0][1]",
-        "Gold_REF": "The five main themes that emerged from this literature review are related to researchers’ attempts to answer basic questions regarding VR in T&H: ‘What and what for?’ (What is VR, and what are its applications in T&H); ‘Why would tourist managers make it available?’ (Expected effects); ‘Why would tourists adopt it?’ (Consumers’ motives to adopt); ‘Who would enjoy it the most?’ (Individual antecedents of satisfaction and intention to reuse/recommend); and ‘How can the VR experience be enhanced?’ (Determinants of the effectiveness of the experience)​."
-    },
-    {
-        "ID": "b09cc959023a3fe66f6a4525185b5a21",
-        "Question": "According to the systematic review of VR in tourism and hospitality, what percentage of the 43 empirical studies analyzed were conducted in controlled laboratory settings?",
-        "Answer": "51.20%",
-        "Type": "Percentage",
-        "Complexity": 2,
-        "Source_IDX": "[5][0][0][1]",
-        "Gold_REF": "Of the total 54 papers analyzed, 43 are empirical studies. Concerning the methodological aspects of these studies, it is relevant to highlight that many were conducted in a laboratory setting (22).\""
-    },
-    {
-        "ID": "40a73abcb976dd1cd51dc6979e185335",
-        "Question": "What percentage of companies in a study by ABI Research are considering VR adoption in B2B marketing?",
-        "Answer": "85%",
-        "Type": "Percentage",
-        "Complexity": 1,
-        "Source_IDX": "[5][0][1][0]",
-        "Gold_REF": "In fact, in a recent assessment commissioned by the global network ABI Research to examine the VR technology penetration in a group of US-based companies, results revealed that 85% of firms were considering adoption of virtual reality."
-    },
-    {
-        "ID": "f4126092a7916ec80df79aed27482b85",
-        "Question": "How many complexity factors (task, social, knowledge) are identified as moderators in the VR framework for B2B relationships?",
-        "Answer": "3",
-        "Type": "Integer",
-        "Complexity": 1,
-        "Source_IDX": "[5][0][1][0]",
-        "Gold_REF": "The three complexity factors considered include knowledge complexity, social complexity, and task complexity, and were chosen based on their relevance to B2B exchange relationships and potential impact of VR"
-    },
-    {
-        "ID": "5be01bc13d1fac12c929556b35d06201",
-        "Question": "According to the study on VR in B2B contexts, what is the reduced training time for employees compared to the traditional 2-3 days?",
-        "Answer": "44 minutes",
-        "Type": "Text (Multi-word)",
-        "Complexity": 1,
-        "Source_IDX": "[5][0][1][0]",
-        "Gold_REF": "As an additional advantage, training time using this technology can be reduced to 45 minutes from the two to three days that used to be common in the past"
-    },
-    {
-        "ID": "54b71732d3d1da21d3261aa8f4d371af",
-        "Question": "Does AR-based remote support improves first-time fix rates in maintenance scenarios?",
-        "Answer": "Yes",
-        "Type": "Binary",
-        "Complexity": 3,
-        "Source_IDX": "[5][0][1][1]",
-        "Gold_REF": "And, if you really look at the facts, yes, you have a better first-time fix rate. That means you can find the error faster and also fix it."
-    },
-    {
-        "ID": "bc60c8f360e278f4c8ba83dbb19814d1",
-        "Question": "Do the findings of the paper on AR/VR in B2B customer journeys and the paper on XR technologies both agree that virtual and augmented reality enhance customer engagement across the B2B customer journey?",
-        "Answer": "Yes",
-        "Type": "Binary",
-        "Complexity": 4,
-        "Source_IDX": "[5][0][1][1]",
-        "Gold_REF": "The first paper emphasizes that AR/VR creates immersive experiences and enables deeper customer engagement during purchase and post-purchase phases in the B2B customer journey The second paper highlights how XR technologies (AR/VR) improve engagement, communication, and interaction in phases such as pre-bid engagement and implementation, thus covering a broader spectrum of the journey"
-    },
-    {
-        "ID": "6255a96ca7580f9c89a0c53271863cd9",
-        "Question": "What percentage of millennials and Gen Z follow Virtual Influencers’ social media accounts for interest and amusement?",
-        "Answer": "38%",
-        "Type": "Percentage",
-        "Complexity": 1,
-        "Source_IDX": "[5][1][1][1]",
-        "Gold_REF": "Around 38% of the respondents, primarily millennials and Gen Z, reported following virtual influencers' accounts for their interest and amusement."
-    },
-    {
-        "ID": "0d6aea19657d820d655e5f572c2a244d",
-        "Question": "What percentage of respondents in the study followed virtual influencers (VIs) without realizing the accounts were not real?",
-        "Answer": "42%",
-        "Type": "Percentage",
-        "Complexity": 1,
-        "Source_IDX": "[5][1][1][1]",
-        "Gold_REF": "What percentage of respondents in the study followed virtual influencers (VIs) without realizing the accounts were not real?"
-    },
-    {
-        "ID": "25540c60b446d31ab14f514bc5296319",
-        "Question": "Among the younger and older age group, whose willingnes to follow VIs is more strongly influenced by rational appeals?",
-        "Answer": "older ",
-        "Type": "Text (Single-word)",
-        "Complexity": 3,
-        "Source_IDX": "[5][1][1][1]",
-        "Gold_REF": "Emotional appeals, especially entertaining and relational content, are shown to strongly influence willingness to follow VIs. These appeals are particularly impactful on younger respondents who prefer engaging and relatable content​. Rational appeals, such as informative content, also positively influence willingness to follow VIs but are more appreciated by older audiences due to their preference for factual and detailed information​​."
-    },
-    {
-        "ID": "cc7eb6c0e36751134b166915f9df2cc9",
-        "Question": "What percentage of consumers perceive virtual influencers as less trustworthy than human influencers?",
-        "Answer": "57%",
-        "Type": "Percentage",
-        "Complexity": 1,
-        "Source_IDX": "[5][1][1][2]",
-        "Gold_REF": "57% of consumers perceive virtual influencers as less trustworthy than their human counterparts"
-    },
-    {
-        "ID": "d20b1b810ce0eaaa9e58ea8039bd6337",
-        "Question": "Who has a higher engagement rate on average between virtual influencers and human influencers, as reported in the paper titled 'Engagement Effectiveness of Virtual Influencers'?",
-        "Answer": "Virtual",
-        "Type": "Text (Single-word)",
-        "Complexity": 1,
-        "Source_IDX": "[5][1][1][2]",
-        "Gold_REF": "Virtual influencers have an average engagement rate of 2.84% compared to 1.72% for human influencers."
-    },
-    {
-        "ID": "44dde6ce1477a0755b8e9ae9577193d0",
-        "Question": "What is the average engagement rate of human influencers, according to the study on influencer effectiveness?",
-        "Answer": "1.72%",
-        "Type": "Percentage",
-        "Complexity": 1,
-        "Source_IDX": "[5][1][1][2]",
-        "Gold_REF": "Virtual influencers have an average engagement rate of 2.84% compared to 1.72% for human influencers."
-    },
-    {
-        "ID": "bb816f5127cb6b117bcfcbf988cde5e1",
-        "Question": "Do the papers 'How and when do virtual influencers positively affect consumer responses to endorsed brands?' and 'The power of human-like virtual-influencer-generated content: Impact on consumers’ willingness to follow and purchase intentions' agree that virtual influencers are less trustworthy than human influencers, and does this negatively impact their effectiveness?\"",
-        "Answer": "No",
-        "Type": "Binary",
-        "Complexity": 4,
-        "Source_IDX": "[5][1][1][2]",
-        "Gold_REF": "Virtual influencers are perceived as less trustworthy than human influencers due to their lack of human-like warmth and similarity While virtual influencers are perceived as less trustworthy, their effectiveness can be mitigated through their perceived uniqueness, which can compensate for trust issues in certain contexts"
-    },
-    {
-        "ID": "af151e0c08ef5e8fb64703f896a2e745",
-        "Question": "According to the paper \"Outcome of Adolescents and Young Adult Acute Myeloid Leukemia Patients Compared with Middle-Aged Patients: A Single Centre Retrospective Experience\", what was the 5-year non-relapse mortality (NRM) rate for middle-aged patients?",
-        "Answer": "24%",
-        "Type": "Percentage",
-        "Complexity": 1,
-        "Source_IDX": "[6][0][0][0]",
-        "Gold_REF": "Regarding non-treatment related mortality (NRM), the 5-year rate was 20% in AYA and 24% in the middle-aged group (p=0.43)"
-    },
-    {
-        "ID": "2b9990521d8c3cbc64597c339013b581",
-        "Question": "Did the 5-year overall survival (OS) rate differ significantly between AYA and middle-aged patients?",
-        "Answer": "No",
-        "Type": "Binary",
-        "Complexity": 2,
-        "Source_IDX": "[6][0][0][0]",
-        "Gold_REF": "Comparing AYA and middle-aged patients, 5-year OS rates were similar at 54.6% vs. 56.5% (p=0.91)"
-    },
-    {
-        "ID": "6d1fa5360051a5128bb7d58ed1e38cfa",
-        "Question": "According to the findings on acute myeloid leukemia outcomes in adolescents and young adults (AYA) compared with middle-aged patients, was the 5-year overall survival (OS) rate for AYA patients who received HSCT higher than for those who did not receive HSCT?",
-        "Answer": "Yes",
-        "Type": "Binary",
-        "Complexity": 2,
-        "Source_IDX": "[6][0][0][0]",
-        "Gold_REF": "For patients who received HSCT, 5-year OS in AYA group was 64 % and in the middle-aged group was 60 % (p=0.52) (Fig. 1b). In contrast, for non-transplanted patients, the 5-year OS was 42 % in the AYA and 53 % in the middle-aged groups (p=0.44"
-    },
-    {
-        "ID": "18bfd50aa30670f82e499979ddadd4ea",
-        "Question": "Considering relapse and survival rates, did the AYA group’s higher physiological reserve allow them to achieve similar OS despite higher relapse rates?",
-        "Answer": "Yes",
-        "Type": "Binary",
-        "Complexity": 3,
-        "Source_IDX": "[6][0][0][0]",
-        "Gold_REF": "Increased CIR with similar OS in the AYA group could be explained by more physiological reserve among AYA patients who would have subsequently received 2nd chemotherapy for relapsed disease. The 5-year OS was 42% in the AYA and 53% in the middle-aged groups (p=0.44)"
-    },
-    {
-        "ID": "c021c5fb10717db5d67869b918aecb20",
-        "Question": "In the paper \"Outcome of Adolescents and Young Adults with Acute Lymphoblastic Leukemia in a Single Center in Brazil,\" did the majority of patients belong to the adolescents and young adults (AYA) group and receive the Berlin-Frankfurt-Münster (BFM) protocol?",
-        "Answer": "Yes",
-        "Type": "Binary",
-        "Complexity": 2,
-        "Source_IDX": "[6][0][0][1]",
-        "Gold_REF": "71.2% of the patients in the AYA group were treated with the BFM protocol The majority of them were aged 15 to 39 years (AYA, 57.7%)"
-    },
-    {
-        "ID": "5730f0079ded77bce3e880d7e25d8f04",
-        "Question": "According to findings from a single-center study on acute lymphoblastic leukemia (ALL) outcomes in Brazil, did AYA patients have a higher median overall survival (OS) compared to patients over 39 years old?",
-        "Answer": "Yes",
-        "Type": "Binary",
-        "Complexity": 1,
-        "Source_IDX": "[6][0][0][1]",
-        "Gold_REF": "The OS analysis revealed that patients aged over 39 years had poorer outcomes, compared to AYA patients (p = 0.004, 6.2 months vs. 13.3 months)"
-    },
-    {
-        "ID": "14b120beacd4724d9d438529633f33c8",
-        "Question": "In the papers \"Outcome of Adolescents and Young Adult Acute Myeloid Leukemia Patients Compared with Middle-Aged Patients: A Single Centre Retrospective Experience\" and \"Outcome of Adolescents and Young Adults with Acute Lymphoblastic Leukemia in a Single Center in Brazil,\" was there a higher frequency of B-cell lineage leukemia in AYA patients?",
-        "Answer": "Yes",
-        "Type": "Binary",
-        "Complexity": 4,
-        "Source_IDX": "[6][0][0][1]",
-        "Gold_REF": "B-ALL was the most frequent subtype (81.6%) The B-cell lineage was the most frequent subtype (81.6%) in AYA patients"
-    },
-    {
-        "ID": "7fd7384cd3ec6e9f28c64d3e1ac3beda",
-        "Question": "What was the effect of a vegan diet on overall survival rates for AYA leukemia patients in the single-center study on acute lymphoblastic leukemia (ALL) outcomes in Brazil?",
-        "Answer": null,
-        "Type": "N/A",
-        "Complexity": 3,
-        "Source_IDX": "[6][0][0][1]",
-        "Gold_REF": "Negative example"
-    },
-    {
-        "ID": "a676fb84120b3f3396f5b915df1d0db7",
-        "Question": "In the paper \"Association of Vaping with Respiratory Symptoms in U.S. Young Adults: Nicotine, Cannabis, and Dual Vaping,\" did frequent nicotine-only vaping show a significantly higher risk of respiratory symptoms compared to non-frequent vaping?",
-        "Answer": "No",
-        "Type": "Binary",
-        "Complexity": 1,
-        "Source_IDX": "[6][0][1][0]",
-        "Gold_REF": "Nicotine-only frequent vaping showed no difference in any of the respiratory symptom risks compared to non-frequent vaping"
-    },
-    {
-        "ID": "0ebd2e0c2891ae5d42a678539278159f",
-        "Question": "According to a study on vaping and respiratory symptoms in U.S. young adults, what percentage of dual vapers reported having a dry cough at night not associated with a cold?",
-        "Answer": "18.80%",
-        "Type": "Percentage",
-        "Complexity": 1,
-        "Source_IDX": "[6][0][1][0]",
-        "Gold_REF": "Dry cough at night not associated with a cold was reported in 18.8% of dual vapers compared to 8.5% of those who did not vape."
-    },
-    {
-        "ID": "34310b6723cc88e76ec825573ce0905e",
-        "Question": "In the study examining the respiratory effects of vaping in U.S. young adults, what is the adjusted prevalence ratio (aPR) for wheezing or whistling in the chest for frequent cannabis-only vapers?",
-        "Answer": "2.36",
-        "Type": "Float",
-        "Complexity": 1,
-        "Source_IDX": "[6][0][1][0]",
-        "Gold_REF": "Cannabis-only frequent vaping was associated with higher risks of wheezing or whistling in the chest, with aPRs of 2.36."
-    },
-    {
-        "ID": "9773444ec3e0345a2a898cf5845da6f4",
-        "Question": "What percentage of participants in the study examining the respiratory effects of vaping in U.S. young adults reported vaping to improve their athletic performance?",
-        "Answer": null,
-        "Type": "N/A",
-        "Complexity": 3,
-        "Source_IDX": "[6][0][1][0]",
-        "Gold_REF": "Negative example"
-    },
-    {
-        "ID": "ab8f77ac6d8950bebc767dc85e91b6e9",
-        "Question": "What percentage of dual vapers in the study examining the respiratory effects of vaping in U.S. young adults reported using vaping to manage asthma symptoms?",
-        "Answer": null,
-        "Type": "N/A",
-        "Complexity": 3,
-        "Source_IDX": "[6][0][1][0]",
-        "Gold_REF": "Negative example"
-    },
-    {
-        "ID": "9bd8436252c477199f4db5e3fea9341b",
-        "Question": "In what percentage of cases did AlphaFold2 perform significantly better than NMR?",
-        "Answer": "30%",
-        "Type": "Percentage",
-        "Complexity": 1,
-        "Source_IDX": "[6][1][0][0]",
-        "Gold_REF": "In 30% of cases, AF2 is significantly better, mainly in hydrogen-bond networks"
-    },
-    {
-        "ID": "b16095adfd79167b0836c019c0d9c716",
-        "Question": "Does AlphaFold2 perform worse on beta-sheet proteins compared to alpha-helical proteins?",
-        "Answer": "No",
-        "Type": "Binary",
-        "Complexity": 1,
-        "Source_IDX": "[6][1][0][0]",
-        "Gold_REF": "We find that the difference in accuracy is particularly apparent for β-sheet proteins (mean difference of 45), whereas the accuracy of α-helical proteins is closer (mean difference of 17)"
-    },
-    {
-        "ID": "4b181c7571aeffd84bae2844d6d249b5",
-        "Question": "In what percentage of cases was NMR more accurate than AlphaFold2?",
-        "Answer": "2%",
-        "Type": "Percentage",
-        "Complexity": 1,
-        "Source_IDX": "[6][1][0][0]",
-        "Gold_REF": "In 30% of cases, AF2 is significantly better, mainly in hydrogen-bond networks; in 2% of cases, NMR is better, mainly in dynamic regions"
-    },
-    {
-        "ID": "3c95a1532b6e3fb0ea876dd26890d6fd",
-        "Question": "In January 2024, how many Russian residents were reported to be living in Barentsburg?",
-        "Answer": "354",
-        "Type": "Integer",
-        "Complexity": 1,
-        "Source_IDX": "[7][0][0][2]",
-        "Gold_REF": "Ny-Ålesund has a population [of] 44 scientists, whereas the population in Barentsburg has been steadily declining and is 354 as of 2024"
-    },
-    {
-        "ID": "48a51a7d98163dfa749f288b3ee585a1",
-        "Question": "Are 42% of the properties in Hebron’s Old City abandoned due to restrictions and ruination?",
-        "Answer": "Yes",
-        "Type": "Binary",
-        "Complexity": 1,
-        "Source_IDX": "[7][0][1][0]",
-        "Gold_REF": "The influence of the slow ruination-by-prevention on the urban fabric of H2 is massive. 1400 families have left their homes, and abandoned properties constitute approximately 42% of the real estate in the Old City"
-    },
-    {
-        "ID": "5b39beed0c0a2b4e625408c2dcd65ec5",
-        "Question": "According to the study on gunshot residues collected 30 minutes after discharge, how many OGSR compounds were detected in more than 70% of the discharge specimens?",
-        "Answer": "3",
-        "Type": "Integer",
-        "Complexity": 2,
-        "Source_IDX": "[8][0][0][2]",
-        "Gold_REF": "The most frequently detected organic compound on the shooters was AK-II (found in 69 out of the 80 collected specimens), while N-nDPA and 2-nDPA were detected in more than 70% of the stubs"
-    },
-    {
-        "ID": "5e603d4036c9e67cc56fd3d7eee7e3e4",
-        "Question": "According to the study on gunshot residues collected 30 minutes after discharge, which body part between the hands and the nostrils had more concentration of GSR?",
-        "Answer": "Hands",
-        "Type": "Text (Single-word)",
-        "Complexity": 3,
-        "Source_IDX": "[8][0][0][2]",
-        "Gold_REF": "The shooter’s right hand generally exhibited the highest amounts of IGSR, while similarly high concentrations of OGSR were detected on both hands The quantities recovered from the nostrils were generally too low to be interesting"
-    },
-    {
-        "ID": "0866d0dc8e857c8abfb192f37a8a0d17",
-        "Question": "Which OGSR compound was most frequently detected in gunshot residue collected 30 minutes after discharge?",
-        "Answer": "AK-II",
-        "Type": "Scientific Notation",
-        "Complexity": 1,
-        "Source_IDX": "[8][0][0][2]",
-        "Gold_REF": "The most frequently detected organic compound on the shooters was AK-II"
-    },
-    {
-        "ID": "d6c1f09577acfcf1d9d82dd4ee00d31a",
-        "Question": "How many microplastics per year would a person in Bangladesh ingest if they consumed 5 g of sea salt daily?",
-        "Answer": "860.8 MPs/year",
-        "Type": "Scientific Notation",
-        "Complexity": 1,
-        "Source_IDX": "[8][1][0][0]",
-        "Gold_REF": "If a person consumes 5 g sea salt/day annually, they will consume 860.8 MPs/year in Bangladesh, which is alarming"
-    },
-    {
-        "ID": "80b937b440639979e2d73d70d74901ec",
-        "Question": "According to the study on microplastic contamination in sea salts from Bangladesh, what risk category did the pollution load index (PLI) values indicate for all processed sea salt samples?",
-        "Answer": "category II",
-        "Type": "Text (Multi-word)",
-        "Complexity": 1,
-        "Source_IDX": "[8][1][0][0]",
-        "Gold_REF": "The PLI values of all processed sea salt samples were 10–20, indicating the risk category of II (supplementary Fig. S3)"
-    },
-    {
-        "ID": "438906dad5d889aec6299cfd1de8d2d1",
-        "Question": "According to the study on microplastic contamination in sea salts from Bangladesh, did the sea salt samples contain gold nanoparticles as a contaminant?",
-        "Answer": null,
-        "Type": "N/A",
-        "Complexity": 3,
-        "Source_IDX": "[8][1][0][0]",
-        "Gold_REF": "Negative example"
-    },
-    {
-        "ID": "b1efab78d2faffa08970b436299d2f16",
-        "Question": "Based on the study of microplastic contamination in sea salts from Bangladesh, mention one polymer identified in the sea salt samples that contributed to the high polymer risk index (PRI) due to its hazard score?",
-        "Answer": "Polyethylene(PE) / Polyamide (PA)​ ",
-        "Type": "Scientific Notation",
-        "Complexity": 2,
-        "Source_IDX": "[8][1][0][0]",
-        "Gold_REF": "Four types of polymers were mainly identified from the analyzed samples: PP, PE, PET, and PA For instance, PE (hazard score 11) and PA (hazard score 50) explained the high chemical risk of MPs in sea salts."
-    },
-    {
-        "ID": "b23751b639f01cebb5e3fcfac0dd23a9",
-        "Question": "Is it true that CoNi layered double hydroxides with the morphology of nanoflowers and nanoflakes prepared in solution with pH 8.5 encloses more area in the CV curve than in with pH of 7.5 since higher scan rates extend faradic reactions to both inner and outer surface of the electrode?",
-        "Answer": "No",
-        "Type": "Binary",
-        "Complexity": 2,
-        "Source_IDX": "[8][2][0][0]",
-        "Gold_REF": "[ In this study, the CoNi layered double hydroxides (LDHs) with the morphology of nanoflowers and nanoflakes were prepared in solutions with pH values of 7.5 (CoNi LDH-7.5) and 8.5 (CoNi LDH-8.5) via a simple sonochemical approach.\", \"The CoNi LDH-7.5 delivered a specific capacity of 740.8C/g at a current density of 1 A/g, surpassing CoNi LDH-8.5 with 668.1C/g. \", \"At the same scan rate, the peak current (Ip) and enclosed area in the CV curve of CoNi LDH-7.5 were higher than those of CoNi LDH-8.5, verifying that the CoNi LDH-7.5 electrode could deliver higher capacity.\", \" When the scan rate is low, the ions in the electrolyte can reach the outer and inner surfaces of the electrode to participate in Faradic reactions, while with the scan accelerating to a high level, the energy storage process can only take place on the outer surface of the electrode. Hence, the boost of scan rate may result in a decrease in the specific capacity.\"]"
-    },
-    {
-        "ID": "02cd9be227051902c2f95424122d7103",
-        "Question": "For CoNi LDHs prepared through a facile solvothermal approach in a solvent with 2 mL of deionized water and 38 mL of ethylene glycol what kind of structure gets composed - nanoflower-like or nanosheet-like?",
-        "Answer": "nanoflower-like",
-        "Type": "Scientific Notation",
-        "Complexity": 1,
-        "Source_IDX": "[8][2][0][1]",
-        "Gold_REF": "[\"As the SEM images shown in Fig. 2a-c, the product prepared in the solvent of 2 mL of DI water and 38 mL of EG was dominated with many flower-like nanostructures (CoNi LDH NFs), and such NFs possessed an average diameter of about 5 μm.\"]"
-    },
-    {
-        "ID": "a5f2f510632ad9cbadc9a7dd37cc703b",
-        "Question": "How many tweets in the VaxxHesitancy dataset are labeled as \"irrelevant\"?",
-        "Answer": 1115,
-        "Type": "Integer",
-        "Complexity": 2,
-        "Source_IDX": "[9][0][0][0]",
-        "Gold_REF": "Table 5 Train 2+ | Train | Test | Sum ... Irrelevant: 916 | 964 | 151 | 1,115"
-    },
-    {
-        "ID": "062b42f26cbf425bf22791e022684f1d",
-        "Question": "Does the VaxxBERT model outperformed BERT and COVID-BERT in predictive performance?",
-        "Answer": "Yes",
-        "Type": "Binary",
-        "Complexity": 2,
-        "Source_IDX": "[9][0][0][0]",
-        "Gold_REF": "We also compare VaxxBERT against the two strong baselines introduced above (i.e., bert-large and COVID-BERT). In general, our VaxxBERT model significantly ((t-test, p < 0.001)) outperforms the two baselines on all three sets (i.e., Set 1, Set 2, Set 3)"
-    },
-    {
-        "ID": "92af3e9af7ca9621b7ad61cf16c6f9f4",
-        "Question": "What is the primary language of the tweets included in the VaxxHesitancy dataset?",
-        "Answer": "English",
-        "Type": "Text (Single-word)",
-        "Complexity": 1,
-        "Source_IDX": "[9][0][0][0]",
-        "Gold_REF": "The final subset T contains 3,101 tweets in English and is of similar size to other vaccine-related datasets (see Table 2)"
-    },
-    {
-        "ID": "fefb4216cc76db257b67d140cb97a7ae",
-        "Question": "How many tweets in the VaxxHesitancy dataset were collected from Instagram?",
-        "Answer": null,
-        "Type": "N/A",
-        "Complexity": 3,
-        "Source_IDX": "[9][0][0][0]",
-        "Gold_REF": "Negative example"
-    },
-    {
-        "ID": "e7cbd8ea6e17e80cf36e8ef3d46e4341",
-        "Question": "How many cities in Brazil were identified as having mpox-confirmed cases?",
-        "Answer": "47",
-        "Type": "Integer",
-        "Complexity": 1,
-        "Source_IDX": "[9][0][1][0]",
-        "Gold_REF": "The 251 confirmed cases came from 47 different cities in 18 states"
-    },
-    {
-        "ID": "133fd766f316d4dfe134f65ef8abbb45",
-        "Question": "Among Sao Paulo and Rio de Janeiro who had higher number of mpox-confirmed cases as found in the study titled “The Clinical and Epidemiological Characteristics of Mpox Cases in Brazil”?",
-        "Answer": "Sao Paulo",
-        "Type": "Text (Multi-word)",
-        "Complexity": 1,
-        "Source_IDX": "[9][0][1][0]",
-        "Gold_REF": "The state with the highest number of confirmed cases was São Paulo, followed by Rio de Janeiro"
-    },
-    {
-        "ID": "ab2c4ced4c026c1430f8e5d86ba635a6",
-        "Question": "According to the study titled “The Clinical and Epidemiological Characteristics of Mpox Cases in Brazil,” what percentage of confirmed mpox cases were people living with HIV (PLWH)?",
-        "Answer": "54.40%",
-        "Type": "Percentage",
-        "Complexity": 1,
-        "Source_IDX": "[9][0][1][0]",
-        "Gold_REF": "Of the 251 confirmed cases, 137 (54.4%) were PLWH (people living with HIV), of whom 128 (93.4%) were on ART (antiretroviral therapy)"
-    }
+  {
+    "ID": "2621d5f87055a10f3e9c40c01694fd44",
+    "Question": "What is the WPE of most C/L/O band lasers?",
+    "Answer": "10%",
+    "Type": "Percentage",
+    "Complexity": 1,
+    "Source_IDX": "[0][0][0][0]",
+    "Gold_REF": "The wall-plug efficiency (WPE) of most of the C/L/O band lasers is only about 10%"
+  },
+  {
+    "ID": "0e19b21f8aa94e09d751210bd8980ae8",
+    "Question": "Is the soil thawing-freezing model applicable only to soil?",
+    "Answer": "No",
+    "Type": "Binary",
+    "Complexity": 1,
+    "Source_IDX": "[0][0][1][0]",
+    "Gold_REF": "the proposed model can be applied to various conditions and to other types of porous media (such as rock or concrete) that undergo freezing-thawing processes."
+  },
+  {
+    "ID": "a6bc1c59a778aee0e2d5290918975a3e",
+    "Question": "How many orders can saturated hydraulic conductivity decrease during the dehydration process of soil?",
+    "Answer": "10",
+    "Type": "Integer",
+    "Complexity": 3,
+    "Source_IDX": "[0][0][1][0]",
+    "Gold_REF": "In that case, kw is considered its saturated hydraulic conductivity It can be seen that kw can decrease over 10 orders during the dehydration process"
+  },
+  {
+    "ID": "a8dd85f83c294726e160966aa0246776",
+    "Question": "What is the most efficient thermodynamic cycle for pyroelectric energy conversion?",
+    "Answer": "Olsen Cycle ",
+    "Type": "Text (Multi-word)",
+    "Complexity": 1,
+    "Source_IDX": "[0][1][0][0]",
+    "Gold_REF": null
+  },
+  {
+    "ID": "11c63b7ba82449f79ab75d476c74b6aa",
+    "Question": "Which conscientiousness faces the largest effect among chronic cannabis users?",
+    "Answer": "Self-control, r=0.34",
+    "Type": "Scientific Notation",
+    "Complexity": 1,
+    "Source_IDX": "[1][0][0][0]",
+    "Gold_REF": null
+  },
+  {
+    "ID": "70e313112258669f35c838602deaab0a",
+    "Question": "What is the effect size of Neighbourhood crime on psychosis in an individual?",
+    "Answer": "0.04",
+    "Type": "Float",
+    "Complexity": 2,
+    "Source_IDX": "[1][0][1][0]",
+    "Gold_REF": "neighbourhood crime-psychosis associations (r = 0.04…..."
+  },
+  {
+    "ID": "068c2494dbc3081f31e8ac8642b2dd38",
+    "Question": "Are young men more likely to engage in gambling than the elder group in Finland?",
+    "Answer": "Yes",
+    "Type": "Binary",
+    "Complexity": 3,
+    "Source_IDX": "[1][1][1][0]",
+    "Gold_REF": "In 2019, the prevalence of lower-risk gambling among men was of lowest among 60–74-years-olds (25.1%; 95% CI 21.8–28.5) (Fig. 1; Supplementary File 1). The prevalence of lower-risk gambling among men increased especially among 18–29-years-olds, being 15.9% (95% CI 12.4–19.3) in 2011 and 34.6% (95% CI 29.7–39.4) in 2019."
+  },
+  {
+    "ID": "ec7c8ecd0e6bc7716bdae1ddc0c5e768",
+    "Question": "What is the maximum range of carbon footprint of microbially produced milk protein?",
+    "Answer": "17.6 tons",
+    "Type": "Scientific Notation",
+    "Complexity": 2,
+    "Source_IDX": "[2][0][0][0]",
+    "Gold_REF": "The carbon footprint results varied between 5.5 and17.6 t CO2e/t protein"
+  },
+  {
+    "ID": "af6ded23a5623e9a388cd6a20f8d3246",
+    "Question": "Is the observed relationship between truth discernment and vaccination intentions correlational or causal?",
+    "Answer": "Correlational",
+    "Type": "Text (Single-word)",
+    "Complexity": 1,
+    "Source_IDX": "[2][0][0][1]",
+    "Gold_REF": "We also find a weaker—but still pronounced and fairly consistently signed—positive association between truth discernment and the extent to which participants believe that others will get vaccinated (that is, their perception of the descriptive norm regarding vaccination). These observations, although only correlational, give some reason to believe that the causal link between misinformation and vaccine hesitancy demonstrated in the United States and the United Kingdom10 may extend more broadly"
+  },
+  {
+    "ID": "3c3cde82b2956d1789944595f1e32a87",
+    "Question": "What technique confirmed the uniform dispersion of ZnO@gal in the chitosan matrix?",
+    "Answer": "Scanning Electron Microscopy (SEM)",
+    "Type": "Scientific Notation",
+    "Complexity": 2,
+    "Source_IDX": "[2][0][1][0]",
+    "Gold_REF": "The surface morphology study by SEM of the prepared ZnO@gal and chitosan films are shown in Figs. 5(A) and 5(B). In Fig. 5(A) at some areas the agglomeration of ZnO@gal can also be noticed. However in the films ZnO@gal nearly rod in shape and homogeneously distributed in the matrix where chitosan played a good binding agent otherwise, surface of pristine chitosan films seemed to be coarse. The surface of bionanocomposite films appears with good size of uniformity of the nanoparticles (Fig.5(B)) as well as good degree of dispersion of ZnO@ gal in the films"
+  },
+  {
+    "ID": "d0d71c7949f863092ebffd8df6f5e50c",
+    "Question": "Was Ch-ZnO@gal1 film not tested for for antibacterial activity?",
+    "Answer": "No",
+    "Type": "Binary",
+    "Complexity": 3,
+    "Source_IDX": "[2][0][1][0]",
+    "Gold_REF": "The films evaluated against both bacterial strains i.e. gram positive bacteria B. subtilis and gram negative bacteria E. coli"
+  },
+  {
+    "ID": "4544497b59182dd445c0c19de7048817",
+    "Question": "In the study of Chitosan based ZnO nanoparticles loaded gallic-acid films for active food packaging, are the gallic acid films electrically conductive?",
+    "Answer": "Not mentioned",
+    "Type": "N/A",
+    "Complexity": 3,
+    "Source_IDX": "[2][0][1][0]",
+    "Gold_REF": null
+  },
+  {
+    "ID": "ff019d60ca155798625a5d7403774eec",
+    "Question": "In the study of Chitosan based ZnO nanoparticles loaded gallic-acid films for active food packaging which chitosan ZnO film has the strongest antibacterial effects?",
+    "Answer": "Ch-ZnO@gal3",
+    "Type": "Scientific Notation",
+    "Complexity": 2,
+    "Source_IDX": "[2][0][1][0]",
+    "Gold_REF": "The results of antibacterial activity of the composite films also revealed that the antimicrobial activity is linearly related to the amount of ZnO@gal in the composite films. Hence Ch-ZnO@gal3 is the most efficient composite film against both B. subtilis and E. coli"
+  },
+  {
+    "ID": "98a3ad852245779eb11d98ae461d603e",
+    "Question": "Were hydrolyzable polyphenols absent in the pigments extracted from RA corn?",
+    "Answer": "No",
+    "Type": "Binary",
+    "Complexity": 2,
+    "Source_IDX": "[2][0][1][2]",
+    "Gold_REF": "In particular, the pigment obtained from RA by the hybrid technique (HM-UE) presented a higher content of condensed tannins (1.49 ± 0.04 mg Cat Eq/g sample) and hydrolyzable polyphenols (0.33 ± 0.05 mg GA Eq/g sample) compared to the rest of the pigments.\""
+  },
+  {
+    "ID": "136ac5598e92f68c88d777b92b6679c2",
+    "Question": "In the study on pigment extraction from red corn, which method was found to yield the highest extraction efficiency for pigments?",
+    "Answer": "Microwave-ultrasound hybrid extraction (HM-UE)",
+    "Type": "Scientific Notation",
+    "Complexity": 2,
+    "Source_IDX": "[2][0][1][2]",
+    "Gold_REF": "Results indicated that the hybrid-assisted extraction (HM-UE) yields higher yields (p < 0.05). Overall, the HM-UE method obtained on average yields of 0.60 %, which is up to 25 % more pigments compared to the individual technologies. MAE and UAE showed yields of 0.48 % for both."
+  },
+  {
+    "ID": "8368949123e4a4e8e2b6e4c55b1e518a",
+    "Question": "Was the same system used to determine color of pigment in both the 2022 and 2023 study on the microwave-ultrasound extraction of red corn pigments?",
+    "Answer": "Yes (CieLab)",
+    "Type": "Scientific Notation",
+    "Complexity": 4,
+    "Source_IDX": "[2][0][1][2]",
+    "Gold_REF": "Paper 1: Table 4 Color of red corn measured in the cielab system Paper 2: The extracts were placed in cylindrical plates of 300 μL (7 × 10 mm) where the color was determined using the CIELab system"
+  },
+  {
+    "ID": "5f202716eb0018ca3b76091c695657b7",
+    "Question": "What is the largest disturbance spot according to the findings of the paper on the bark beetle outbreak in Central Europe?",
+    "Answer": "C4",
+    "Type": "Text (Single-word)",
+    "Complexity": 1,
+    "Source_IDX": "[2][1][0][1]",
+    "Gold_REF": "Notably, the major hotspot C4 spanned 9,000 km"
+  },
+  {
+    "ID": "fb6a2426c02808a2a6dffacb02305bb4",
+    "Question": "According to the findings of the paper on the bark beetle outbreak in Central Europe, what percentage of the total forest area was lost in C4?",
+    "Answer": "38%",
+    "Type": "Percentage",
+    "Complexity": 2,
+    "Source_IDX": "[2][1][0][1]",
+    "Gold_REF": "In the main outbreak area C4 (Fig. 4b), the forest area affected represented 38% of the total forest and 49% of the initial spruce cover."
+  },
+  {
+    "ID": "8e87b43ff45315af67a1e85994a1631e",
+    "Question": "According to the findings of the paper on the bark beetle outbreak in Central Europe, what percentage of the spruce forest area was lost in C4?",
+    "Answer": "49%",
+    "Type": "Percentage",
+    "Complexity": 2,
+    "Source_IDX": "[2][1][0][1]",
+    "Gold_REF": "In the main outbreak area C4 (Fig. 4b), the forest area affected represented 38% of the total forest and 49% of the initial spruce cover."
+  },
+  {
+    "ID": "57eb238af101252088ece98aa2e3c622",
+    "Question": "According to the findings of the paper on the bark beetle outbreak in Central Europe, which type of forest area faced more loss in C4, total or spruce?",
+    "Answer": "Spruce",
+    "Type": "Text (Single-word)",
+    "Complexity": 3,
+    "Source_IDX": "[2][1][0][1]",
+    "Gold_REF": "In the main outbreak area C4 (Fig. 4b), the forest area affected represented 38% of the total forest and 49% of the initial spruce cover."
+  },
+  {
+    "ID": "506113489ec64c59597ea09a65d00cab",
+    "Question": "Do both R50 and R75 strategies result in increased high-suitability habitats and biodiversity benefits?",
+    "Answer": "Yes",
+    "Type": "Binary",
+    "Complexity": 3,
+    "Source_IDX": "[2][1][0][3]",
+    "Gold_REF": "Suitability values for the R75 and R50 strategies were significantly higher than the suitability values for the other strategies (p < 0.05), and the suitability value for the R50 strategy was (non-significantly) higher than the suit- ability value for the R75 strategy (p > 0.05)."
+  },
+  {
+    "ID": "c6c8fadadba23f94f56a8d37ba99192f",
+    "Question": "Which river basin has the largest concentration of highly suitable bird habitat in Taiwan?",
+    "Answer": "Zhuoshui",
+    "Type": "Text (Single-word)",
+    "Complexity": 1,
+    "Source_IDX": "[2][1][0][3]",
+    "Gold_REF": "Farmland habitats characterized by high suitability are concentrated in the western region of the Zhuoshui River basin, accounting for 2289 hectares"
+  },
+  {
+    "ID": "ecbc4a1df74e8a30c57e2381b16029b8",
+    "Question": "What is the land area of highly suitable farmland habitat in the Zhuoshui river basin?",
+    "Answer": " 2289 hectares",
+    "Type": "Text (Multi-word)",
+    "Complexity": 1,
+    "Source_IDX": "[2][1][0][3]",
+    "Gold_REF": "Farmland habitats characterized by high suitability are concentrated in the western region of the Zhuoshui River basin, accounting for 2289 hectares"
+  },
+  {
+    "ID": "a693f1023ea657e1e093b8c3cd437941",
+    "Question": "Are changes in farmland habitats under R75 expected to benefit biodiversity more than under R0?",
+    "Answer": "Yes",
+    "Type": "Binary",
+    "Complexity": 2,
+    "Source_IDX": "[2][1][0][3]",
+    "Gold_REF": "Inference of: significant increase in moderate and high-suitability habitats under R75 with the negative trends in suitability under R0"
+  },
+  {
+    "ID": "e27c34d44717898d3d31386efc2212c0",
+    "Question": "What type of law demonstrates the use of both evidential reasoning and blockchain-based accountability systems?",
+    "Answer": "Tort",
+    "Type": "Text (Single-word)",
+    "Complexity": 4,
+    "Source_IDX": "[3][0][0][1]",
+    "Gold_REF": "Paper 1: The framework is applied to a case study on tort liability, focusing on ambiguous evidence scenarios in workplace accidents Paper2 : A case study on vicarious liability arising from workplace accidents under tort law demonstrates the implementation of the blockchain-based auditing framework."
+  },
+  {
+    "ID": "ad6e29b6822c194956b7c6643b1cdb57",
+    "Question": "Using which validation technique can the tampering of off-chain data be detected?",
+    "Answer": "Merkle root",
+    "Type": "Text (Multi-word)",
+    "Complexity": 2,
+    "Source_IDX": "[3][0][0][1]",
+    "Gold_REF": "The key principle of the algorithm is to compare the locally recomputed Merkle roots of the files in off-chain storage facilities (IPFS and Cloud) with their corresponding Merkle root stored on the blockchain Any discrepancies between the newly computed Merkle root and its blockchain counterpart indicate potential data tampering with the off-chain data, indicating a breach of data integrity"
+  },
+  {
+    "ID": "ffac66577d6cdee63bd2d504c4cf9ef8",
+    "Question": "Can tampering of off-chain data be detected through Merkle root validation?",
+    "Answer": "Yes",
+    "Type": "Binary",
+    "Complexity": 2,
+    "Source_IDX": "[3][0][0][1]",
+    "Gold_REF": "The key principle of the algorithm is to compare the locally recomputed Merkle roots of the files in off-chain storage facilities (IPFS and Cloud) with their corresponding Merkle root stored on the blockchain Any discrepancies between the newly computed Merkle root and its blockchain counterpart indicate potential data tampering with the off-chain data, indicating a breach of data integrity"
+  },
+  {
+    "ID": "ef2b39836a281f3f33443f79b1085824",
+    "Question": "Besides Ethereum, which blockchain platform is utilized in the system for blockchain implementations?",
+    "Answer": "Hyperledger",
+    "Type": "Text (Single-word)",
+    "Complexity": 1,
+    "Source_IDX": "[3][0][0][1]",
+    "Gold_REF": "The blockchain-based auditing framework is evaluated on two blockchain platforms: Ethereum (a public platform) and Hyperledger Fabric (a private platform)"
+  },
+  {
+    "ID": "e589dd8ca17ef82c2fecccc95364bcce",
+    "Question": "Which dataset was used for training and testing the Lung-EffNet model?",
+    "Answer": "IQ-OTH/NCCD",
+    "Type": "Scientific Notation",
+    "Complexity": 1,
+    "Source_IDX": "[3][0][1][0]",
+    "Gold_REF": "The experiments are carried out on the 'Iraq-Oncology Teaching Hospital/National Center for Cancer Diseases (IQ-OTH/NCCD)' lung cancer dataset.\""
+  },
+  {
+    "ID": "31841a46e9df2d75887c9c064db79f8b",
+    "Question": "Which experimental split ratio yielded the best results in the study of Lung-EffNet model?",
+    "Answer": "80-20",
+    "Type": "Scientific Notation",
+    "Complexity": 1,
+    "Source_IDX": "[3][0][1][0]",
+    "Gold_REF": "Based on our experiments, we found that the model’s performance is comparatively better with the originally proposed split of 80:20 compared to the other splits."
+  },
+  {
+    "ID": "42d696eccbf0d3acf4ee195f2d22359f",
+    "Question": "In the study titled “Enhancing Intrusion Detection in IoT Systems,” what feature selection technique combines Harris Hawk Optimization and a mathematical operator to improve intrusion detection?",
+    "Answer": "HHO-EFDM",
+    "Type": "Scientific Notation",
+    "Complexity": 2,
+    "Source_IDX": "[3][1][0][0]",
+    "Gold_REF": "This paper employed the Harris Hawk Optimization-based elite fractional derivative mutation (HHO-EFDM) method for feature selection. Feature selection is efficiently performed by the HHO-EFDM algorithm, which combines the Harris Hawk Optimization (HHO) algorithm and the elite fractional derivative mutation (EFDM) operator."
+  },
+  {
+    "ID": "c81001c787e72de8ca31a5664f52ced0",
+    "Question": "What attack from the IoT-23 dataset were most effectively classified by the MM-WMVEDL model, based on the findings in “Enhancing Intrusion Detection in IoT Systems”?",
+    "Answer": "DoS/XSS",
+    "Type": "Scientific Notation",
+    "Complexity": 2,
+    "Source_IDX": "[3][1][0][0]",
+    "Gold_REF": "The proposed MM-WMVEDL scheme attained the highest accuracy of 98.12% on the IoT-23 dataset, outperforming all other state-of-the-art intrusion detection systems. The work also accomplished a high AUC-ROC of 0.9982, indicating its ability to discriminate between normal and attack traffic, including specific types like DoS and XSS."
+  },
+  {
+    "ID": "a6987337f98fe915b2fb730696d98a65",
+    "Question": "How many attack types were tested using the proposed Hybrid CNN-LSTM model in the paper “A Deep Learning-Based Novel Hybrid CNN-LSTM Architecture for Efficient Detection of Threats in the IoT Ecosystem”?",
+    "Answer": "14",
+    "Type": "Integer",
+    "Complexity": 1,
+    "Source_IDX": "[3][1][0][1]",
+    "Gold_REF": "The proposed model underwent rigorous testing and validation, encompassing an extensive range of attack types, surpassing a total of 14 distinct categories"
+  },
+  {
+    "ID": "9c85c05f66c614bb9288647ee4626ab5",
+    "Question": "According to the paper “A Deep Learning-Based Novel Hybrid CNN-LSTM Architecture for Efficient Detection of Threats in the IoT Ecosystem”, what was the accuracy achieved by the Hybrid CNN-LSTM model on the IoT-23 dataset?",
+    "Answer": "95%",
+    "Type": "Percentage",
+    "Complexity": 1,
+    "Source_IDX": "[3][1][0][1]",
+    "Gold_REF": "The outcomes of our research showcase remarkable accuracy, with the models achieving 95% accuracy on the IoT-23 dataset."
+  },
+  {
+    "ID": "3d6ef8a9e31c7a7f076d5385a758f63e",
+    "Question": "Which dataset achieved the highest precision and recall metrics for the Hybrid CNN-LSTM model, as mentioned in “A Deep Learning-Based Novel Hybrid CNN-LSTM Architecture for Efficient Detection of Threats in the IoT Ecosystem”?",
+    "Answer": "CICIDS2017",
+    "Type": "Scientific Notation",
+    "Complexity": 2,
+    "Source_IDX": "[3][1][0][1]",
+    "Gold_REF": null
+  },
+  {
+    "ID": "5d7b088612e3586cdae383fa5d15ed11",
+    "Question": "Is the accuracy of the Hybrid CNN-LSTM model on the IoT-23 dataset higher compare to the MM-WMVEDL model discussed in “Enhancing Intrusion Detection in IoT Systems”?",
+    "Answer": "No",
+    "Type": "Binary",
+    "Complexity": 4,
+    "Source_IDX": "[3][1][0][1]",
+    "Gold_REF": "The Hybrid CNN-LSTM model achieved a notable accuracy of 95% on the IoT-23 dataset The MM-WMVEDL framework delivered an outstanding accuracy of 98.12% on the IoT-23 dataset"
+  },
+  {
+    "ID": "c22a4389bd3b6465e17516ad0a884179",
+    "Question": "How does the number of attack types classified by the Hybrid CNN-LSTM model in “A Deep Learning-Based Novel Hybrid CNN-LSTM Architecture for Efficient Detection of Threats in the IoT Ecosystem” compare to those addressed by the MM-WMVEDL framework in “Enhancing Intrusion Detection in IoT Systems: A Hybrid Metaheuristics-Deep Learning Approach with Ensemble of Recurrent Neural Networks”?",
+    "Answer": "Equal",
+    "Type": "Text (Single-word)",
+    "Complexity": 4,
+    "Source_IDX": "[3][1][0][1]",
+    "Gold_REF": "The Hybrid CNN-LSTM model was tested on 14 distinct attack types, ensuring comprehensive evaluation across diverse IoT threat scenarios The proposed MM-WMVEDL model demonstrated its capacity by accurately classifying 14 different types of attacks, showcasing its robustness"
+  },
+  {
+    "ID": "4bc480dd74d872d7a1eab674d3a4daff",
+    "Question": "What is the predicted mean increase in the number of species of conservation concern in grazed SNGs compared to ley fields on former SNGs found in the research on semi-natural grassland habitats in northern Europe?",
+    "Answer": "574%",
+    "Type": "Percentage",
+    "Complexity": 1,
+    "Source_IDX": "[4][0][0][1]",
+    "Gold_REF": "The predicted mean number of species of conservation concern on grazed SNGs was >15 times (574%) higher than the one for ley fields on former SNGs"
+  },
+  {
+    "ID": "33edeb71430968f7aeea12dedbd7b85f",
+    "Question": "What is the β-diversity turnover component (βJTU) for plant community dissimilarity among habitat types in the research on semi-natural grassland habitats in northern Europe?",
+    "Answer": "0.929",
+    "Type": "Float",
+    "Complexity": 1,
+    "Source_IDX": "[4][0][0][1]",
+    "Gold_REF": "Overall, the differences in community composition among habitats were mainly explained by species turnover (βJTU = 0.929), and not nestedness (βJNE = 0.03)"
+  },
+  {
+    "ID": "6ecf21451bacc56565b90f57151dd001",
+    "Question": "Does the research on semi-natural grassland habitats in northern Europe show that ley fields and afforested grasslands differ significantly from grazed and abandoned SNGs in terms of species richness, conservation species, and community composition?",
+    "Answer": "Yes",
+    "Type": "Binary",
+    "Complexity": 3,
+    "Source_IDX": "[4][0][0][1]",
+    "Gold_REF": "Our results showed that SNGs that had been afforested or converted to ley fields held lower local plant species richness and diversity than grazed or abandoned SNGs. Grazed SNGs were significantly more species-rich than all other habitats, while abandoned SNGs had a higher species richness than older spruce plantations and improved grasslands"
+  },
+  {
+    "ID": "05d57837429b116dbeaffd25bfe03b04",
+    "Question": "Does the research on northern European semi-natural grasslands identify specific habitat factors (e.g., SNG cover, cropland) that influence plant species richness, and are their impacts significant for conservation strategies?",
+    "Answer": "Yes",
+    "Type": "Binary",
+    "Complexity": 2,
+    "Source_IDX": "[4][0][0][1]",
+    "Gold_REF": "The species richness and Shannon diversity were higher in sites surrounded by a high cover of SNGs, while a higher cover of cropland around a site was associated with lower species richness and diversity. The landscape effect was small compared to the local effect of habitat type, but interactions between landscape context and habitat type were not significant"
+  },
+  {
+    "ID": "4f0d46e7747c3ef71471c38f0f6939d7",
+    "Question": "Is the contribution of wildland fire PM2.5 to total PM2.5 consistent between the studies \"Pregnancy exposure to PM2.5 from wildland fire smoke and preterm birth in California\" and \"Associations between wildfire smoke exposure during pregnancy and risk of preterm birth in California\"?",
+    "Answer": "No",
+    "Type": "Binary",
+    "Complexity": 4,
+    "Source_IDX": "[4][1][2][0]",
+    "Gold_REF": "Wildland fire PM2.5 contributed 17.7% of total PM2.5 during 2018 Wildfire-specific PM2.5 was estimated to contribute approximately 50% of total PM2.5 on days with wildfire smoke influence"
+  },
+  {
+    "ID": "c64915359fcc9ee6e34bd98b41715bea",
+    "Question": "What was the OR for preterm birth associated with a 10 µg/m³ increase in California wildland fire PM2.5 exposure during gestational week 23?",
+    "Answer": "1.034",
+    "Type": "Float",
+    "Complexity": 1,
+    "Source_IDX": "[4][1][2][1]",
+    "Gold_REF": "For example, a 10 µg/m³ increase in wildland fire PM2.5 in week 23 of pregnancy was associated with a higher risk of preterm birth (OR = 1.034; 95% CI: 1.019, 1.049)."
+  },
+  {
+    "ID": "abec4011944e2b96818cde62950de5b0",
+    "Question": "Is the odds ratio for preterm birth lower for a 10 µg/m³ increase in wildland fire PM2.5 during gestational week 23 compared to week 35?",
+    "Answer": "No",
+    "Type": "Binary",
+    "Complexity": 3,
+    "Source_IDX": "[4][1][2][1]",
+    "Gold_REF": "For example, a 10 µg/m³ increase in wildland fire PM2.5 in week 23 of pregnancy was associated with a higher risk of preterm birth (OR = 1.034; 95% CI: 1.019, 1.049) In weeks 35–37... the odds ratios were lower, with no specific critical week identified"
+  },
+  {
+    "ID": "1c6d3ddd781e6f0f9447f3c4b97d8efb",
+    "Question": "What was the average fractional error (%) for weekly PM2.5 concentrations after bias correction, as reported in the study on pregnancy exposure to wildland fire smoke and preterm birth in California?",
+    "Answer": "31%",
+    "Type": "Percentage",
+    "Complexity": 1,
+    "Source_IDX": "[4][1][2][1]",
+    "Gold_REF": "The bias, error, and coefficient of determination (R²) for the weekly PM2.5 exposure concentrations determined by leave-one-out cross-validation are listed (Table 1)... The mean fractional error was reduced from 45% to 31% after bias correction"
+  },
+  {
+    "ID": "af91d6ab3c9f0c8b0f3b00e123462dd6",
+    "Question": "Between Croatia and Portugal, sediment samples from which country shows higher pesticide concentrations in the findings of the pesticide residue in European sediment study?",
+    "Answer": "Portugal",
+    "Type": "Text (Single-word)",
+    "Complexity": 2,
+    "Source_IDX": "[4][2][0][0]",
+    "Gold_REF": "The lowest total pesticide concentrations were found in Slovenia, Switzerland, Croatia, and Denmark, ranging between 80 and 120 μg/kg, whereas Portuguese, French, and Dutch samples showed higher concentrations, ranging between 200 and 800 μg/kg"
+  },
+  {
+    "ID": "6bbb500471d924ed51e9df63005c25d0",
+    "Question": "Is Slovenia identified as the country with the lowest pesticide residue levels, including a sample that was pesticide-free?",
+    "Answer": "Yes",
+    "Type": "Binary",
+    "Complexity": 1,
+    "Source_IDX": "[4][2][0][0]",
+    "Gold_REF": "The lowest number of compounds was found in Slovenia (min: 0, max: 6, average and median: 2). Sample 15, from Slovenia, was the only ‘pesticide-free’ sample."
+  },
+  {
+    "ID": "f255f5bb02bbb9551515d531121bcc1d",
+    "Question": "Which country has the highest total pesticide concentrations according to the pesticide residue in European sediment study?",
+    "Answer": "Czech Republic",
+    "Type": "Text (Multi-word)",
+    "Complexity": 1,
+    "Source_IDX": "[4][2][0][0]",
+    "Gold_REF": "The Czech Republic exhibited the highest total pesticide concentrations (600–1200 μg/kg) and the most complex mixtures, including a wide range of pesticide residues across all sediment samples."
+  },
+  {
+    "ID": "f2aea9f85c790af34bd828f4b2d9593e",
+    "Question": "Which pesticide is identified as the most frequently detected in \"Assessing pesticide residues occurrence and risks in water systems: A Pan-European and Argentina perspective\" and \"Pesticide residues in European sediments\"?",
+    "Answer": "Glyphosate",
+    "Type": "Text (Single-word)",
+    "Complexity": 4,
+    "Source_IDX": "[4][2][0][1]",
+    "Gold_REF": "Glyphosate (approved herbicide) and its main metabolite AMPA were the two most frequently detected compounds Glyphosate (98 % Df), its degradation product AMPA (80 %), and terbuthylazine (70 %) were found in most water samples, highlighting their ubiquitous presence and the dominance of herbicides among detected pesticides in aquatic environments"
+  },
+  {
+    "ID": "6907c702ccb6af470d2ab1800d10be11",
+    "Question": "Which pesticide type is dominant in the Pan-European and Argentina pesticide study but not in the European sediment pesticide residue study?",
+    "Answer": "Herbicides",
+    "Type": "Text (Single-word)",
+    "Complexity": 4,
+    "Source_IDX": "[4][2][0][1]",
+    "Gold_REF": "Glyphosate was the contaminant with the highest median concentration (114 ng/L), followed by herbicides like 2,4-D and MCPA, while fungicides showed much lower median concentrations (e.g., 31.4 ng/L for azoles) The sediments showed dominance of persistent residues, including fungicides such as azoxystrobin and boscalid, highlighting a stronger presence of fungicides in sediment samples compared to water systems"
+  },
+  {
+    "ID": "5ad57567f9de9ca2b488ebda3848c348",
+    "Question": "What is the percentage of variance in tourists’ intention to return, as reflected in their willingness to consider subsequent stays after experiencing augmented and virtual reality in hotels, explained by perceived usefulness, ease of use, and innovativeness?",
+    "Answer": "73.30%",
+    "Type": "Percentage",
+    "Complexity": 3,
+    "Source_IDX": "[5][0][0][0]",
+    "Gold_REF": "The conceptual model and hypotheses explicitly connect perceived usefulness, ease of use, and innovativeness to satisfaction as key predictors​asurement Model Data"
+  },
+  {
+    "ID": "b23418edb0a04b892188f44f24d073f9",
+    "Question": "Name one of the factors extended in the conceptual model based on the Technology Acceptance Model, as applied in the study of AR/VR technologies in hotels.",
+    "Answer": "Perceived Innovativeness",
+    "Type": "Text (Multi-word)",
+    "Complexity": 1,
+    "Source_IDX": "[5][0][0][0]",
+    "Gold_REF": "Perceived Innovativeness and Perceived Risk are the two extended factors added to the Technology Acceptance Model (TAM) to account for the unique aspects of AR and VR in the hotel industry​​."
+  },
+  {
+    "ID": "28b620b5092a77d43537e88d1ee1bd73",
+    "Question": "How many main themes emerged from the systematic review of VR in tourism and hospitality?",
+    "Answer": "5",
+    "Type": "Integer",
+    "Complexity": 2,
+    "Source_IDX": "[5][0][0][1]",
+    "Gold_REF": "The five main themes that emerged from this literature review are related to researchers’ attempts to answer basic questions regarding VR in T&H: ‘What and what for?’ (What is VR, and what are its applications in T&H); ‘Why would tourist managers make it available?’ (Expected effects); ‘Why would tourists adopt it?’ (Consumers’ motives to adopt); ‘Who would enjoy it the most?’ (Individual antecedents of satisfaction and intention to reuse/recommend); and ‘How can the VR experience be enhanced?’ (Determinants of the effectiveness of the experience)​."
+  },
+  {
+    "ID": "b09cc959023a3fe66f6a4525185b5a21",
+    "Question": "According to the systematic review of VR in tourism and hospitality, what percentage of the 43 empirical studies analyzed were conducted in controlled laboratory settings?",
+    "Answer": "51.20%",
+    "Type": "Percentage",
+    "Complexity": 2,
+    "Source_IDX": "[5][0][0][1]",
+    "Gold_REF": "Of the total 54 papers analyzed, 43 are empirical studies. Concerning the methodological aspects of these studies, it is relevant to highlight that many were conducted in a laboratory setting (22).\""
+  },
+  {
+    "ID": "40a73abcb976dd1cd51dc6979e185335",
+    "Question": "What percentage of companies in a study by ABI Research are considering VR adoption in B2B marketing?",
+    "Answer": "85%",
+    "Type": "Percentage",
+    "Complexity": 1,
+    "Source_IDX": "[5][0][1][0]",
+    "Gold_REF": "In fact, in a recent assessment commissioned by the global network ABI Research to examine the VR technology penetration in a group of US-based companies, results revealed that 85% of firms were considering adoption of virtual reality."
+  },
+  {
+    "ID": "f4126092a7916ec80df79aed27482b85",
+    "Question": "How many complexity factors (task, social, knowledge) are identified as moderators in the VR framework for B2B relationships?",
+    "Answer": "3",
+    "Type": "Integer",
+    "Complexity": 1,
+    "Source_IDX": "[5][0][1][0]",
+    "Gold_REF": "The three complexity factors considered include knowledge complexity, social complexity, and task complexity, and were chosen based on their relevance to B2B exchange relationships and potential impact of VR"
+  },
+  {
+    "ID": "5be01bc13d1fac12c929556b35d06201",
+    "Question": "According to the study on VR in B2B contexts, what is the reduced training time for employees compared to the traditional 2-3 days?",
+    "Answer": "44 minutes",
+    "Type": "Text (Multi-word)",
+    "Complexity": 1,
+    "Source_IDX": "[5][0][1][0]",
+    "Gold_REF": "As an additional advantage, training time using this technology can be reduced to 45 minutes from the two to three days that used to be common in the past"
+  },
+  {
+    "ID": "54b71732d3d1da21d3261aa8f4d371af",
+    "Question": "Does AR-based remote support improves first-time fix rates in maintenance scenarios?",
+    "Answer": "Yes",
+    "Type": "Binary",
+    "Complexity": 3,
+    "Source_IDX": "[5][0][1][1]",
+    "Gold_REF": "And, if you really look at the facts, yes, you have a better first-time fix rate. That means you can find the error faster and also fix it."
+  },
+  {
+    "ID": "bc60c8f360e278f4c8ba83dbb19814d1",
+    "Question": "Do the findings of the paper on AR/VR in B2B customer journeys and the paper on XR technologies both agree that virtual and augmented reality enhance customer engagement across the B2B customer journey?",
+    "Answer": "Yes",
+    "Type": "Binary",
+    "Complexity": 4,
+    "Source_IDX": "[5][0][1][1]",
+    "Gold_REF": "The first paper emphasizes that AR/VR creates immersive experiences and enables deeper customer engagement during purchase and post-purchase phases in the B2B customer journey The second paper highlights how XR technologies (AR/VR) improve engagement, communication, and interaction in phases such as pre-bid engagement and implementation, thus covering a broader spectrum of the journey"
+  },
+  {
+    "ID": "6255a96ca7580f9c89a0c53271863cd9",
+    "Question": "What percentage of millennials and Gen Z follow Virtual Influencers’ social media accounts for interest and amusement?",
+    "Answer": "38%",
+    "Type": "Percentage",
+    "Complexity": 1,
+    "Source_IDX": "[5][1][1][1]",
+    "Gold_REF": "Around 38% of the respondents, primarily millennials and Gen Z, reported following virtual influencers' accounts for their interest and amusement."
+  },
+  {
+    "ID": "0d6aea19657d820d655e5f572c2a244d",
+    "Question": "What percentage of respondents in the study followed virtual influencers (VIs) without realizing the accounts were not real?",
+    "Answer": "42%",
+    "Type": "Percentage",
+    "Complexity": 1,
+    "Source_IDX": "[5][1][1][1]",
+    "Gold_REF": "What percentage of respondents in the study followed virtual influencers (VIs) without realizing the accounts were not real?"
+  },
+  {
+    "ID": "25540c60b446d31ab14f514bc5296319",
+    "Question": "Among the younger and older age group, whose willingnes to follow VIs is more strongly influenced by rational appeals?",
+    "Answer": "older ",
+    "Type": "Text (Single-word)",
+    "Complexity": 3,
+    "Source_IDX": "[5][1][1][1]",
+    "Gold_REF": "Emotional appeals, especially entertaining and relational content, are shown to strongly influence willingness to follow VIs. These appeals are particularly impactful on younger respondents who prefer engaging and relatable content​. Rational appeals, such as informative content, also positively influence willingness to follow VIs but are more appreciated by older audiences due to their preference for factual and detailed information​​."
+  },
+  {
+    "ID": "cc7eb6c0e36751134b166915f9df2cc9",
+    "Question": "What percentage of consumers perceive virtual influencers as less trustworthy than human influencers?",
+    "Answer": "57%",
+    "Type": "Percentage",
+    "Complexity": 1,
+    "Source_IDX": "[5][1][1][2]",
+    "Gold_REF": "57% of consumers perceive virtual influencers as less trustworthy than their human counterparts"
+  },
+  {
+    "ID": "d20b1b810ce0eaaa9e58ea8039bd6337",
+    "Question": "Who has a higher engagement rate on average between virtual influencers and human influencers, as reported in the paper titled 'Engagement Effectiveness of Virtual Influencers'?",
+    "Answer": "Virtual",
+    "Type": "Text (Single-word)",
+    "Complexity": 1,
+    "Source_IDX": "[5][1][1][2]",
+    "Gold_REF": "Virtual influencers have an average engagement rate of 2.84% compared to 1.72% for human influencers."
+  },
+  {
+    "ID": "44dde6ce1477a0755b8e9ae9577193d0",
+    "Question": "What is the average engagement rate of human influencers, according to the study on influencer effectiveness?",
+    "Answer": "1.72%",
+    "Type": "Percentage",
+    "Complexity": 1,
+    "Source_IDX": "[5][1][1][2]",
+    "Gold_REF": "Virtual influencers have an average engagement rate of 2.84% compared to 1.72% for human influencers."
+  },
+  {
+    "ID": "bb816f5127cb6b117bcfcbf988cde5e1",
+    "Question": "Do the papers 'How and when do virtual influencers positively affect consumer responses to endorsed brands?' and 'The power of human-like virtual-influencer-generated content: Impact on consumers’ willingness to follow and purchase intentions' agree that virtual influencers are less trustworthy than human influencers, and does this negatively impact their effectiveness?\"",
+    "Answer": "No",
+    "Type": "Binary",
+    "Complexity": 4,
+    "Source_IDX": "[5][1][1][2]",
+    "Gold_REF": "Virtual influencers are perceived as less trustworthy than human influencers due to their lack of human-like warmth and similarity While virtual influencers are perceived as less trustworthy, their effectiveness can be mitigated through their perceived uniqueness, which can compensate for trust issues in certain contexts"
+  },
+  {
+    "ID": "af151e0c08ef5e8fb64703f896a2e745",
+    "Question": "According to the paper \"Outcome of Adolescents and Young Adult Acute Myeloid Leukemia Patients Compared with Middle-Aged Patients: A Single Centre Retrospective Experience\", what was the 5-year non-relapse mortality (NRM) rate for middle-aged patients?",
+    "Answer": "24%",
+    "Type": "Percentage",
+    "Complexity": 1,
+    "Source_IDX": "[6][0][0][0]",
+    "Gold_REF": "Regarding non-treatment related mortality (NRM), the 5-year rate was 20% in AYA and 24% in the middle-aged group (p=0.43)"
+  },
+  {
+    "ID": "2b9990521d8c3cbc64597c339013b581",
+    "Question": "Did the 5-year overall survival (OS) rate differ significantly between AYA and middle-aged patients?",
+    "Answer": "No",
+    "Type": "Binary",
+    "Complexity": 2,
+    "Source_IDX": "[6][0][0][0]",
+    "Gold_REF": "Comparing AYA and middle-aged patients, 5-year OS rates were similar at 54.6% vs. 56.5% (p=0.91)"
+  },
+  {
+    "ID": "6d1fa5360051a5128bb7d58ed1e38cfa",
+    "Question": "According to the findings on acute myeloid leukemia outcomes in adolescents and young adults (AYA) compared with middle-aged patients, was the 5-year overall survival (OS) rate for AYA patients who received HSCT higher than for those who did not receive HSCT?",
+    "Answer": "Yes",
+    "Type": "Binary",
+    "Complexity": 2,
+    "Source_IDX": "[6][0][0][0]",
+    "Gold_REF": "For patients who received HSCT, 5-year OS in AYA group was 64 % and in the middle-aged group was 60 % (p=0.52) (Fig. 1b). In contrast, for non-transplanted patients, the 5-year OS was 42 % in the AYA and 53 % in the middle-aged groups (p=0.44"
+  },
+  {
+    "ID": "18bfd50aa30670f82e499979ddadd4ea",
+    "Question": "Considering relapse and survival rates, did the AYA group’s higher physiological reserve allow them to achieve similar OS despite higher relapse rates?",
+    "Answer": "Yes",
+    "Type": "Binary",
+    "Complexity": 3,
+    "Source_IDX": "[6][0][0][0]",
+    "Gold_REF": "Increased CIR with similar OS in the AYA group could be explained by more physiological reserve among AYA patients who would have subsequently received 2nd chemotherapy for relapsed disease. The 5-year OS was 42% in the AYA and 53% in the middle-aged groups (p=0.44)"
+  },
+  {
+    "ID": "c021c5fb10717db5d67869b918aecb20",
+    "Question": "In the paper \"Outcome of Adolescents and Young Adults with Acute Lymphoblastic Leukemia in a Single Center in Brazil,\" did the majority of patients belong to the adolescents and young adults (AYA) group and receive the Berlin-Frankfurt-Münster (BFM) protocol?",
+    "Answer": "Yes",
+    "Type": "Binary",
+    "Complexity": 2,
+    "Source_IDX": "[6][0][0][1]",
+    "Gold_REF": "71.2% of the patients in the AYA group were treated with the BFM protocol The majority of them were aged 15 to 39 years (AYA, 57.7%)"
+  },
+  {
+    "ID": "5730f0079ded77bce3e880d7e25d8f04",
+    "Question": "According to findings from a single-center study on acute lymphoblastic leukemia (ALL) outcomes in Brazil, did AYA patients have a higher median overall survival (OS) compared to patients over 39 years old?",
+    "Answer": "Yes",
+    "Type": "Binary",
+    "Complexity": 1,
+    "Source_IDX": "[6][0][0][1]",
+    "Gold_REF": "The OS analysis revealed that patients aged over 39 years had poorer outcomes, compared to AYA patients (p = 0.004, 6.2 months vs. 13.3 months)"
+  },
+  {
+    "ID": "14b120beacd4724d9d438529633f33c8",
+    "Question": "In the papers \"Outcome of Adolescents and Young Adult Acute Myeloid Leukemia Patients Compared with Middle-Aged Patients: A Single Centre Retrospective Experience\" and \"Outcome of Adolescents and Young Adults with Acute Lymphoblastic Leukemia in a Single Center in Brazil,\" was there a higher frequency of B-cell lineage leukemia in AYA patients?",
+    "Answer": "Yes",
+    "Type": "Binary",
+    "Complexity": 4,
+    "Source_IDX": "[6][0][0][1]",
+    "Gold_REF": "B-ALL was the most frequent subtype (81.6%) The B-cell lineage was the most frequent subtype (81.6%) in AYA patients"
+  },
+  {
+    "ID": "a676fb84120b3f3396f5b915df1d0db7",
+    "Question": "In the paper \"Association of Vaping with Respiratory Symptoms in U.S. Young Adults: Nicotine, Cannabis, and Dual Vaping,\" did frequent nicotine-only vaping show a significantly higher risk of respiratory symptoms compared to non-frequent vaping?",
+    "Answer": "No",
+    "Type": "Binary",
+    "Complexity": 1,
+    "Source_IDX": "[6][0][1][0]",
+    "Gold_REF": "Nicotine-only frequent vaping showed no difference in any of the respiratory symptom risks compared to non-frequent vaping"
+  },
+  {
+    "ID": "0ebd2e0c2891ae5d42a678539278159f",
+    "Question": "According to a study on vaping and respiratory symptoms in U.S. young adults, what percentage of dual vapers reported having a dry cough at night not associated with a cold?",
+    "Answer": "18.80%",
+    "Type": "Percentage",
+    "Complexity": 1,
+    "Source_IDX": "[6][0][1][0]",
+    "Gold_REF": "Dry cough at night not associated with a cold was reported in 18.8% of dual vapers compared to 8.5% of those who did not vape."
+  },
+  {
+    "ID": "34310b6723cc88e76ec825573ce0905e",
+    "Question": "In the study examining the respiratory effects of vaping in U.S. young adults, what is the adjusted prevalence ratio (aPR) for wheezing or whistling in the chest for frequent cannabis-only vapers?",
+    "Answer": "2.36",
+    "Type": "Float",
+    "Complexity": 1,
+    "Source_IDX": "[6][0][1][0]",
+    "Gold_REF": "Cannabis-only frequent vaping was associated with higher risks of wheezing or whistling in the chest, with aPRs of 2.36."
+  },
+  {
+    "ID": "9773444ec3e0345a2a898cf5845da6f4",
+    "Question": "What percentage of participants in the study examining the respiratory effects of vaping in U.S. young adults reported vaping to improve their athletic performance?",
+    "Answer": null,
+    "Type": "N/A",
+    "Complexity": 3,
+    "Source_IDX": "[6][0][1][0]",
+    "Gold_REF": "Negative example"
+  },
+  {
+    "ID": "ab8f77ac6d8950bebc767dc85e91b6e9",
+    "Question": "What percentage of dual vapers in the study examining the respiratory effects of vaping in U.S. young adults reported using vaping to manage asthma symptoms?",
+    "Answer": null,
+    "Type": "N/A",
+    "Complexity": 3,
+    "Source_IDX": "[6][0][1][0]",
+    "Gold_REF": "Negative example"
+  },
+  {
+    "ID": "9bd8436252c477199f4db5e3fea9341b",
+    "Question": "In what percentage of cases did AlphaFold2 perform significantly better than NMR?",
+    "Answer": "30%",
+    "Type": "Percentage",
+    "Complexity": 1,
+    "Source_IDX": "[6][1][0][0]",
+    "Gold_REF": "In 30% of cases, AF2 is significantly better, mainly in hydrogen-bond networks"
+  },
+  {
+    "ID": "b16095adfd79167b0836c019c0d9c716",
+    "Question": "Does AlphaFold2 perform worse on beta-sheet proteins compared to alpha-helical proteins?",
+    "Answer": "No",
+    "Type": "Binary",
+    "Complexity": 1,
+    "Source_IDX": "[6][1][0][0]",
+    "Gold_REF": "We find that the difference in accuracy is particularly apparent for β-sheet proteins (mean difference of 45), whereas the accuracy of α-helical proteins is closer (mean difference of 17)"
+  },
+  {
+    "ID": "4b181c7571aeffd84bae2844d6d249b5",
+    "Question": "In what percentage of cases was NMR more accurate than AlphaFold2?",
+    "Answer": "2%",
+    "Type": "Percentage",
+    "Complexity": 1,
+    "Source_IDX": "[6][1][0][0]",
+    "Gold_REF": "In 30% of cases, AF2 is significantly better, mainly in hydrogen-bond networks; in 2% of cases, NMR is better, mainly in dynamic regions"
+  },
+  {
+    "ID": "3c95a1532b6e3fb0ea876dd26890d6fd",
+    "Question": "In January 2024, how many Russian residents were reported to be living in Barentsburg?",
+    "Answer": "354",
+    "Type": "Integer",
+    "Complexity": 1,
+    "Source_IDX": "[7][0][0][2]",
+    "Gold_REF": "Ny-Ålesund has a population [of] 44 scientists, whereas the population in Barentsburg has been steadily declining and is 354 as of 2024"
+  },
+  {
+    "ID": "48a51a7d98163dfa749f288b3ee585a1",
+    "Question": "Are 42% of the properties in Hebron’s Old City abandoned due to restrictions and ruination?",
+    "Answer": "Yes",
+    "Type": "Binary",
+    "Complexity": 1,
+    "Source_IDX": "[7][0][1][0]",
+    "Gold_REF": "The influence of the slow ruination-by-prevention on the urban fabric of H2 is massive. 1400 families have left their homes, and abandoned properties constitute approximately 42% of the real estate in the Old City"
+  },
+  {
+    "ID": "5b39beed0c0a2b4e625408c2dcd65ec5",
+    "Question": "According to the study on gunshot residues collected 30 minutes after discharge, how many OGSR compounds were detected in more than 70% of the discharge specimens?",
+    "Answer": "3",
+    "Type": "Integer",
+    "Complexity": 2,
+    "Source_IDX": "[8][0][0][2]",
+    "Gold_REF": "The most frequently detected organic compound on the shooters was AK-II (found in 69 out of the 80 collected specimens), while N-nDPA and 2-nDPA were detected in more than 70% of the stubs"
+  },
+  {
+    "ID": "5e603d4036c9e67cc56fd3d7eee7e3e4",
+    "Question": "According to the study on gunshot residues collected 30 minutes after discharge, which body part between the hands and the nostrils had more concentration of GSR?",
+    "Answer": "Hands",
+    "Type": "Text (Single-word)",
+    "Complexity": 3,
+    "Source_IDX": "[8][0][0][2]",
+    "Gold_REF": "The shooter’s right hand generally exhibited the highest amounts of IGSR, while similarly high concentrations of OGSR were detected on both hands The quantities recovered from the nostrils were generally too low to be interesting"
+  },
+  {
+    "ID": "0866d0dc8e857c8abfb192f37a8a0d17",
+    "Question": "Which OGSR compound was most frequently detected in gunshot residue collected 30 minutes after discharge?",
+    "Answer": "AK-II",
+    "Type": "Scientific Notation",
+    "Complexity": 1,
+    "Source_IDX": "[8][0][0][2]",
+    "Gold_REF": "The most frequently detected organic compound on the shooters was AK-II"
+  },
+  {
+    "ID": "d6c1f09577acfcf1d9d82dd4ee00d31a",
+    "Question": "How many microplastics per year would a person in Bangladesh ingest if they consumed 5 g of sea salt daily?",
+    "Answer": "860.8 MPs/year",
+    "Type": "Scientific Notation",
+    "Complexity": 1,
+    "Source_IDX": "[8][1][0][0]",
+    "Gold_REF": "If a person consumes 5 g sea salt/day annually, they will consume 860.8 MPs/year in Bangladesh, which is alarming"
+  },
+  {
+    "ID": "80b937b440639979e2d73d70d74901ec",
+    "Question": "According to the study on microplastic contamination in sea salts from Bangladesh, what risk category did the pollution load index (PLI) values indicate for all processed sea salt samples?",
+    "Answer": "category II",
+    "Type": "Text (Multi-word)",
+    "Complexity": 1,
+    "Source_IDX": "[8][1][0][0]",
+    "Gold_REF": "The PLI values of all processed sea salt samples were 10–20, indicating the risk category of II (supplementary Fig. S3)"
+  },
+  {
+    "ID": "438906dad5d889aec6299cfd1de8d2d1",
+    "Question": "According to the study on microplastic contamination in sea salts from Bangladesh, did the sea salt samples contain gold nanoparticles as a contaminant?",
+    "Answer": null,
+    "Type": "N/A",
+    "Complexity": 3,
+    "Source_IDX": "[8][1][0][0]",
+    "Gold_REF": "Negative example"
+  },
+  {
+    "ID": "b1efab78d2faffa08970b436299d2f16",
+    "Question": "Based on the study of microplastic contamination in sea salts from Bangladesh, mention one polymer identified in the sea salt samples that contributed to the high polymer risk index (PRI) due to its hazard score?",
+    "Answer": "Polyethylene(PE) / Polyamide (PA)​ ",
+    "Type": "Scientific Notation",
+    "Complexity": 2,
+    "Source_IDX": "[8][1][0][0]",
+    "Gold_REF": "Four types of polymers were mainly identified from the analyzed samples: PP, PE, PET, and PA For instance, PE (hazard score 11) and PA (hazard score 50) explained the high chemical risk of MPs in sea salts."
+  },
+  {
+    "ID": "b23751b639f01cebb5e3fcfac0dd23a9",
+    "Question": "Is it true that CoNi layered double hydroxides with the morphology of nanoflowers and nanoflakes prepared in solution with pH 8.5 encloses more area in the CV curve than in with pH of 7.5 since higher scan rates extend faradic reactions to both inner and outer surface of the electrode?",
+    "Answer": "No",
+    "Type": "Binary",
+    "Complexity": 2,
+    "Source_IDX": "[8][2][0][0]",
+    "Gold_REF": "[ In this study, the CoNi layered double hydroxides (LDHs) with the morphology of nanoflowers and nanoflakes were prepared in solutions with pH values of 7.5 (CoNi LDH-7.5) and 8.5 (CoNi LDH-8.5) via a simple sonochemical approach.\", \"The CoNi LDH-7.5 delivered a specific capacity of 740.8C/g at a current density of 1 A/g, surpassing CoNi LDH-8.5 with 668.1C/g. \", \"At the same scan rate, the peak current (Ip) and enclosed area in the CV curve of CoNi LDH-7.5 were higher than those of CoNi LDH-8.5, verifying that the CoNi LDH-7.5 electrode could deliver higher capacity.\", \" When the scan rate is low, the ions in the electrolyte can reach the outer and inner surfaces of the electrode to participate in Faradic reactions, while with the scan accelerating to a high level, the energy storage process can only take place on the outer surface of the electrode. Hence, the boost of scan rate may result in a decrease in the specific capacity.\"]"
+  },
+  {
+    "ID": "02cd9be227051902c2f95424122d7103",
+    "Question": "For CoNi LDHs prepared through a facile solvothermal approach in a solvent with 2 mL of deionized water and 38 mL of ethylene glycol what kind of structure gets composed - nanoflower-like or nanosheet-like?",
+    "Answer": "nanoflower-like",
+    "Type": "Scientific Notation",
+    "Complexity": 1,
+    "Source_IDX": "[8][2][0][1]",
+    "Gold_REF": "[\"As the SEM images shown in Fig. 2a-c, the product prepared in the solvent of 2 mL of DI water and 38 mL of EG was dominated with many flower-like nanostructures (CoNi LDH NFs), and such NFs possessed an average diameter of about 5 μm.\"]"
+  },
+  {
+    "ID": "133fd766f316d4dfe134f65ef8abbb45",
+    "Question": "Among Sao Paulo and Rio de Janeiro who had higher number of mpox-confirmed cases as found in the study titled “The Clinical and Epidemiological Characteristics of Mpox Cases in Brazil”?",
+    "Answer": "Sao Paulo",
+    "Type": "Text (Multi-word)",
+    "Complexity": 1,
+    "Source_IDX": "[9][0][1][0]",
+    "Gold_REF": "The state with the highest number of confirmed cases was São Paulo, followed by Rio de Janeiro"
+  },
+  {
+    "ID": "ab2c4ced4c026c1430f8e5d86ba635a6",
+    "Question": "According to the study titled “The Clinical and Epidemiological Characteristics of Mpox Cases in Brazil,” what percentage of confirmed mpox cases were people living with HIV (PLWH)?",
+    "Answer": "54.40%",
+    "Type": "Percentage",
+    "Complexity": 1,
+    "Source_IDX": "[9][0][1][0]",
+    "Gold_REF": "Of the 251 confirmed cases, 137 (54.4%) were PLWH (people living with HIV), of whom 128 (93.4%) were on ART (antiretroviral therapy)"
+  }
 ]
