@@ -22,7 +22,7 @@ We use a 6-experiment design evaluated with [RAGAS](https://docs.ragas.io/) metr
 |---|---|---|
 | 1 | **Closed Book** | Local LLM parametric knowledge alone — no retrieval |
 | 2 | **Baseline RAG** | Fixed-size chunking + basic vector search |
-| 3 | **Phase 1 — Optimized Retrieval** | Semantic chunking + hybrid BM25/vector search + FlashRank reranking |
+| 3 | **Phase 1 — Optimized Retrieval** | Semantic chunking + hybrid BM25/vector search + FlashRank reranking + metadata enrichment |
 | 4 | **Phase 2 — Agentic RAG** | Critique-driven multi-hop agent over the optimized retrieval pipeline |
 | 5 | **Llama + Gold References** | Perfect retrieval (gold contexts injected) — isolates Llama's comprehension ceiling |
 | 6 | **GPT-4o RAG (Ceiling)** | GPT-4o running the identical Phase 2 pipeline — LLM is the only variable |
@@ -33,7 +33,7 @@ We use a 6-experiment design evaluated with [RAGAS](https://docs.ragas.io/) metr
 1. Closed Book          ──┐
                           ├─ RAG value-add
 2. Baseline             ──┘──┐
-                              ├─ Better retrieval + semantic chunking
+                              ├─ Better retrieval + semantic chunking + metadata enrichment
 3. Phase 1              ─────┘──┐
                                  ├─ Agentic multi-hop reasoning
 4. Phase 2              ────────┘──┬─── Retrieval quality gap (Llama only)
