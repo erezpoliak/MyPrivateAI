@@ -54,8 +54,8 @@ FINAL_SYNTHESIS_PROMPT = (
     "---------------------\n"
     "{context}\n"
     "---------------------\n"
-    "Using ONLY the provided context, answer the following question. "
-    "Be comprehensive and factual.\n\n"
+    "Using ONLY the provided context, give the shortest complete answer possible. "
+    "Be factual.\n\n"
     "Question: {question}\n"
     "Answer: "
 )
@@ -95,7 +95,7 @@ CORRECTION_PROMPT = (
     "Previous answer: {answer}\n"
     "Critique: {critique}\n\n"
     "Write a corrected answer that addresses every deficiency raised in the "
-    "critique. Be concise and stay faithful to the context.\n\n"
+    "critique. Give the shortest complete answer possible and stay faithful to the context.\n\n"
     "Corrected answer: "
 )
 
