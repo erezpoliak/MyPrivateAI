@@ -1,13 +1,13 @@
-"""LlamaIndex Workflow: hop-specific agentic RAG.
+"""LlamaIndex Workflow: 3-hop agentic RAG.
 
-Three fixed hops, each using a different retrieval strategy:
-  Hop 1 — direct retrieval (original question) → synthesize → critique
-  Hop 2 — HyDE (hypothetical answer as query)  → synthesize → critique
-  Hop 3 — query rewrite (independent rephrase)  → synthesize → stop (no critique)
+Hop 1 — direct retrieval (original question) → synthesize → critique (PASS/FAIL)
+Hop 2 — decompose question → multi-retrieve (one query per sub-question + original)
+         → synthesize → critique (PASS/FAIL + explanation text)
+Hop 3 — correct: re-synthesize from all accumulated context + critique text
+         (no new retrieval — reasoning correction only)
 
-Critique is PASS/FAIL only. A PASS at any hop stops early. A FAIL advances
-to the next hop. Hop 3 always returns its answer regardless of quality.
-Context is accumulated across all hops before each synthesis.
+A PASS at hop 1 or 2 stops early. Hop 3 always returns its answer.
+Context accumulates across hops 1 and 2.
 
 Public API
 ----------
@@ -35,12 +35,13 @@ from common.data_loader import QAPair
 from common.utils import get_logger
 from experiments.spec import GenerationResult, Retriever
 from .prompts import (
-    CRITIQUE_PROMPT,
+    CORRECT_PROMPT,
+    CRITIQUE_DETAILED_PROMPT,
+    CRITIQUE_SIMPLE_PROMPT,
+    DECOMPOSE_PROMPT,
     FINAL_SYNTHESIS_PROMPT,
-    HYDE_PROMPT,
-    REWRITE_PROMPT,
 )
-from .tools import RetrievalResult, format_context, merge_results, retrieve_context
+from .tools import RetrievalResult, format_context, merge_results, retrieve_context, retrieve_multi
 
 logger = get_logger(__name__)
 
@@ -86,7 +87,7 @@ class AgentResult:
 # ---------------------------------------------------------------------------
 
 class RetrieveEvent(Event):
-    """Triggers the next hop's retrieval strategy."""
+    """Triggers the next hop's retrieval."""
     pass
 
 
@@ -96,10 +97,25 @@ class SynthesizeEvent(Event):
 
 
 class CritiqueEvent(Event):
-    """Carries the synthesised answer for quality evaluation."""
+    """Carries synthesised answer and context for quality evaluation."""
 
     answer: str
     all_context: str
+
+
+class CorrectEvent(Event):
+    """Triggers the final correction step with critique feedback."""
+
+    critique_text: str
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def _parse_sub_questions(text: str) -> list[str]:
+    """Extract one sub-question per non-empty line."""
+    return [line.strip() for line in text.splitlines() if line.strip()]
 
 
 # ---------------------------------------------------------------------------
@@ -107,11 +123,7 @@ class CritiqueEvent(Event):
 # ---------------------------------------------------------------------------
 
 class AgentWorkflow(Workflow):
-    """Hop-specific agentic RAG with three fixed retrieval strategies.
-
-    Hop 1: direct retrieval → synthesize → critique
-    Hop 2: HyDE            → synthesize → critique
-    Hop 3: query rewrite   → synthesize → stop (final, no critique)
+    """3-hop agentic RAG: direct → decompose/multi-retrieve → correct.
 
     Each instance is single-use (one question).
     """
@@ -144,46 +156,43 @@ class AgentWorkflow(Workflow):
 
     @step
     async def retrieve(self, ctx: Context, ev: RetrieveEvent) -> SynthesizeEvent:
-        """Select retrieval strategy for the current hop and fetch context."""
+        """Hop 1: direct retrieval. Hop 2: decompose then multi-retrieve."""
         self._hop += 1
         hop = self._hop
-        max_hops = self._config.max_agent_hops
 
         if hop == 1:
-            query = self._question
-            logger.info("Hop 1/%d: direct retrieval", max_hops)
-
-        elif hop == 2:
-            hyde_prompt = HYDE_PROMPT.format(question=self._question)
-            query = (await self._llm.acomplete(hyde_prompt)).text.strip()
-            self.trajectory.log("hyde", hyde_prompt, query)
-            logger.info("Hop 2/%d HyDE query: %.120s", max_hops, query)
+            logger.info("Hop 1: direct retrieval")
+            result = retrieve_context(self._question, self._retriever)
+            self.trajectory.log(
+                "retrieve_direct",
+                self._question,
+                f"{len(result.texts)} chunks"
+                + (f" (top score={result.scores[0]:.4f})" if result.scores else ""),
+            )
 
         else:
-            rewrite_prompt = REWRITE_PROMPT.format(question=self._question)
-            query = (await self._llm.acomplete(rewrite_prompt)).text.strip()
-            self.trajectory.log("rewrite", rewrite_prompt, query)
-            logger.info("Hop 3/%d rewritten query: %.120s", max_hops, query)
+            decompose_prompt = DECOMPOSE_PROMPT.format(question=self._question)
+            raw = (await self._llm.acomplete(decompose_prompt)).text.strip()
+            sub_questions = _parse_sub_questions(raw)
+            self.trajectory.log("decompose", decompose_prompt, "\n".join(sub_questions))
+            logger.info("Hop 2: %d sub-questions generated", len(sub_questions))
 
-        result = retrieve_context(query, self._retriever)
+            queries = [self._question] + sub_questions
+            result = retrieve_multi(queries, self._retriever)
+            self.trajectory.log(
+                "retrieve_multi",
+                "; ".join(queries),
+                f"{len(result.texts)} unique chunks",
+            )
+
         self._retrieval_results.append(result)
-        self.trajectory.log(
-            "retrieve",
-            query,
-            f"{len(result.texts)} chunks"
-            + (f" (top score={result.scores[0]:.4f})" if result.scores else ""),
-        )
-
         return SynthesizeEvent()
 
     @step
     async def synthesize(
         self, ctx: Context, ev: SynthesizeEvent,
-    ) -> CritiqueEvent | StopEvent:
-        """Synthesize an answer from all accumulated context.
-
-        On hop 3 (final hop) returns StopEvent directly, skipping critique.
-        """
+    ) -> CritiqueEvent:
+        """Synthesize answer from all accumulated context."""
         merged = merge_results(self._retrieval_results)
         all_context = format_context(merged)
         self._context_texts = merged.texts
@@ -193,37 +202,65 @@ class AgentWorkflow(Workflow):
             context=all_context,
         )
         answer = (await self._llm.acomplete(final_prompt)).text.strip()
-        self.trajectory.log("synthesize_final", final_prompt, answer)
+        self.trajectory.log("synthesize", final_prompt, answer)
         logger.info("Synthesis complete (%.120s)", answer)
-
-        if self._hop >= self._config.max_agent_hops:
-            logger.info("Hop 3 final answer — skipping critique")
-            return StopEvent(result=answer)
 
         return CritiqueEvent(answer=answer, all_context=all_context)
 
     @step
     async def critique(
         self, ctx: Context, ev: CritiqueEvent,
-    ) -> StopEvent | RetrieveEvent:
-        """PASS/FAIL evaluation. PASS stops early; FAIL advances to next hop."""
-        critique_prompt = CRITIQUE_PROMPT.format(
-            question=self._question,
-            answer=ev.answer,
-            context=ev.all_context,
-        )
-        verdict = (await self._llm.acomplete(critique_prompt)).text.strip()
-        self.trajectory.log("critique", critique_prompt, verdict)
+    ) -> StopEvent | RetrieveEvent | CorrectEvent:
+        """Hop 1: simple PASS/FAIL. Hop 2: detailed PASS/FAIL + critique text."""
+        if self._hop == 1:
+            prompt = CRITIQUE_SIMPLE_PROMPT.format(
+                question=self._question,
+                answer=ev.answer,
+                context=ev.all_context,
+            )
+        else:
+            prompt = CRITIQUE_DETAILED_PROMPT.format(
+                question=self._question,
+                answer=ev.answer,
+                context=ev.all_context,
+            )
+
+        verdict = (await self._llm.acomplete(prompt)).text.strip()
+        self.trajectory.log("critique", prompt, verdict)
 
         passed = verdict.upper().startswith("PASS")
-        logger.info("Critique verdict: %s", "PASS" if passed else "FAIL")
+        logger.info("Hop %d critique: %s", self._hop, "PASS" if passed else "FAIL")
 
         if passed:
             self.trajectory.success = True
             return StopEvent(result=ev.answer)
 
-        logger.info("Critique failed, advancing to hop %d", self._hop + 1)
-        return RetrieveEvent()
+        if self._hop == 1:
+            logger.info("Hop 1 failed — advancing to decompose/multi-retrieve")
+            return RetrieveEvent()
+
+        # Hop 2 failed — extract critique text for correction step
+        critique_text = verdict[4:].strip() if verdict.upper().startswith("FAIL") else verdict
+        logger.info("Hop 2 failed — advancing to correction with critique: %.120s", critique_text)
+        return CorrectEvent(critique_text=critique_text)
+
+    @step
+    async def correct(self, ctx: Context, ev: CorrectEvent) -> StopEvent:
+        """Re-synthesize using all accumulated context + critique feedback. No new retrieval."""
+        merged = merge_results(self._retrieval_results)
+        all_context = format_context(merged)
+        self._context_texts = merged.texts
+
+        correct_prompt = CORRECT_PROMPT.format(
+            question=self._question,
+            critique=ev.critique_text,
+            context=all_context,
+        )
+        answer = (await self._llm.acomplete(correct_prompt)).text.strip()
+        self.trajectory.log("correct", correct_prompt, answer)
+        logger.info("Correction complete (%.120s)", answer)
+
+        return StopEvent(result=answer)
 
 
 # ---------------------------------------------------------------------------
@@ -276,7 +313,7 @@ def run_agent_workflow(
     llm: Any,
     config: Config,
 ) -> AgentResult:
-    """Run the hop-specific agent workflow synchronously."""
+    """Run the 3-hop agentic workflow synchronously."""
     try:
         loop = asyncio.get_event_loop()
         if loop.is_closed():

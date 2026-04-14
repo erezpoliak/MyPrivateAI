@@ -48,20 +48,21 @@ We use a 6-experiment design evaluated with [RAGAS](https://docs.ragas.io/) metr
 ### Phase 2 — Agent Flow
 
 ```
-Hop 1:  retrieve(original Q) ──> synthesize ──> critique
+Hop 1:  retrieve(original Q) ──> synthesize ──> critique(PASS/FAIL)
           PASS ──> done
           FAIL ──>
 
-Hop 2:  HyDE query ──> retrieve ──> synthesize ──> critique
+Hop 2:  decompose(question) ──> retrieve(each sub-Q + original Q) ──> synthesize ──> critique(PASS/FAIL + text)
           PASS ──> done
           FAIL ──>
 
-Hop 3:  rewrite query ──> retrieve ──> synthesize ──> done
+Hop 3:  correct(all accumulated context + critique text) ──> done
+        [no new retrieval — reasoning correction only]
 ```
 
-- **Hop 1** uses the original question directly — giving it a fair shot first
-- **Hop 2** generates a hypothetical document snippet (HyDE) to improve retrieval coverage
-- **Hop 3** rephrases the question with different terminology; no critique (final answer)
+- **Hop 1** retrieves using the original question directly — giving it a fair shot first
+- **Hop 2** decomposes the question into sub-questions (model decides how many), retrieves for each, then synthesizes from the combined context — targets cross-paper retrieval failures
+- **Hop 3** re-synthesizes using the critique text from hop 2 as explicit correction guidance — targets reasoning failures where the right context was retrieved but the model reasoned incorrectly
 - **Synthesize** always answers the original question from all accumulated context
 
 ---

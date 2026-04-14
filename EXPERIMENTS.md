@@ -7,7 +7,7 @@
 | 1 | **Closed Book** | N/A | None | None | No | Qwen3.5 9B | GPT-4.1-mini | Reference floor (no targets) |
 | 2 | **Baseline** | Fixed 512 | Vector k=5 | None | No | Qwen3.5 9B | GPT-4.1-mini | AC > Closed Book |
 | 3 | **Phase 1** | Semantic | Hybrid BM25+Vector (RRF) | FlashRank top-3 | Yes | Qwen3.5 9B | GPT-4.1-mini | CR > 0.92, Faith > 0.98 |
-| 4 | **Phase 2** | Semantic | Hop-specific agent using Hybrid BM25+Vector (RRF) | FlashRank top-3 | Yes | Qwen3.5 9B | GPT-4.1-mini | AC > 85% ceiling, Traj > 0.80, AC(cplx 3-4) ≥ Qwen+Gold_REF |
+| 4 | **Phase 2** | Semantic | Critique-driven agent: hop 1 direct, hop 2 decompose+multi-retrieve, hop 3 correct | FlashRank top-3 | Yes | Qwen3.5 9B | GPT-4.1-mini | AC > 85% ceiling, Traj > 0.80, AC(cplx 3-4) ≥ Qwen+Gold_REF |
 | 5 | **Qwen+Gold_REF** | N/A | Gold_REF injected | None | No | Qwen3.5 9B | GPT-4.1-mini | Model comprehension ceiling |
 | 6 | **GPT-4o RAG (Ceiling)** | Semantic | Hop-specific agent using Hybrid BM25+Vector (RRF) | FlashRank top-3 | Yes | GPT-4o | GPT-4.1-mini | Upper bound anchor — identical pipeline to Phase 2, only LLM differs |
 

@@ -108,6 +108,12 @@ def merge_results(results: list[RetrievalResult]) -> RetrievalResult:
     )
 
 
+def retrieve_multi(queries: list[str], retriever: Retriever) -> RetrievalResult:
+    """Run retrieval for each query and return deduplicated merged results."""
+    results = [retrieve_context(q, retriever) for q in queries]
+    return merge_results(results)
+
+
 def format_context(result: RetrievalResult) -> str:
     """Join retrieved texts into a context block for prompt injection."""
     if not result.texts:

@@ -90,7 +90,6 @@ class Config:
     ragas_judge_model: str = "gpt-4.1-mini"
 
     # -- Agent (Phase 2) -----------------------------------------------------
-    max_agent_hops: int = 3
 
     def __post_init__(self) -> None:
         # Honour .env override for NLTK_DATA
