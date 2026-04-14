@@ -51,7 +51,7 @@
     "Type": "Float",
     "Complexity": 2,
     "Source_IDX": "[1][0][1][0]",
-    "Gold_REF": "neighbourhood crime-psychosis associations (r = 0.04…..."
+    "Gold_REF": "neighbourhood crime-psychosis associations (r = 0.04\u2026..."
   },
   {
     "ID": "068c2494dbc3081f31e8ac8642b2dd38",
@@ -60,7 +60,7 @@
     "Type": "Binary",
     "Complexity": 3,
     "Source_IDX": "[1][1][1][0]",
-    "Gold_REF": "In 2019, the prevalence of lower-risk gambling among men was of lowest among 60–74-years-olds (25.1%; 95% CI 21.8–28.5) (Fig. 1; Supplementary File 1). The prevalence of lower-risk gambling among men increased especially among 18–29-years-olds, being 15.9% (95% CI 12.4–19.3) in 2011 and 34.6% (95% CI 29.7–39.4) in 2019."
+    "Gold_REF": "In 2019, the prevalence of lower-risk gambling among men was of lowest among 60\u201374-years-olds (25.1%; 95% CI 21.8\u201328.5) (Fig. 1; Supplementary File 1). The prevalence of lower-risk gambling among men increased especially among 18\u201329-years-olds, being 15.9% (95% CI 12.4\u201319.3) in 2011 and 34.6% (95% CI 29.7\u201339.4) in 2019."
   },
   {
     "ID": "ec7c8ecd0e6bc7716bdae1ddc0c5e768",
@@ -78,7 +78,7 @@
     "Type": "Text (Single-word)",
     "Complexity": 1,
     "Source_IDX": "[2][0][0][1]",
-    "Gold_REF": "We also find a weaker—but still pronounced and fairly consistently signed—positive association between truth discernment and the extent to which participants believe that others will get vaccinated (that is, their perception of the descriptive norm regarding vaccination). These observations, although only correlational, give some reason to believe that the causal link between misinformation and vaccine hesitancy demonstrated in the United States and the United Kingdom10 may extend more broadly"
+    "Gold_REF": "We also find a weaker\u2014but still pronounced and fairly consistently signed\u2014positive association between truth discernment and the extent to which participants believe that others will get vaccinated (that is, their perception of the descriptive norm regarding vaccination). These observations, although only correlational, give some reason to believe that the causal link between misinformation and vaccine hesitancy demonstrated in the United States and the United Kingdom10 may extend more broadly"
   },
   {
     "ID": "3c3cde82b2956d1789944595f1e32a87",
@@ -123,7 +123,7 @@
     "Type": "Binary",
     "Complexity": 2,
     "Source_IDX": "[2][0][1][2]",
-    "Gold_REF": "In particular, the pigment obtained from RA by the hybrid technique (HM-UE) presented a higher content of condensed tannins (1.49 ± 0.04 mg Cat Eq/g sample) and hydrolyzable polyphenols (0.33 ± 0.05 mg GA Eq/g sample) compared to the rest of the pigments.\""
+    "Gold_REF": "In particular, the pigment obtained from RA by the hybrid technique (HM-UE) presented a higher content of condensed tannins (1.49 \u00b1 0.04 mg Cat Eq/g sample) and hydrolyzable polyphenols (0.33 \u00b1 0.05 mg GA Eq/g sample) compared to the rest of the pigments.\""
   },
   {
     "ID": "136ac5598e92f68c88d777b92b6679c2",
@@ -141,7 +141,7 @@
     "Type": "Scientific Notation",
     "Complexity": 4,
     "Source_IDX": "[2][0][1][2]",
-    "Gold_REF": "Paper 1: Table 4 Color of red corn measured in the cielab system Paper 2: The extracts were placed in cylindrical plates of 300 μL (7 × 10 mm) where the color was determined using the CIELab system"
+    "Gold_REF": "Paper 1: Table 4 Color of red corn measured in the cielab system Paper 2: The extracts were placed in cylindrical plates of 300 \u03bcL (7 \u00d7 10 mm) where the color was determined using the CIELab system"
   },
   {
     "ID": "5f202716eb0018ca3b76091c695657b7",
@@ -267,11 +267,11 @@
     "Type": "Scientific Notation",
     "Complexity": 1,
     "Source_IDX": "[3][0][1][0]",
-    "Gold_REF": "Based on our experiments, we found that the model’s performance is comparatively better with the originally proposed split of 80:20 compared to the other splits."
+    "Gold_REF": "Based on our experiments, we found that the model\u2019s performance is comparatively better with the originally proposed split of 80:20 compared to the other splits."
   },
   {
     "ID": "42d696eccbf0d3acf4ee195f2d22359f",
-    "Question": "In the study titled “Enhancing Intrusion Detection in IoT Systems,” what feature selection technique combines Harris Hawk Optimization and a mathematical operator to improve intrusion detection?",
+    "Question": "In the study titled \u201cEnhancing Intrusion Detection in IoT Systems,\u201d what feature selection technique combines Harris Hawk Optimization and a mathematical operator to improve intrusion detection?",
     "Answer": "HHO-EFDM",
     "Type": "Scientific Notation",
     "Complexity": 2,
@@ -280,7 +280,7 @@
   },
   {
     "ID": "c81001c787e72de8ca31a5664f52ced0",
-    "Question": "What attack from the IoT-23 dataset were most effectively classified by the MM-WMVEDL model, based on the findings in “Enhancing Intrusion Detection in IoT Systems”?",
+    "Question": "What attack from the IoT-23 dataset were most effectively classified by the MM-WMVEDL model, based on the findings in \u201cEnhancing Intrusion Detection in IoT Systems\u201d?",
     "Answer": "DoS/XSS",
     "Type": "Scientific Notation",
     "Complexity": 2,
@@ -289,7 +289,7 @@
   },
   {
     "ID": "a6987337f98fe915b2fb730696d98a65",
-    "Question": "How many attack types were tested using the proposed Hybrid CNN-LSTM model in the paper “A Deep Learning-Based Novel Hybrid CNN-LSTM Architecture for Efficient Detection of Threats in the IoT Ecosystem”?",
+    "Question": "How many attack types were tested using the proposed Hybrid CNN-LSTM model in the paper \u201cA Deep Learning-Based Novel Hybrid CNN-LSTM Architecture for Efficient Detection of Threats in the IoT Ecosystem\u201d?",
     "Answer": "14",
     "Type": "Integer",
     "Complexity": 1,
@@ -298,7 +298,7 @@
   },
   {
     "ID": "9c85c05f66c614bb9288647ee4626ab5",
-    "Question": "According to the paper “A Deep Learning-Based Novel Hybrid CNN-LSTM Architecture for Efficient Detection of Threats in the IoT Ecosystem”, what was the accuracy achieved by the Hybrid CNN-LSTM model on the IoT-23 dataset?",
+    "Question": "According to the paper \u201cA Deep Learning-Based Novel Hybrid CNN-LSTM Architecture for Efficient Detection of Threats in the IoT Ecosystem\u201d, what was the accuracy achieved by the Hybrid CNN-LSTM model on the IoT-23 dataset?",
     "Answer": "95%",
     "Type": "Percentage",
     "Complexity": 1,
@@ -307,7 +307,7 @@
   },
   {
     "ID": "3d6ef8a9e31c7a7f076d5385a758f63e",
-    "Question": "Which dataset achieved the highest precision and recall metrics for the Hybrid CNN-LSTM model, as mentioned in “A Deep Learning-Based Novel Hybrid CNN-LSTM Architecture for Efficient Detection of Threats in the IoT Ecosystem”?",
+    "Question": "Which dataset achieved the highest precision and recall metrics for the Hybrid CNN-LSTM model, as mentioned in \u201cA Deep Learning-Based Novel Hybrid CNN-LSTM Architecture for Efficient Detection of Threats in the IoT Ecosystem\u201d?",
     "Answer": "CICIDS2017",
     "Type": "Scientific Notation",
     "Complexity": 2,
@@ -316,7 +316,7 @@
   },
   {
     "ID": "5d7b088612e3586cdae383fa5d15ed11",
-    "Question": "Is the accuracy of the Hybrid CNN-LSTM model on the IoT-23 dataset higher compare to the MM-WMVEDL model discussed in “Enhancing Intrusion Detection in IoT Systems”?",
+    "Question": "Is the accuracy of the Hybrid CNN-LSTM model on the IoT-23 dataset higher compare to the MM-WMVEDL model discussed in \u201cEnhancing Intrusion Detection in IoT Systems\u201d?",
     "Answer": "No",
     "Type": "Binary",
     "Complexity": 4,
@@ -325,7 +325,7 @@
   },
   {
     "ID": "c22a4389bd3b6465e17516ad0a884179",
-    "Question": "How does the number of attack types classified by the Hybrid CNN-LSTM model in “A Deep Learning-Based Novel Hybrid CNN-LSTM Architecture for Efficient Detection of Threats in the IoT Ecosystem” compare to those addressed by the MM-WMVEDL framework in “Enhancing Intrusion Detection in IoT Systems: A Hybrid Metaheuristics-Deep Learning Approach with Ensemble of Recurrent Neural Networks”?",
+    "Question": "How does the number of attack types classified by the Hybrid CNN-LSTM model in \u201cA Deep Learning-Based Novel Hybrid CNN-LSTM Architecture for Efficient Detection of Threats in the IoT Ecosystem\u201d compare to those addressed by the MM-WMVEDL framework in \u201cEnhancing Intrusion Detection in IoT Systems: A Hybrid Metaheuristics-Deep Learning Approach with Ensemble of Recurrent Neural Networks\u201d?",
     "Answer": "Equal",
     "Type": "Text (Single-word)",
     "Complexity": 4,
@@ -343,12 +343,12 @@
   },
   {
     "ID": "33edeb71430968f7aeea12dedbd7b85f",
-    "Question": "What is the β-diversity turnover component (βJTU) for plant community dissimilarity among habitat types in the research on semi-natural grassland habitats in northern Europe?",
+    "Question": "What is the \u03b2-diversity turnover component (\u03b2JTU) for plant community dissimilarity among habitat types in the research on semi-natural grassland habitats in northern Europe?",
     "Answer": "0.929",
     "Type": "Float",
     "Complexity": 1,
     "Source_IDX": "[4][0][0][1]",
-    "Gold_REF": "Overall, the differences in community composition among habitats were mainly explained by species turnover (βJTU = 0.929), and not nestedness (βJNE = 0.03)"
+    "Gold_REF": "Overall, the differences in community composition among habitats were mainly explained by species turnover (\u03b2JTU = 0.929), and not nestedness (\u03b2JNE = 0.03)"
   },
   {
     "ID": "6ecf21451bacc56565b90f57151dd001",
@@ -379,21 +379,21 @@
   },
   {
     "ID": "c64915359fcc9ee6e34bd98b41715bea",
-    "Question": "What was the OR for preterm birth associated with a 10 µg/m³ increase in California wildland fire PM2.5 exposure during gestational week 23?",
+    "Question": "What was the OR for preterm birth associated with a 10 \u00b5g/m\u00b3 increase in California wildland fire PM2.5 exposure during gestational week 23?",
     "Answer": "1.034",
     "Type": "Float",
     "Complexity": 1,
     "Source_IDX": "[4][1][2][1]",
-    "Gold_REF": "For example, a 10 µg/m³ increase in wildland fire PM2.5 in week 23 of pregnancy was associated with a higher risk of preterm birth (OR = 1.034; 95% CI: 1.019, 1.049)."
+    "Gold_REF": "For example, a 10 \u00b5g/m\u00b3 increase in wildland fire PM2.5 in week 23 of pregnancy was associated with a higher risk of preterm birth (OR = 1.034; 95% CI: 1.019, 1.049)."
   },
   {
     "ID": "abec4011944e2b96818cde62950de5b0",
-    "Question": "Is the odds ratio for preterm birth lower for a 10 µg/m³ increase in wildland fire PM2.5 during gestational week 23 compared to week 35?",
+    "Question": "Is the odds ratio for preterm birth lower for a 10 \u00b5g/m\u00b3 increase in wildland fire PM2.5 during gestational week 23 compared to week 35?",
     "Answer": "No",
     "Type": "Binary",
     "Complexity": 3,
     "Source_IDX": "[4][1][2][1]",
-    "Gold_REF": "For example, a 10 µg/m³ increase in wildland fire PM2.5 in week 23 of pregnancy was associated with a higher risk of preterm birth (OR = 1.034; 95% CI: 1.019, 1.049) In weeks 35–37... the odds ratios were lower, with no specific critical week identified"
+    "Gold_REF": "For example, a 10 \u00b5g/m\u00b3 increase in wildland fire PM2.5 in week 23 of pregnancy was associated with a higher risk of preterm birth (OR = 1.034; 95% CI: 1.019, 1.049) In weeks 35\u201337... the odds ratios were lower, with no specific critical week identified"
   },
   {
     "ID": "1c6d3ddd781e6f0f9447f3c4b97d8efb",
@@ -402,7 +402,7 @@
     "Type": "Percentage",
     "Complexity": 1,
     "Source_IDX": "[4][1][2][1]",
-    "Gold_REF": "The bias, error, and coefficient of determination (R²) for the weekly PM2.5 exposure concentrations determined by leave-one-out cross-validation are listed (Table 1)... The mean fractional error was reduced from 45% to 31% after bias correction"
+    "Gold_REF": "The bias, error, and coefficient of determination (R\u00b2) for the weekly PM2.5 exposure concentrations determined by leave-one-out cross-validation are listed (Table 1)... The mean fractional error was reduced from 45% to 31% after bias correction"
   },
   {
     "ID": "af91d6ab3c9f0c8b0f3b00e123462dd6",
@@ -411,7 +411,7 @@
     "Type": "Text (Single-word)",
     "Complexity": 2,
     "Source_IDX": "[4][2][0][0]",
-    "Gold_REF": "The lowest total pesticide concentrations were found in Slovenia, Switzerland, Croatia, and Denmark, ranging between 80 and 120 μg/kg, whereas Portuguese, French, and Dutch samples showed higher concentrations, ranging between 200 and 800 μg/kg"
+    "Gold_REF": "The lowest total pesticide concentrations were found in Slovenia, Switzerland, Croatia, and Denmark, ranging between 80 and 120 \u03bcg/kg, whereas Portuguese, French, and Dutch samples showed higher concentrations, ranging between 200 and 800 \u03bcg/kg"
   },
   {
     "ID": "6bbb500471d924ed51e9df63005c25d0",
@@ -420,7 +420,7 @@
     "Type": "Binary",
     "Complexity": 1,
     "Source_IDX": "[4][2][0][0]",
-    "Gold_REF": "The lowest number of compounds was found in Slovenia (min: 0, max: 6, average and median: 2). Sample 15, from Slovenia, was the only ‘pesticide-free’ sample."
+    "Gold_REF": "The lowest number of compounds was found in Slovenia (min: 0, max: 6, average and median: 2). Sample 15, from Slovenia, was the only \u2018pesticide-free\u2019 sample."
   },
   {
     "ID": "f255f5bb02bbb9551515d531121bcc1d",
@@ -429,7 +429,7 @@
     "Type": "Text (Multi-word)",
     "Complexity": 1,
     "Source_IDX": "[4][2][0][0]",
-    "Gold_REF": "The Czech Republic exhibited the highest total pesticide concentrations (600–1200 μg/kg) and the most complex mixtures, including a wide range of pesticide residues across all sediment samples."
+    "Gold_REF": "The Czech Republic exhibited the highest total pesticide concentrations (600\u20131200 \u03bcg/kg) and the most complex mixtures, including a wide range of pesticide residues across all sediment samples."
   },
   {
     "ID": "f2aea9f85c790af34bd828f4b2d9593e",
@@ -450,22 +450,13 @@
     "Gold_REF": "Glyphosate was the contaminant with the highest median concentration (114 ng/L), followed by herbicides like 2,4-D and MCPA, while fungicides showed much lower median concentrations (e.g., 31.4 ng/L for azoles) The sediments showed dominance of persistent residues, including fungicides such as azoxystrobin and boscalid, highlighting a stronger presence of fungicides in sediment samples compared to water systems"
   },
   {
-    "ID": "5ad57567f9de9ca2b488ebda3848c348",
-    "Question": "What is the percentage of variance in tourists’ intention to return, as reflected in their willingness to consider subsequent stays after experiencing augmented and virtual reality in hotels, explained by perceived usefulness, ease of use, and innovativeness?",
-    "Answer": "73.30%",
-    "Type": "Percentage",
-    "Complexity": 3,
-    "Source_IDX": "[5][0][0][0]",
-    "Gold_REF": "The conceptual model and hypotheses explicitly connect perceived usefulness, ease of use, and innovativeness to satisfaction as key predictors​asurement Model Data"
-  },
-  {
     "ID": "b23418edb0a04b892188f44f24d073f9",
     "Question": "Name one of the factors extended in the conceptual model based on the Technology Acceptance Model, as applied in the study of AR/VR technologies in hotels.",
     "Answer": "Perceived Innovativeness",
     "Type": "Text (Multi-word)",
     "Complexity": 1,
     "Source_IDX": "[5][0][0][0]",
-    "Gold_REF": "Perceived Innovativeness and Perceived Risk are the two extended factors added to the Technology Acceptance Model (TAM) to account for the unique aspects of AR and VR in the hotel industry​​."
+    "Gold_REF": "Perceived Innovativeness and Perceived Risk are the two extended factors added to the Technology Acceptance Model (TAM) to account for the unique aspects of AR and VR in the hotel industry\u200b\u200b."
   },
   {
     "ID": "28b620b5092a77d43537e88d1ee1bd73",
@@ -474,7 +465,7 @@
     "Type": "Integer",
     "Complexity": 2,
     "Source_IDX": "[5][0][0][1]",
-    "Gold_REF": "The five main themes that emerged from this literature review are related to researchers’ attempts to answer basic questions regarding VR in T&H: ‘What and what for?’ (What is VR, and what are its applications in T&H); ‘Why would tourist managers make it available?’ (Expected effects); ‘Why would tourists adopt it?’ (Consumers’ motives to adopt); ‘Who would enjoy it the most?’ (Individual antecedents of satisfaction and intention to reuse/recommend); and ‘How can the VR experience be enhanced?’ (Determinants of the effectiveness of the experience)​."
+    "Gold_REF": "The five main themes that emerged from this literature review are related to researchers\u2019 attempts to answer basic questions regarding VR in T&H: \u2018What and what for?\u2019 (What is VR, and what are its applications in T&H); \u2018Why would tourist managers make it available?\u2019 (Expected effects); \u2018Why would tourists adopt it?\u2019 (Consumers\u2019 motives to adopt); \u2018Who would enjoy it the most?\u2019 (Individual antecedents of satisfaction and intention to reuse/recommend); and \u2018How can the VR experience be enhanced?\u2019 (Determinants of the effectiveness of the experience)\u200b."
   },
   {
     "ID": "b09cc959023a3fe66f6a4525185b5a21",
@@ -532,7 +523,7 @@
   },
   {
     "ID": "6255a96ca7580f9c89a0c53271863cd9",
-    "Question": "What percentage of millennials and Gen Z follow Virtual Influencers’ social media accounts for interest and amusement?",
+    "Question": "What percentage of millennials and Gen Z follow Virtual Influencers\u2019 social media accounts for interest and amusement?",
     "Answer": "38%",
     "Type": "Percentage",
     "Complexity": 1,
@@ -547,15 +538,6 @@
     "Complexity": 1,
     "Source_IDX": "[5][1][1][1]",
     "Gold_REF": "What percentage of respondents in the study followed virtual influencers (VIs) without realizing the accounts were not real?"
-  },
-  {
-    "ID": "25540c60b446d31ab14f514bc5296319",
-    "Question": "Among the younger and older age group, whose willingnes to follow VIs is more strongly influenced by rational appeals?",
-    "Answer": "older ",
-    "Type": "Text (Single-word)",
-    "Complexity": 3,
-    "Source_IDX": "[5][1][1][1]",
-    "Gold_REF": "Emotional appeals, especially entertaining and relational content, are shown to strongly influence willingness to follow VIs. These appeals are particularly impactful on younger respondents who prefer engaging and relatable content​. Rational appeals, such as informative content, also positively influence willingness to follow VIs but are more appreciated by older audiences due to their preference for factual and detailed information​​."
   },
   {
     "ID": "cc7eb6c0e36751134b166915f9df2cc9",
@@ -586,7 +568,7 @@
   },
   {
     "ID": "bb816f5127cb6b117bcfcbf988cde5e1",
-    "Question": "Do the papers 'How and when do virtual influencers positively affect consumer responses to endorsed brands?' and 'The power of human-like virtual-influencer-generated content: Impact on consumers’ willingness to follow and purchase intentions' agree that virtual influencers are less trustworthy than human influencers, and does this negatively impact their effectiveness?\"",
+    "Question": "Do the papers 'How and when do virtual influencers positively affect consumer responses to endorsed brands?' and 'The power of human-like virtual-influencer-generated content: Impact on consumers\u2019 willingness to follow and purchase intentions' agree that virtual influencers are less trustworthy than human influencers, and does this negatively impact their effectiveness?\"",
     "Answer": "No",
     "Type": "Binary",
     "Complexity": 4,
@@ -622,7 +604,7 @@
   },
   {
     "ID": "18bfd50aa30670f82e499979ddadd4ea",
-    "Question": "Considering relapse and survival rates, did the AYA group’s higher physiological reserve allow them to achieve similar OS despite higher relapse rates?",
+    "Question": "Considering relapse and survival rates, did the AYA group\u2019s higher physiological reserve allow them to achieve similar OS despite higher relapse rates?",
     "Answer": "Yes",
     "Type": "Binary",
     "Complexity": 3,
@@ -631,7 +613,7 @@
   },
   {
     "ID": "c021c5fb10717db5d67869b918aecb20",
-    "Question": "In the paper \"Outcome of Adolescents and Young Adults with Acute Lymphoblastic Leukemia in a Single Center in Brazil,\" did the majority of patients belong to the adolescents and young adults (AYA) group and receive the Berlin-Frankfurt-Münster (BFM) protocol?",
+    "Question": "In the paper \"Outcome of Adolescents and Young Adults with Acute Lymphoblastic Leukemia in a Single Center in Brazil,\" did the majority of patients belong to the adolescents and young adults (AYA) group and receive the Berlin-Frankfurt-M\u00fcnster (BFM) protocol?",
     "Answer": "Yes",
     "Type": "Binary",
     "Complexity": 2,
@@ -717,7 +699,7 @@
     "Type": "Binary",
     "Complexity": 1,
     "Source_IDX": "[6][1][0][0]",
-    "Gold_REF": "We find that the difference in accuracy is particularly apparent for β-sheet proteins (mean difference of 45), whereas the accuracy of α-helical proteins is closer (mean difference of 17)"
+    "Gold_REF": "We find that the difference in accuracy is particularly apparent for \u03b2-sheet proteins (mean difference of 45), whereas the accuracy of \u03b1-helical proteins is closer (mean difference of 17)"
   },
   {
     "ID": "4b181c7571aeffd84bae2844d6d249b5",
@@ -735,11 +717,11 @@
     "Type": "Integer",
     "Complexity": 1,
     "Source_IDX": "[7][0][0][2]",
-    "Gold_REF": "Ny-Ålesund has a population [of] 44 scientists, whereas the population in Barentsburg has been steadily declining and is 354 as of 2024"
+    "Gold_REF": "Ny-\u00c5lesund has a population [of] 44 scientists, whereas the population in Barentsburg has been steadily declining and is 354 as of 2024"
   },
   {
     "ID": "48a51a7d98163dfa749f288b3ee585a1",
-    "Question": "Are 42% of the properties in Hebron’s Old City abandoned due to restrictions and ruination?",
+    "Question": "Are 42% of the properties in Hebron\u2019s Old City abandoned due to restrictions and ruination?",
     "Answer": "Yes",
     "Type": "Binary",
     "Complexity": 1,
@@ -762,7 +744,7 @@
     "Type": "Text (Single-word)",
     "Complexity": 3,
     "Source_IDX": "[8][0][0][2]",
-    "Gold_REF": "The shooter’s right hand generally exhibited the highest amounts of IGSR, while similarly high concentrations of OGSR were detected on both hands The quantities recovered from the nostrils were generally too low to be interesting"
+    "Gold_REF": "The shooter\u2019s right hand generally exhibited the highest amounts of IGSR, while similarly high concentrations of OGSR were detected on both hands The quantities recovered from the nostrils were generally too low to be interesting"
   },
   {
     "ID": "0866d0dc8e857c8abfb192f37a8a0d17",
@@ -789,7 +771,7 @@
     "Type": "Text (Multi-word)",
     "Complexity": 1,
     "Source_IDX": "[8][1][0][0]",
-    "Gold_REF": "The PLI values of all processed sea salt samples were 10–20, indicating the risk category of II (supplementary Fig. S3)"
+    "Gold_REF": "The PLI values of all processed sea salt samples were 10\u201320, indicating the risk category of II (supplementary Fig. S3)"
   },
   {
     "ID": "438906dad5d889aec6299cfd1de8d2d1",
@@ -803,7 +785,7 @@
   {
     "ID": "b1efab78d2faffa08970b436299d2f16",
     "Question": "Based on the study of microplastic contamination in sea salts from Bangladesh, mention one polymer identified in the sea salt samples that contributed to the high polymer risk index (PRI) due to its hazard score?",
-    "Answer": "Polyethylene(PE) / Polyamide (PA)​ ",
+    "Answer": "Polyethylene(PE) / Polyamide (PA)\u200b ",
     "Type": "Scientific Notation",
     "Complexity": 2,
     "Source_IDX": "[8][1][0][0]",
@@ -825,20 +807,20 @@
     "Type": "Scientific Notation",
     "Complexity": 1,
     "Source_IDX": "[8][2][0][1]",
-    "Gold_REF": "[\"As the SEM images shown in Fig. 2a-c, the product prepared in the solvent of 2 mL of DI water and 38 mL of EG was dominated with many flower-like nanostructures (CoNi LDH NFs), and such NFs possessed an average diameter of about 5 μm.\"]"
+    "Gold_REF": "[\"As the SEM images shown in Fig. 2a-c, the product prepared in the solvent of 2 mL of DI water and 38 mL of EG was dominated with many flower-like nanostructures (CoNi LDH NFs), and such NFs possessed an average diameter of about 5 \u03bcm.\"]"
   },
   {
     "ID": "133fd766f316d4dfe134f65ef8abbb45",
-    "Question": "Among Sao Paulo and Rio de Janeiro who had higher number of mpox-confirmed cases as found in the study titled “The Clinical and Epidemiological Characteristics of Mpox Cases in Brazil”?",
+    "Question": "Among Sao Paulo and Rio de Janeiro who had higher number of mpox-confirmed cases as found in the study titled \u201cThe Clinical and Epidemiological Characteristics of Mpox Cases in Brazil\u201d?",
     "Answer": "Sao Paulo",
     "Type": "Text (Multi-word)",
     "Complexity": 1,
     "Source_IDX": "[9][0][1][0]",
-    "Gold_REF": "The state with the highest number of confirmed cases was São Paulo, followed by Rio de Janeiro"
+    "Gold_REF": "The state with the highest number of confirmed cases was S\u00e3o Paulo, followed by Rio de Janeiro"
   },
   {
     "ID": "ab2c4ced4c026c1430f8e5d86ba635a6",
-    "Question": "According to the study titled “The Clinical and Epidemiological Characteristics of Mpox Cases in Brazil,” what percentage of confirmed mpox cases were people living with HIV (PLWH)?",
+    "Question": "According to the study titled \u201cThe Clinical and Epidemiological Characteristics of Mpox Cases in Brazil,\u201d what percentage of confirmed mpox cases were people living with HIV (PLWH)?",
     "Answer": "54.40%",
     "Type": "Percentage",
     "Complexity": 1,
