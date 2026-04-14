@@ -1,16 +1,17 @@
-"""LlamaIndex Workflow: critique-driven multi-hop agentic RAG.
+"""LlamaIndex Workflow: hop-specific agentic RAG.
 
-Hop 1: retrieve (original question) → full synthesize → critique
-Hop 2+: decompose (informed by critique) → retrieve → full synthesize → critique
-  - PASS at any hop → stop early
-  - FAIL + hops remaining → decompose targets the gap identified by critique
-  - FAIL + no hops left → one-shot correction as last resort → stop
+Three fixed hops, each using a different retrieval strategy:
+  Hop 1 — direct retrieval (original question) → synthesize → critique
+  Hop 2 — HyDE (hypothetical answer as query)  → synthesize → critique
+  Hop 3 — query rewrite (independent rephrase)  → synthesize → stop (no critique)
+
+Critique is PASS/FAIL only. A PASS at any hop stops early. A FAIL advances
+to the next hop. Hop 3 always returns its answer regardless of quality.
+Context is accumulated across all hops before each synthesis.
 
 Public API
 ----------
 run_agent_workflow(qa, retriever, llm, config) → AgentResult
-    Runs the critique-driven loop and returns the generation result
-    together with a step-by-step trajectory log.
 """
 
 from __future__ import annotations
@@ -34,11 +35,10 @@ from common.data_loader import QAPair
 from common.utils import get_logger
 from experiments.spec import GenerationResult, Retriever
 from .prompts import (
-    CORRECTION_PROMPT,
     CRITIQUE_PROMPT,
-    DECOMPOSE_PROMPT,
     FINAL_SYNTHESIS_PROMPT,
-    format_prior_queries,
+    HYDE_PROMPT,
+    REWRITE_PROMPT,
 )
 from .tools import RetrievalResult, format_context, merge_results, retrieve_context
 
@@ -85,15 +85,13 @@ class AgentResult:
 # Workflow events
 # ---------------------------------------------------------------------------
 
-class DecomposeEvent(Event):
-    """Triggers a retrieve (hop 1) or decompose → retrieve (hop 2+) cycle."""
-
+class RetrieveEvent(Event):
+    """Triggers the next hop's retrieval strategy."""
     pass
 
 
 class SynthesizeEvent(Event):
-    """Triggers full synthesis of the original question from all context."""
-
+    """Triggers synthesis from all accumulated context."""
     pass
 
 
@@ -104,28 +102,18 @@ class CritiqueEvent(Event):
     all_context: str
 
 
-class CorrectEvent(Event):
-    """Carries a failed answer + critique for correction."""
-
-    answer: str
-    all_context: str
-    critique: str
-
-
 # ---------------------------------------------------------------------------
 # AgentWorkflow
 # ---------------------------------------------------------------------------
 
 class AgentWorkflow(Workflow):
-    """Critique-driven multi-hop agentic RAG.
+    """Hop-specific agentic RAG with three fixed retrieval strategies.
 
-    Hop 1: retrieve (original question) → full synthesize → critique.
-    Hop 2+: decompose (informed by critique) → retrieve → full synthesize → critique.
-    Critique decides: stop (PASS), loop (FAIL + hops left), or correct (FAIL + done).
+    Hop 1: direct retrieval → synthesize → critique
+    Hop 2: HyDE            → synthesize → critique
+    Hop 3: query rewrite   → synthesize → stop (final, no critique)
 
-    Each instance is single-use (one question). State lives on instance
-    attributes so callers can inspect ``trajectory`` after the run.
-
+    Each instance is single-use (one question).
     """
 
     def __init__(
@@ -143,59 +131,40 @@ class AgentWorkflow(Workflow):
         self._retriever = retriever
         self._config = config
 
-        # Per-run mutable state
         self.trajectory = Trajectory()
         self._hop = 0
-        self._queries: list[str] = []
         self._retrieval_results: list[RetrievalResult] = []
         self._context_texts: list[str] = []
-        self._last_critique: str = ""
 
     # ── Steps ──────────────────────────────────────────────────────────
 
     @step
-    async def start(self, ctx: Context, ev: StartEvent) -> DecomposeEvent:
-        """Kick off the first hop."""
-        return DecomposeEvent()
+    async def start(self, ctx: Context, ev: StartEvent) -> RetrieveEvent:
+        return RetrieveEvent()
 
     @step
-    async def decompose_and_retrieve(
-        self, ctx: Context, ev: DecomposeEvent,
-    ) -> SynthesizeEvent:
-        """Retrieve context for the current hop.
-
-        Hop 1 uses the original question directly. Hop 2+ decomposes a
-        targeted sub-question informed by the critique feedback.
-        The sub-question is only a retrieval query — it is not answered
-        separately. All answering happens in the full synthesis step.
-        """
+    async def retrieve(self, ctx: Context, ev: RetrieveEvent) -> SynthesizeEvent:
+        """Select retrieval strategy for the current hop and fetch context."""
         self._hop += 1
         hop = self._hop
         max_hops = self._config.max_agent_hops
 
-        # ── Query selection ───────────────────────────────────────────
         if hop == 1:
             query = self._question
-            logger.info("Hop 1/%d: using original question directly", max_hops)
+            logger.info("Hop 1/%d: direct retrieval", max_hops)
+
+        elif hop == 2:
+            hyde_prompt = HYDE_PROMPT.format(question=self._question)
+            query = (await self._llm.acomplete(hyde_prompt)).text.strip()
+            self.trajectory.log("hyde", hyde_prompt, query)
+            logger.info("Hop 2/%d HyDE query: %.120s", max_hops, query)
+
         else:
-            prior_queries = format_prior_queries(self._queries)
-            critique_feedback = (
-                f"The previous answer was rejected:\n{self._last_critique}\n\n"
-                "Focus your next sub-question on the identified gaps.\n\n"
-                if self._last_critique else ""
-            )
-            decompose_prompt = DECOMPOSE_PROMPT.format(
-                question=self._question,
-                prior_queries=prior_queries,
-                critique_feedback=critique_feedback,
-            )
-            query = (await self._llm.acomplete(decompose_prompt)).text.strip()
-            self.trajectory.log("decompose", decompose_prompt, query)
-            logger.info("Hop %d/%d sub-question: %s", hop, max_hops, query)
+            rewrite_prompt = REWRITE_PROMPT.format(question=self._question)
+            query = (await self._llm.acomplete(rewrite_prompt)).text.strip()
+            self.trajectory.log("rewrite", rewrite_prompt, query)
+            logger.info("Hop 3/%d rewritten query: %.120s", max_hops, query)
 
-        self._queries.append(query)
-
-        # ── Retrieve ──────────────────────────────────────────────────
         result = retrieve_context(query, self._retriever)
         self._retrieval_results.append(result)
         self.trajectory.log(
@@ -210,8 +179,11 @@ class AgentWorkflow(Workflow):
     @step
     async def synthesize(
         self, ctx: Context, ev: SynthesizeEvent,
-    ) -> CritiqueEvent:
-        """Produce a final answer from all accumulated context."""
+    ) -> CritiqueEvent | StopEvent:
+        """Synthesize an answer from all accumulated context.
+
+        On hop 3 (final hop) returns StopEvent directly, skipping critique.
+        """
         merged = merge_results(self._retrieval_results)
         all_context = format_context(merged)
         self._context_texts = merged.texts
@@ -222,15 +194,19 @@ class AgentWorkflow(Workflow):
         )
         answer = (await self._llm.acomplete(final_prompt)).text.strip()
         self.trajectory.log("synthesize_final", final_prompt, answer)
-        logger.info("Final synthesis complete (%.120s)", answer)
+        logger.info("Synthesis complete (%.120s)", answer)
+
+        if self._hop >= self._config.max_agent_hops:
+            logger.info("Hop 3 final answer — skipping critique")
+            return StopEvent(result=answer)
 
         return CritiqueEvent(answer=answer, all_context=all_context)
 
     @step
     async def critique(
         self, ctx: Context, ev: CritiqueEvent,
-    ) -> StopEvent | CorrectEvent | DecomposeEvent:
-        """Evaluate the answer; stop early on PASS or loop back for more hops."""
+    ) -> StopEvent | RetrieveEvent:
+        """PASS/FAIL evaluation. PASS stops early; FAIL advances to next hop."""
         critique_prompt = CRITIQUE_PROMPT.format(
             question=self._question,
             answer=ev.answer,
@@ -246,36 +222,8 @@ class AgentWorkflow(Workflow):
             self.trajectory.success = True
             return StopEvent(result=ev.answer)
 
-        # Hops remaining → feed critique into next decompose
-        if self._hop < self._config.max_agent_hops:
-            # Extract just the gap line ("Missing: ...") if present
-            lines = verdict.strip().splitlines()
-            gap_lines = [l for l in lines if l.strip() and not l.upper().startswith("FAIL")]
-            self._last_critique = gap_lines[0] if gap_lines else verdict
-            logger.info("Critique failed, triggering hop %d", self._hop + 1)
-            return DecomposeEvent()
-
-        # Out of hops → one-shot correction as last resort
-        return CorrectEvent(
-            answer=ev.answer,
-            all_context=ev.all_context,
-            critique=verdict,
-        )
-
-    @step
-    async def correct(self, ctx: Context, ev: CorrectEvent) -> StopEvent:
-        """Produce a corrected answer addressing critique deficiencies."""
-        correction_prompt = CORRECTION_PROMPT.format(
-            question=self._question,
-            answer=ev.answer,
-            context=ev.all_context,
-            critique=ev.critique,
-        )
-        corrected = (await self._llm.acomplete(correction_prompt)).text.strip()
-        self.trajectory.log("correct", correction_prompt, corrected)
-        logger.info("Correction applied (%.120s)", corrected)
-
-        return StopEvent(result=corrected)
+        logger.info("Critique failed, advancing to hop %d", self._hop + 1)
+        return RetrieveEvent()
 
 
 # ---------------------------------------------------------------------------
@@ -288,7 +236,6 @@ async def _run_async(
     llm: Any,
     config: Config,
 ) -> AgentResult:
-    """Async implementation of the agent workflow."""
     workflow = AgentWorkflow(
         question=qa.question,
         llm=llm,
@@ -329,12 +276,7 @@ def run_agent_workflow(
     llm: Any,
     config: Config,
 ) -> AgentResult:
-    """Run the critique-driven agent workflow synchronously.
-
-    Creates an ``AgentWorkflow``, executes the critique-driven loop
-    (retrieve → synthesize → critique, with decompose on hop 2+),
-    and returns the generation result together with a full trajectory log.
-    """
+    """Run the hop-specific agent workflow synchronously."""
     try:
         loop = asyncio.get_event_loop()
         if loop.is_closed():

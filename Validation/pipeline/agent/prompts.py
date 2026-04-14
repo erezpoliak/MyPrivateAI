@@ -1,49 +1,50 @@
 """Prompt templates for the critique-driven agentic RAG workflow.
 
-Four templates drive the retrieve → synthesize → critique loop, with
-decompose joining on hop 2+.  All are plain ``str.format`` templates
-with named placeholders.
+Three templates drive the hop-specific retrieval strategies:
 
-Placeholders per template
--------------------------
-DECOMPOSE_PROMPT (hop 2+ only)
-    {question}           — original user question
-    {prior_queries}      — retrieval queries already tried (so they aren't repeated)
-    {critique_feedback}  — critique text explaining why the previous answer
-                           was rejected
+  Hop 1 — direct retrieval using the original question
+  Hop 2 — HyDE: generate a hypothetical answer, use it as retrieval query
+  Hop 3 — query rewrite: rephrase independently, no critique (final hop)
+
+Placeholders
+------------
+HYDE_PROMPT
+    {question}  — original user question
+
+REWRITE_PROMPT
+    {question}  — original user question
 
 FINAL_SYNTHESIS_PROMPT
     {question}  — original user question
     {context}   — all accumulated context across hops
 
-CRITIQUE_PROMPT
+CRITIQUE_PROMPT  (hops 1–2 only)
     {question}  — original user question
     {answer}    — synthesised answer to evaluate
     {context}   — all retrieved context used during synthesis
-
-CORRECTION_PROMPT
-    {question}  — original user question
-    {answer}    — answer that failed critique
-    {context}   — all retrieved context
-    {critique}  — critique text explaining the deficiencies
 """
 
 from __future__ import annotations
 
 # ---------------------------------------------------------------------------
-# DECOMPOSE — generate a targeted retrieval query to fill gaps (hop 2+ only)
+# HyDE — generate a hypothetical answer to use as retrieval query (hop 2)
 # ---------------------------------------------------------------------------
-DECOMPOSE_PROMPT = (
-    "A previous attempt to answer the question below was rejected because "
-    "specific information was missing.\n\n"
-    "Original question: {question}\n\n"
-    "{critique_feedback}"
-    "{prior_queries}"
-    "Write ONE retrieval query that will directly find the missing information "
-    "identified above. Do NOT repeat previous queries. Do NOT elaborate beyond "
-    "what is needed.\n"
-    "Output ONLY the query, nothing else.\n\n"
-    "Query: "
+HYDE_PROMPT = (
+    "Write 1-2 sentences from a scientific paper that directly contain the answer "
+    "to the question below. Be specific, use precise technical language, no explanations.\n\n"
+    "Question: {question}\n\n"
+    "Sentences: "
+)
+
+# ---------------------------------------------------------------------------
+# REWRITE — rephrase the question independently for broader retrieval (hop 3)
+# ---------------------------------------------------------------------------
+REWRITE_PROMPT = (
+    "Rephrase the following question using different terminology or perspective "
+    "to improve document retrieval. "
+    "Output ONLY the rephrased question, nothing else.\n\n"
+    "Question: {question}\n\n"
+    "Rephrased question: "
 )
 
 # ---------------------------------------------------------------------------
@@ -61,55 +62,20 @@ FINAL_SYNTHESIS_PROMPT = (
 )
 
 # ---------------------------------------------------------------------------
-# CRITIQUE — evaluate an answer for completeness and faithfulness
+# CRITIQUE — PASS/FAIL evaluation (hops 1–2 only)
 # ---------------------------------------------------------------------------
 CRITIQUE_PROMPT = (
-    "You are a fair evaluator. Assess whether the answer below reasonably "
-    "answers the original question based on the provided context.\n\n"
+    "You are an evaluator. Assess whether the answer below adequately answers "
+    "the original question based on the provided context.\n\n"
     "Context:\n"
     "---------------------\n"
     "{context}\n"
     "---------------------\n"
     "Original question: {question}\n"
     "Answer to evaluate: {answer}\n\n"
-    "If the answer addresses the core of the question and is supported by "
-    "the context, respond with exactly: PASS\n"
-    "Only respond with FAIL if a specific, clearly identifiable piece of "
-    "information is missing from the answer. In that case respond with: FAIL\n"
-    "Then on the next line write ONE sentence naming exactly what specific "
-    "information is missing (e.g. 'Missing: the exact percentage of X').\n\n"
+    "Respond with PASS if the answer is correct, addresses what was asked, "
+    "and is grounded in the context — minor gaps are acceptable.\n"
+    "Respond with FAIL if a key piece of information the question asks for "
+    "is clearly missing or the answer is substantially incomplete.\n\n"
     "Verdict: "
 )
-
-# ---------------------------------------------------------------------------
-# CORRECTION — fix a flawed answer using the critique
-# ---------------------------------------------------------------------------
-CORRECTION_PROMPT = (
-    "The previous answer was found to be deficient. Using the critique and "
-    "the original context, produce a corrected answer.\n\n"
-    "Context:\n"
-    "---------------------\n"
-    "{context}\n"
-    "---------------------\n"
-    "Original question: {question}\n"
-    "Previous answer: {answer}\n"
-    "Critique: {critique}\n\n"
-    "Write a corrected answer that addresses every deficiency raised in the "
-    "critique. Give the shortest complete answer possible and stay faithful to the context.\n\n"
-    "Corrected answer: "
-)
-
-
-def format_prior_queries(queries: list[str]) -> str:
-    """Build the ``{prior_queries}`` block for DECOMPOSE on hop 2+.
-
-    Lists retrieval queries already tried so decompose avoids repeating them.
-    Returns an empty string when no prior queries exist.
-    """
-    if not queries:
-        return ""
-    lines = ["Retrieval queries already tried:\n"]
-    for i, q in enumerate(queries, 1):
-        lines.append(f"  {i}. {q}")
-    lines.append("\n")
-    return "\n".join(lines)

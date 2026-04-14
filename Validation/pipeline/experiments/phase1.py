@@ -1,6 +1,6 @@
 """Phase 1 experiment — semantic chunking + hybrid retrieval.
 
-Pipeline: CappedSemanticSplitter → HybridRetriever (RRF fusion + FlashRankRerank) → Ollama LLM.
+Pipeline: CappedSemanticSplitter → HybridRetriever (RRF fusion + FlashRankRerank) → MLX LLM.
 
 CLI:
     python -m pipeline.experiments.phase1                     # scored run (fetched PDFs)

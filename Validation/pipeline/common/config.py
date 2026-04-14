@@ -54,11 +54,10 @@ class Config:
     db_path: Path = _PIPELINE_DIR / "results" / "runs.db"
     nltk_data_dir: Path = _PIPELINE_DIR / "data" / "nltk_data"
 
-    # -- LLM -----------------------------------------------------------------
-    ollama_model: str = "llama3.1:8b-instruct-q4_K_M"
-    ollama_base_url: str = "http://localhost:11434"
-    ollama_timeout: float = 300.0
-    ollama_temperature: float = 0.1
+    # -- LLM (MLX — Apple Silicon only) -------------------------------------
+    mlx_model: str = "mlx-community/Qwen3.5-9B-OptiQ-4bit"
+    mlx_temperature: float = 0.1
+    mlx_max_tokens: int = 512
 
     # -- Embeddings ----------------------------------------------------------
     embedding_model: str = "BAAI/bge-base-en-v1.5"

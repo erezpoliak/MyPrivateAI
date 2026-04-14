@@ -1,7 +1,7 @@
-"""Phase 2 experiment — agentic RAG with critique-driven multi-hop retrieval.
+"""Phase 2 experiment — agentic RAG with hop-specific retrieval strategies.
 
 Pipeline: CappedSemanticSplitter → HybridRetriever → AgentWorkflow
-         (decompose → retrieve → synthesize → critique → [correct])
+         (direct → HyDE → query rewrite, with critique on hops 1-2)
 
 CLI:
     python -m pipeline.experiments.phase2                     # scored run (fetched PDFs)
