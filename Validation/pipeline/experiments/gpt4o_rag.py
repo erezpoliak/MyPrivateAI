@@ -49,8 +49,7 @@ def _get_openai_llm(config: Config) -> OpenAI:
     return OpenAI(
         model="gpt-4o",
         api_key=api_key,
-        temperature=config.ollama_temperature,
-        timeout=config.ollama_timeout,
+        temperature=config.mlx_temperature,
     )
 
 
