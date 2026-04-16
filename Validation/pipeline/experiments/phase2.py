@@ -2,8 +2,8 @@
 
 Pipeline: CappedSemanticSplitter → HybridRetriever → AgentWorkflow
          Hop 1: direct retrieval → synthesize → critique (PASS/FAIL)
-         Hop 2: decompose → multi-retrieve → synthesize → critique (PASS/FAIL + text)
-         Hop 3: correct using all accumulated context + critique text (no new retrieval)
+         Hop 2: decompose (up to 3 sub-questions) → multi-retrieve → synthesize → critique (PASS/FAIL)
+         Hop 3: inferential correction over all accumulated context (no new retrieval)
 
 CLI:
     python -m pipeline.experiments.phase2                     # scored run (fetched PDFs)

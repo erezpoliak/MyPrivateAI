@@ -1,10 +1,11 @@
 """LlamaIndex Workflow: 3-hop agentic RAG.
 
 Hop 1 — direct retrieval (original question) → synthesize → critique (PASS/FAIL)
-Hop 2 — decompose question → multi-retrieve (one query per sub-question + original)
-         → synthesize → critique (PASS/FAIL + explanation text)
-Hop 3 — correct: re-synthesize from all accumulated context + critique text
-         (no new retrieval — reasoning correction only)
+Hop 2 — decompose question → multi-retrieve (sub-questions + original)
+         → synthesize → critique (PASS/FAIL)
+Hop 3 — inferential correction: reason over all accumulated context to derive
+         an answer, including logical conclusions not explicitly stated.
+         No new retrieval.
 
 A PASS at hop 1 or 2 stops early. Hop 3 always returns its answer.
 Context accumulates across hops 1 and 2.
@@ -36,8 +37,7 @@ from common.utils import get_logger
 from experiments.spec import GenerationResult, Retriever
 from .prompts import (
     CORRECT_PROMPT,
-    CRITIQUE_DETAILED_PROMPT,
-    CRITIQUE_SIMPLE_PROMPT,
+    CRITIQUE_PROMPT,
     DECOMPOSE_PROMPT,
     FINAL_SYNTHESIS_PROMPT,
 )
@@ -104,9 +104,8 @@ class CritiqueEvent(Event):
 
 
 class CorrectEvent(Event):
-    """Triggers the final correction step with critique feedback."""
-
-    critique_text: str
+    """Triggers the final inferential correction step."""
+    pass
 
 
 # ---------------------------------------------------------------------------
@@ -123,7 +122,7 @@ def _parse_sub_questions(text: str) -> list[str]:
 # ---------------------------------------------------------------------------
 
 class AgentWorkflow(Workflow):
-    """3-hop agentic RAG: direct → decompose/multi-retrieve → correct.
+    """3-hop agentic RAG: direct → decompose/multi-retrieve → infer.
 
     Each instance is single-use (one question).
     """
@@ -176,6 +175,8 @@ class AgentWorkflow(Workflow):
             sub_questions = _parse_sub_questions(raw)
             self.trajectory.log("decompose", decompose_prompt, "\n".join(sub_questions))
             logger.info("Hop 2: %d sub-questions generated", len(sub_questions))
+            for i, sq in enumerate(sub_questions, 1):
+                logger.info("  Sub-question %d: %s", i, sq)
 
             queries = [self._question] + sub_questions
             result = retrieve_multi(queries, self._retriever)
@@ -211,20 +212,12 @@ class AgentWorkflow(Workflow):
     async def critique(
         self, ctx: Context, ev: CritiqueEvent,
     ) -> StopEvent | RetrieveEvent | CorrectEvent:
-        """Hop 1: simple PASS/FAIL. Hop 2: detailed PASS/FAIL + critique text."""
-        if self._hop == 1:
-            prompt = CRITIQUE_SIMPLE_PROMPT.format(
-                question=self._question,
-                answer=ev.answer,
-                context=ev.all_context,
-            )
-        else:
-            prompt = CRITIQUE_DETAILED_PROMPT.format(
-                question=self._question,
-                answer=ev.answer,
-                context=ev.all_context,
-            )
-
+        """PASS/FAIL evaluation after hops 1 and 2."""
+        prompt = CRITIQUE_PROMPT.format(
+            question=self._question,
+            answer=ev.answer,
+            context=ev.all_context,
+        )
         verdict = (await self._llm.acomplete(prompt)).text.strip()
         self.trajectory.log("critique", prompt, verdict)
 
@@ -239,26 +232,23 @@ class AgentWorkflow(Workflow):
             logger.info("Hop 1 failed — advancing to decompose/multi-retrieve")
             return RetrieveEvent()
 
-        # Hop 2 failed — extract critique text for correction step
-        critique_text = verdict[4:].strip() if verdict.upper().startswith("FAIL") else verdict
-        logger.info("Hop 2 failed — advancing to correction with critique: %.120s", critique_text)
-        return CorrectEvent(critique_text=critique_text)
+        logger.info("Hop 2 failed — advancing to inferential correction")
+        return CorrectEvent()
 
     @step
     async def correct(self, ctx: Context, ev: CorrectEvent) -> StopEvent:
-        """Re-synthesize using all accumulated context + critique feedback. No new retrieval."""
+        """Reason over all accumulated context to derive an answer. No new retrieval."""
         merged = merge_results(self._retrieval_results)
         all_context = format_context(merged)
         self._context_texts = merged.texts
 
         correct_prompt = CORRECT_PROMPT.format(
             question=self._question,
-            critique=ev.critique_text,
             context=all_context,
         )
         answer = (await self._llm.acomplete(correct_prompt)).text.strip()
         self.trajectory.log("correct", correct_prompt, answer)
-        logger.info("Correction complete (%.120s)", answer)
+        logger.info("Inferential correction complete (%.120s)", answer)
 
         return StopEvent(result=answer)
 

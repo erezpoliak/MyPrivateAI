@@ -55,7 +55,8 @@ class Config:
     nltk_data_dir: Path = _PIPELINE_DIR / "data" / "nltk_data"
 
     # -- LLM (MLX — Apple Silicon only) -------------------------------------
-    mlx_model: str = "mlx-community/Qwen3.5-9B-OptiQ-4bit"
+    # mlx_model: str = "mlx-community/Qwen3.5-9B-OptiQ-4bit"
+    mlx_model: str = "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit"
     mlx_temperature: float = 0.1
     mlx_max_tokens: int = 512
 

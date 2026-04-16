@@ -52,17 +52,17 @@ Hop 1:  retrieve(original Q) ──> synthesize ──> critique(PASS/FAIL)
           PASS ──> done
           FAIL ──>
 
-Hop 2:  decompose(question) ──> retrieve(each sub-Q + original Q) ──> synthesize ──> critique(PASS/FAIL + text)
+Hop 2:  decompose(question) ──> retrieve(each sub-Q + original Q) ──> synthesize ──> critique(PASS/FAIL)
           PASS ──> done
           FAIL ──>
 
-Hop 3:  correct(all accumulated context + critique text) ──> done
-        [no new retrieval — reasoning correction only]
+Hop 3:  correct(all accumulated context) ──> done
+        [no new retrieval — inferential reasoning over full context]
 ```
 
 - **Hop 1** retrieves using the original question directly — giving it a fair shot first
-- **Hop 2** decomposes the question into sub-questions (model decides how many), retrieves for each, then synthesizes from the combined context — targets cross-paper retrieval failures
-- **Hop 3** re-synthesizes using the critique text from hop 2 as explicit correction guidance — targets reasoning failures where the right context was retrieved but the model reasoned incorrectly
+- **Hop 2** decomposes the question into up to 3 sub-questions, retrieves for each, then synthesizes from the combined context — targets cross-paper retrieval failures
+- **Hop 3** reasons over all accumulated context to derive the best possible answer, including logical conclusions not explicitly stated — targets reasoning failures and inference gaps
 - **Synthesize** always answers the original question from all accumulated context
 
 ---
