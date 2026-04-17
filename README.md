@@ -2,11 +2,11 @@
 
 **A local-first desktop application that brings cloud-level AI to sensitive private documents — without sacrificing security, cost, or accessibility.**
 
-While existing local AI tools require technical expertise, MyPrivateAI offers a simple installer for researchers, lawyers, and professionals handling confidential data.
+While existing local AI tools and Agentic RAG pipelines require technical expertise, MyPrivateAI offers a simple installer for researchers, lawyers, and professionals handling confidential data.
 
-**The core innovation:** Local LLMs typically underperform on complex reasoning compared to GPT-4. Our Optimized Agentic RAG system combines advanced retrieval with multi-turn reasoning agents, enabling complex multi-document analysis once reserved for cloud services. Through systematic validation on research benchmarks, we aim to demonstrate that frontier-level performance is achievable on consumer hardware.
+**The core innovation:** Local LLMs typically underperform on complex reasoning compared to GPT-5. Our Optimized Agentic RAG system combines advanced RAG techniques with multi-turn reasoning agents, enabling complex multi-document analysis once reserved for cloud services. Through systematic validation on research benchmarks, we demonstrate that frontier-level performance is achievable on consumer hardware.
 
-MyPrivateAI will deliver a "cloud LLM experience" locally — completely free, private, and offline — making advanced AI accessible to anyone with sensitive documents.
+MyPrivateAI delivers a "cloud LLM experience" locally — completely free, private, and offline — making advanced AI accessible to anyone with sensitive documents.
 
 ---
 
@@ -14,7 +14,7 @@ MyPrivateAI will deliver a "cloud LLM experience" locally — completely free, p
 
 Before building the full application, we rigorously validate our core hypothesis:
 
-> *An Optimized Agentic RAG pipeline can compensate for an 8B model's limitations and achieve performance close to GPT-4o on complex mutli-paper private document tasks.*
+> *An Optimized Agentic RAG pipeline can compensate for an 8B model's limitations and achieve performance close to GPT-5.1 on complex mutli-paper private document tasks.*
 
 We use a 6-experiment design evaluated with [RAGAS](https://docs.ragas.io/) metrics on the **SciRAG-QA** benchmark. Each transition between experiments isolates a single variable, letting us decompose exactly where performance gains (and losses) come from.
 
@@ -25,7 +25,7 @@ We use a 6-experiment design evaluated with [RAGAS](https://docs.ragas.io/) metr
 | 3 | **Phase 1 — Optimized Retrieval** | Semantic chunking + hybrid BM25/vector search + FlashRank reranking + metadata enrichment |
 | 4 | **Phase 2 — Agentic RAG** | Critique-driven multi-hop agent over the optimized retrieval pipeline |
 | 5 | **Llama+Gold_REF** | Perfect retrieval (gold contexts injected) — isolates the model's comprehension ceiling |
-| 6 | **GPT-4o Gold_REF (Ceiling)** | GPT-4o with perfect context (Gold_REF injected) — absolute ceiling combining strongest model + perfect retrieval |
+| 6 | **GPT-5.1 Gold_REF (Ceiling)** | GPT-5.1 with perfect context (Gold_REF injected) — absolute ceiling combining strongest model + perfect retrieval |
 
 ### Gap Analysis
 
@@ -40,10 +40,10 @@ We use a 6-experiment design evaluated with [RAGAS](https://docs.ragas.io/) metr
                                     │              └──> 5. Llama+Gold_REF
                                     │
                                     ├─ HYPOTHESIS TEST (target: ≥85%)
-6. GPT-4o Gold_REF (Ceiling) ─────┘
+6. GPT-5.1 Gold_REF (Ceiling) ────┘
 ```
 
-**Success criteria:** Phase 2 achieves ≥ 85% of the GPT-4o Gold_REF ceiling on answer correctness (the absolute ceiling combining strongest model + perfect context), and matches or exceeds Llama+Gold_REF on complexity 3-4 questions (demonstrating that the agent's reasoning compensates for imperfect retrieval on hard questions).
+**Success criteria:** Phase 2 achieves ≥ 85% of the GPT-5.1 Gold_REF ceiling on answer correctness (the absolute ceiling combining strongest model + perfect context), and matches or exceeds Llama+Gold_REF on complexity 3-4 questions (demonstrating that the agent's reasoning compensates for imperfect retrieval on hard questions).
 
 ### Phase 2 — Agent Flow
 

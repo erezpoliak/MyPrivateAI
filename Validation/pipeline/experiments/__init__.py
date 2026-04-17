@@ -15,5 +15,5 @@ Experiments (each defines an ExperimentSpec and calls run_experiment):
     phase2          — Critique-driven multi-hop agent (retrieve -> synthesize -> critique -> decompose -> correct)
     closed_book     — Llama 3.1 8B with no context (parametric knowledge only)
     llama_gold_ref  — Llama 3.1 8B with Gold_REF as sole context
-    gpt4o_gold_ref  — GPT-4o with Gold_REF as sole context (ceiling)
+    gpt5_1_gold_ref — GPT-5.1 with Gold_REF as sole context (ceiling)
 """

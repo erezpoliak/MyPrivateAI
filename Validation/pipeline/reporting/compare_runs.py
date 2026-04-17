@@ -41,7 +41,7 @@ EXPERIMENT_ORDER = [
     "phase1",
     "phase2",
     "llama_gold_ref",
-    "gpt4o_gold_ref",
+    "gpt5_1_gold_ref",
 ]
 
 # Human-friendly labels
@@ -51,7 +51,7 @@ EXPERIMENT_LABELS = {
     "phase1": "Phase 1 (Semantic / Hybrid)",
     "phase2": "Phase 2 (Agentic RAG)",
     "llama_gold_ref": "Llama + Gold Ref",
-    "gpt4o_gold_ref": "GPT-4o + Gold Ref (Ceiling)",
+    "gpt5_1_gold_ref": "GPT-5.1 + Gold Ref (Ceiling)",
 }
 
 METRIC_KEYS = ["faithfulness", "context_recall", "context_precision", "answer_correctness"]

@@ -1,15 +1,15 @@
-"""GPT-4o + Gold-REF experiment — Gold_REF as sole context, GPT-4o.
+"""GPT-5.1 + Gold-REF experiment — Gold_REF as sole context, GPT-5.1.
 
 Injects each question's Gold_REF text as the only context and sends it to
-GPT-4o.  GPT-4.1-mini as RAGAS judge.  All RAGAS metrics apply (context is
+GPT-5.1.  GPT-4.1-mini as RAGAS judge.  All RAGAS metrics apply (context is
 present).  Corpus mode: ``gold_ref``.
 
 Requires ``OPENAI_API_KEY`` environment variable.
 
 CLI:
-    python -m pipeline.experiments.gpt4o_gold_ref                     # full run
-    python -m pipeline.experiments.gpt4o_gold_ref --smoke-test        # quick check (5 Qs)
-    python -m pipeline.experiments.gpt4o_gold_ref --subset 20 --notes "test run"
+    python -m pipeline.experiments.gpt5_1_gold_ref                     # full run
+    python -m pipeline.experiments.gpt5_1_gold_ref --smoke-test        # quick check (5 Qs)
+    python -m pipeline.experiments.gpt5_1_gold_ref --subset 20 --notes "test run"
 """
 
 from __future__ import annotations
@@ -39,7 +39,7 @@ from experiments.spec import GenerationResult
 
 logger = get_logger(__name__)
 
-EXPERIMENT_NAME = "gpt4o_gold_ref"
+EXPERIMENT_NAME = "gpt5_1_gold_ref"
 
 GOLD_REF_PROMPT = (
     "Context information is below.\n"
@@ -62,7 +62,7 @@ def _get_openai_llm(config: Config) -> OpenAI:
             "Set it in your shell or in the .env file."
         )
     return OpenAI(
-        model="gpt-4o",
+        model="gpt-5.1",
         api_key=api_key,
         temperature=config.mlx_temperature,
     )
@@ -72,8 +72,8 @@ def _get_openai_llm(config: Config) -> OpenAI:
 # Main pipeline
 # ---------------------------------------------------------------------------
 
-def run_gpt4o_gold_ref(args) -> int:
-    """Execute the GPT-4o+Gold-REF experiment and return the run_id."""
+def run_gpt5_1_gold_ref(args) -> int:
+    """Execute the GPT-5.1+Gold-REF experiment and return the run_id."""
 
     if args.smoke_test:
         args.subset = args.subset or 5
@@ -131,10 +131,10 @@ def run_gpt4o_gold_ref(args) -> int:
 
 def main() -> None:
     args = parse_args(
-        description="GPT-4o+Gold-REF experiment: Gold_REF as sole context, GPT-4o.",
+        description="GPT-5.1+Gold-REF experiment: Gold_REF as sole context, GPT-5.1.",
         corpus_choices=None,  # no --corpus-mode flag; always uses CorpusMode.GOLD_REF
     )
-    run_gpt4o_gold_ref(args)
+    run_gpt5_1_gold_ref(args)
 
 
 if __name__ == "__main__":
