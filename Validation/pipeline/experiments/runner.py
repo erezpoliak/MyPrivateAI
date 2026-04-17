@@ -130,6 +130,42 @@ def load_qa_pairs(config: Config, subset: int | None) -> list[QAPair]:
     return qa_pairs
 
 
+def filter_to_corpus_coverage(
+    qa_pairs: list[QAPair], config: Config,
+) -> list[QAPair]:
+    """Keep only questions whose source papers have a fetchable PDF.
+
+    This mirrors the corpus-coverage filter applied inside
+    ``run_experiment``, but without actually parsing or chunking.
+    Use it in experiments that skip corpus building (closed-book,
+    gold-ref) so every experiment is evaluated on the same question set.
+    """
+    from common.utils import doi_to_path
+
+    covered: set[str] = set()
+    checked: set[str] = set()
+
+    for qa in qa_pairs:
+        idx = qa.source_idx
+        if idx in checked:
+            if idx in covered:
+                continue  # already known good
+            continue      # already known bad
+        checked.add(idx)
+        if not qa.paper or not qa.paper.doi:
+            continue
+        if doi_to_path(config.papers_dir, qa.paper.doi).exists():
+            covered.add(idx)
+
+    before = len(qa_pairs)
+    filtered = [q for q in qa_pairs if q.source_idx in covered]
+    if before != len(filtered):
+        logger.info(
+            "Corpus-coverage filter: %d → %d questions", before, len(filtered),
+        )
+    return filtered
+
+
 def evaluate_results(
     gen_results: list[GenerationResult],
     config: Config,

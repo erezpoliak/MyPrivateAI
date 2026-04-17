@@ -29,6 +29,7 @@ from common.config import Config, CorpusMode
 from common.utils import get_logger
 from experiments.runner import (
     evaluate_results,
+    filter_to_corpus_coverage,
     load_qa_pairs,
     parse_args,
     persist_and_report,
@@ -80,6 +81,7 @@ def run_gpt4o_gold_ref(args) -> int:
 
     config = setup_config(EXPERIMENT_NAME, CorpusMode.GOLD_REF, args.subset)
     qa_pairs = load_qa_pairs(config, args.subset)
+    qa_pairs = filter_to_corpus_coverage(qa_pairs, config)
 
     if not qa_pairs:
         logger.error("No questions to evaluate — aborting.")
