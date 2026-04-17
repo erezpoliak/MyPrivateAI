@@ -25,7 +25,7 @@ We use a 6-experiment design evaluated with [RAGAS](https://docs.ragas.io/) metr
 | 3 | **Phase 1 — Optimized Retrieval** | Semantic chunking + hybrid BM25/vector search + FlashRank reranking + metadata enrichment |
 | 4 | **Phase 2 — Agentic RAG** | Critique-driven multi-hop agent over the optimized retrieval pipeline |
 | 5 | **Llama+Gold_REF** | Perfect retrieval (gold contexts injected) — isolates the model's comprehension ceiling |
-| 6 | **GPT-4o RAG (Ceiling)** | GPT-4o running the identical Phase 2 pipeline — LLM is the only variable |
+| 6 | **GPT-4o Gold_REF (Ceiling)** | GPT-4o with perfect context (Gold_REF injected) — absolute ceiling combining strongest model + perfect retrieval |
 
 ### Gap Analysis
 
@@ -40,10 +40,10 @@ We use a 6-experiment design evaluated with [RAGAS](https://docs.ragas.io/) metr
                                     │              └──> 5. Llama+Gold_REF
                                     │
                                     ├─ HYPOTHESIS TEST (target: ≥85%)
-6. GPT-4o RAG (Ceiling) ──────────┘
+6. GPT-4o Gold_REF (Ceiling) ─────┘
 ```
 
-**Success criteria:** Phase 2 achieves ≥ 85% of the GPT-4o RAG ceiling on answer correctness (LLM is the only variable), and matches or exceeds Llama+Gold_REF on complexity 3-4 questions (demonstrating that the agent's reasoning compensates for imperfect retrieval on hard questions).
+**Success criteria:** Phase 2 achieves ≥ 85% of the GPT-4o Gold_REF ceiling on answer correctness (the absolute ceiling combining strongest model + perfect context), and matches or exceeds Llama+Gold_REF on complexity 3-4 questions (demonstrating that the agent's reasoning compensates for imperfect retrieval on hard questions).
 
 ### Phase 2 — Agent Flow
 

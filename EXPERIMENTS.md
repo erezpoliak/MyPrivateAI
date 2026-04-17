@@ -9,7 +9,7 @@
 | 3 | **Phase 1** | Semantic | Hybrid BM25+Vector (RRF) | FlashRank top-3 | Yes | Llama 3.1 8B | GPT-4.1-mini | CR > 0.92, Faith > 0.98 |
 | 4 | **Phase 2** | Semantic | Critique-driven agent: hop 1 direct, hop 2 decompose+multi-retrieve, hop 3 correct | FlashRank top-3 | Yes | Llama 3.1 8B | GPT-4.1-mini | AC > 85% ceiling, Traj > 0.80, AC(cplx 3-4) ≥ Llama+Gold_REF |
 | 5 | **Llama+Gold_REF** | N/A | Gold_REF injected | None | No | Llama 3.1 8B | GPT-4.1-mini | Model comprehension ceiling |
-| 6 | **GPT-4o RAG (Ceiling)** | Semantic | Hop-specific agent using Hybrid BM25+Vector (RRF) | FlashRank top-3 | Yes | GPT-4o | GPT-4.1-mini | Upper bound anchor — identical pipeline to Phase 2, only LLM differs |
+| 6 | **GPT-4o Gold_REF (Ceiling)** | N/A | Gold_REF injected | None | No | GPT-4o | GPT-4.1-mini | Upper bound anchor — GPT-4o with perfect context |
 
 ---
 
@@ -28,7 +28,7 @@ Each transition between experiments isolates a single variable:
                                     │              └──> 5. Llama+Gold_REF
                                     │
                                     ├─ HYPOTHESIS TEST (target: ≥85%)
-6. GPT-4o RAG (Ceiling) ──────────┘
+6. GPT-4o Gold_REF (Ceiling) ─────┘
 ```
 
 | Gap | What it measures | Why it matters |
@@ -37,7 +37,7 @@ Each transition between experiments isolates a single variable:
 | Baseline → Phase 1 | Impact of semantic chunking + hybrid search + reranking + metadata enrichment | Quantifies retrieval optimization gains |
 | Phase 1 → Phase 2 | Impact of agentic multi-hop reasoning | Quantifies value of the ReAct agent |
 | Phase 2 → Llama+Gold_REF | Performance lost to imperfect retrieval | Shows how much headroom better retrieval could unlock |
-| Phase 2 → GPT-4o RAG | Model capability gap — direct hypothesis test | LLM is the only variable; ≤15% gap confirms the hypothesis |
+| Phase 2 → GPT-4o Gold_REF | Combined model + retrieval ceiling gap — direct hypothesis test | GPT-4o Gold_REF represents the absolute ceiling (strongest model + perfect context); ≤15% gap confirms the pipeline compensates for 8B limitations |
 
 ---
 
@@ -67,7 +67,7 @@ Not all RAGAS metrics are meaningful for every experiment:
 | Phase 1 | `fetched` | Real PDFs for scored runs |
 | Phase 2 | `fetched` | Real PDFs for scored runs |
 | Llama+Gold_REF | `gold_ref` | Gold_REF text injected directly as context |
-| GPT-4o RAG (Ceiling) | `fetched` | Same fetched PDFs and pipeline as Phase 2 — only LLM differs |
+| GPT-4o Gold_REF (Ceiling) | `gold_ref` | Gold_REF text injected directly as context — GPT-4o with perfect retrieval |
 
 ---
 
@@ -77,6 +77,6 @@ Not all RAGAS metrics are meaningful for every experiment:
 
 The 6-experiment design lets us decompose this hypothesis precisely:
 
-- **Phase 2 AC / GPT-4o RAG AC ≥ 85%** → Hypothesis supported — the pipeline closes the model gap (LLM is the only variable)
+- **Phase 2 AC / GPT-4o Gold_REF AC ≥ 85%** → Hypothesis supported — the pipeline closes the model gap
 - **Phase 2 AC on complexity 3-4 ≥ Llama+Gold_REF AC on complexity 3-4** → Agent's reasoning compensates for imperfect retrieval on hard questions
-- **Phase 2 vs Llama+Gold_REF** → Isolates how much of the remaining gap to GPT-4o RAG is retrieval quality vs model capability
+- **Phase 2 vs Llama+Gold_REF** → Isolates how much of the remaining gap to GPT-4o Gold_REF is retrieval quality vs model capability

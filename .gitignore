@@ -26,6 +26,8 @@ Validation/pipeline/data/
 
 # Results: track CSVs (research output), ignore SQLite binary
 Validation/pipeline/results/*.db
+Validation/pipeline/results/*.db-shm
+Validation/pipeline/results/*.db-wal
 
 # Environment variables
 .env
