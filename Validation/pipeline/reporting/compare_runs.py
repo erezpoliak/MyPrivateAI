@@ -41,7 +41,7 @@ EXPERIMENT_ORDER = [
     "phase1",
     "phase2",
     "llama_gold_ref",
-    "gpt4o_rag",
+    "gpt4o_gold_ref",
 ]
 
 # Human-friendly labels
@@ -51,7 +51,7 @@ EXPERIMENT_LABELS = {
     "phase1": "Phase 1 (Semantic / Hybrid)",
     "phase2": "Phase 2 (Agentic RAG)",
     "llama_gold_ref": "Llama + Gold Ref",
-    "gpt4o_rag": "GPT-4o RAG (Ceiling)",
+    "gpt4o_gold_ref": "GPT-4o + Gold Ref (Ceiling)",
 }
 
 METRIC_KEYS = ["faithfulness", "context_recall", "context_precision", "answer_correctness"]
@@ -60,7 +60,7 @@ METRIC_KEYS = ["faithfulness", "context_recall", "context_precision", "answer_co
 CONTEXT_METRICS = {"faithfulness", "context_recall", "context_precision"}
 
 # Experiments that use the agentic workflow (trajectory data is meaningful)
-AGENTIC_EXPERIMENTS = {"phase2", "gpt4o_rag"}
+AGENTIC_EXPERIMENTS = {"phase2"}
 
 # Metrics only meaningful for agentic experiments
 TRAJECTORY_METRICS = {"avg_trajectory_steps", "trajectory_success_rate"}
@@ -149,7 +149,6 @@ def build_overall_table(rows: list[dict]) -> Table:
     )
     table.add_column("Experiment", style="bold")
     table.add_column("Run", justify="right")
-    table.add_column("N", justify="right")
     table.add_column("Faithfulness", justify="right")
     table.add_column("Ctx Recall", justify="right")
     table.add_column("Ctx Precision", justify="right")
@@ -164,7 +163,6 @@ def build_overall_table(rows: list[dict]) -> Table:
         table.add_row(
             r["label"],
             str(r["run_id"]),
-            str(r["num_questions"]),
             _fmt(r["avg_faithfulness"], dash, "faithfulness"),
             _fmt(r["avg_context_recall"], dash, "context_recall"),
             _fmt(r["avg_context_precision"], dash, "context_precision"),
@@ -185,7 +183,6 @@ def build_breakdown_table(rows: list[dict]) -> Table:
     )
     table.add_column("Experiment", style="bold")
     table.add_column("Complexity", justify="center")
-    table.add_column("N", justify="right")
     table.add_column("Faithfulness", justify="right")
     table.add_column("Ctx Recall", justify="right")
     table.add_column("Ctx Precision", justify="right")
@@ -203,7 +200,6 @@ def build_breakdown_table(rows: list[dict]) -> Table:
             table.add_row(
                 label,
                 str(complexity),
-                str(stats["count"]),
                 _fmt(stats.get("avg_faithfulness"), dash, "faithfulness"),
                 _fmt(stats.get("avg_context_recall"), dash, "context_recall"),
                 _fmt(stats.get("avg_context_precision"), dash, "context_precision"),
@@ -224,7 +220,7 @@ def export_csv(rows: list[dict], output_path: Path) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     fieldnames = [
-        "experiment", "complexity", "n", "faithfulness",
+        "experiment", "complexity", "faithfulness",
         "context_recall", "context_precision", "answer_correctness",
         "avg_trajectory_steps", "trajectory_success_rate", "latency_s",
     ]
@@ -238,9 +234,8 @@ def export_csv(rows: list[dict], output_path: Path) -> None:
 
             # Overall row
             writer.writerow({
-                "experiment": r["experiment"],
+                "experiment": r["label"],
                 "complexity": "all",
-                "n": r["num_questions"],
                 "faithfulness": _fmt(r["avg_faithfulness"], dash, "faithfulness"),
                 "context_recall": _fmt(r["avg_context_recall"], dash, "context_recall"),
                 "context_precision": _fmt(r["avg_context_precision"], dash, "context_precision"),
@@ -253,9 +248,8 @@ def export_csv(rows: list[dict], output_path: Path) -> None:
             # Per-complexity rows
             for complexity, stats in sorted(r["breakdown"].items()):
                 writer.writerow({
-                    "experiment": r["experiment"],
+                    "experiment": r["label"],
                     "complexity": complexity,
-                    "n": stats["count"],
                     "faithfulness": _fmt(stats.get("avg_faithfulness"), dash, "faithfulness"),
                     "context_recall": _fmt(stats.get("avg_context_recall"), dash, "context_recall"),
                     "context_precision": _fmt(stats.get("avg_context_precision"), dash, "context_precision"),
@@ -264,6 +258,30 @@ def export_csv(rows: list[dict], output_path: Path) -> None:
                     "trajectory_success_rate": _fmt(stats.get("trajectory_success_rate"), traj_dash, "trajectory_success_rate"),
                     "latency_s": _fmt(stats.get("avg_latency_s")),
                 })
+
+
+def export_concise_csv(rows: list[dict], output_path: Path) -> None:
+    """Write a concise CSV with only overall metrics per experiment (no breakdown)."""
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    fieldnames = [
+        "experiment", "faithfulness",
+        "context_recall", "context_precision", "answer_correctness",
+    ]
+    with open(output_path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+
+        for r in rows:
+            dash = CONTEXT_METRICS if r["is_closed"] else set()
+
+            writer.writerow({
+                "experiment": r["label"],
+                "faithfulness": _fmt(r["avg_faithfulness"], dash, "faithfulness"),
+                "context_recall": _fmt(r["avg_context_recall"], dash, "context_recall"),
+                "context_precision": _fmt(r["avg_context_precision"], dash, "context_precision"),
+                "answer_correctness": _fmt(r["avg_answer_correctness"]),
+            })
 
 
 # ---------------------------------------------------------------------------
@@ -313,8 +331,11 @@ def main(argv: list[str] | None = None) -> None:
 
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
     csv_path = Path(args.csv) if args.csv else config.results_dir / f"comparison_{stamp}.csv"
+    concise_path = csv_path.with_stem(f"{csv_path.stem}_concise")
     export_csv(rows, csv_path)
+    export_concise_csv(rows, concise_path)
     console.print(f"\n[green]CSV exported to:[/green] {csv_path}")
+    console.print(f"[green]Concise CSV exported to:[/green] {concise_path}")
 
 
 if __name__ == "__main__":
