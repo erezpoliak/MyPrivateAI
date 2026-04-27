@@ -4,7 +4,7 @@
 
 While existing local AI tools and Agentic RAG pipelines require technical expertise, MyPrivateAI offers a simple installer for researchers, lawyers, and professionals handling confidential data.
 
-**The core innovation:** Local LLMs typically underperform on complex reasoning compared to GPT-5. Our Optimized Agentic RAG system combines advanced RAG techniques with multi-turn reasoning agents, enabling complex multi-document analysis once reserved for cloud services. Through systematic validation on research benchmarks, we demonstrate that frontier-level performance is achievable on consumer hardware.
+**The core innovation:** Local LLMs typically underperform on complex reasoning compared to GPT-5. Our Optimized Agentic RAG system combines advanced RAG techniques with multi-turn reasoning agents, enabling complex multi-document analysis once reserved for cloud services. Through systematic validation on the SciRAG-QA benchmark, we demonstrate that frontier-level performance is achievable on consumer hardware — **MyPrivateAI achieved 95% of GPT-5.1 + Gold Ref, a ceiling simulating a perfect cloud model with perfect retrieval.**
 
 MyPrivateAI delivers a "cloud LLM experience" locally — completely free, private, and offline — making advanced AI accessible to anyone with sensitive documents.
 
@@ -75,6 +75,17 @@ Hop 3:  correct(all accumulated context) ──> done
 
 ## Experiment Results
 
-> **Coming soon.** Results will be published here as each experiment is completed.
+**Phase 2 (Agentic RAG) achieved 95% of GPT-5.1 + Gold Ref performance — a ceiling that simulates a perfect cloud model with perfect retrieval.**
+
+All experiments evaluated with [RAGAS](https://docs.ragas.io/) metrics on the SciRAG-QA benchmark. `—` indicates the metric is not applicable (no retrieval).
+
+| Experiment | Faithfulness | Context Recall | Context Precision | Answer Correctness |
+|---|:---:|:---:|:---:|:---:|
+| Closed Book | — | — | — | 0.2696 |
+| Baseline (Fixed / Vector) | 0.7500 | 0.6897 | 0.6185 | 0.5543 |
+| Phase 1 (Semantic / Hybrid) | 0.8534 | 0.7931 | 0.7667 | 0.7346 |
+| Phase 2 (Agentic RAG) | 0.7615 | 0.8276 | 0.7363 | 0.7816 |
+| Llama + Gold Ref | 0.6351 | 0.9310 | 0.9138 | 0.6607 |
+| GPT-5.1 + Gold Ref (Ceiling) | 0.5737 | 0.8793 | 0.9138 | 0.8195 |
 
 ---

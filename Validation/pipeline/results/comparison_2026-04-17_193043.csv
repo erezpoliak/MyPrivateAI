@@ -1,0 +1,31 @@
+experiment,complexity,faithfulness,context_recall,context_precision,answer_correctness,avg_trajectory_steps,trajectory_success_rate,latency_s
+Closed Book,all,—,—,—,0.2696,—,—,9.8701
+Closed Book,1,—,—,—,0.2552,—,—,7.3565
+Closed Book,2,—,—,—,0.3260,—,—,11.0638
+Closed Book,3,—,—,—,0.2960,—,—,15.3758
+Closed Book,4,—,—,—,0.1959,—,—,12.6144
+Baseline (Fixed / Vector),all,0.7500,0.6897,0.6185,0.5543,—,—,18.5150
+Baseline (Fixed / Vector),1,0.7759,0.6207,0.5785,0.5832,—,—,17.7855
+Baseline (Fixed / Vector),2,0.7333,0.8000,0.6544,0.5828,—,—,18.7775
+Baseline (Fixed / Vector),3,0.7778,0.8333,0.8595,0.6137,—,—,20.1516
+Baseline (Fixed / Vector),4,0.6667,0.6250,0.5153,0.3516,—,—,19.4399
+Phase 1 (Semantic / Hybrid),all,0.8534,0.7931,0.7667,0.7346,—,—,37.4735
+Phase 1 (Semantic / Hybrid),1,0.9138,0.8966,0.7601,0.7649,—,—,35.8786
+Phase 1 (Semantic / Hybrid),2,0.9111,0.7333,0.8037,0.7620,—,—,39.7774
+Phase 1 (Semantic / Hybrid),3,1.0000,0.6667,0.9326,0.7626,—,—,38.3823
+Phase 1 (Semantic / Hybrid),4,0.4167,0.6250,0.5970,0.5522,—,—,38.2536
+Phase 2 (Agentic RAG),all,0.7615,0.8276,0.7363,0.7816,3.3793,0.9655,47.0474
+Phase 2 (Agentic RAG),1,0.7759,0.8966,0.7609,0.8865,3.4828,0.9310,48.8542
+Phase 2 (Agentic RAG),2,0.8444,0.8667,0.8037,0.7098,3.0000,1.0000,38.4896
+Phase 2 (Agentic RAG),3,0.9444,0.6667,0.7458,0.6198,3.0000,1.0000,39.1903
+Phase 2 (Agentic RAG),4,0.4167,0.6250,0.5135,0.6576,4.0000,1.0000,62.4362
+Llama + Gold Ref,all,0.6351,0.9310,0.9138,0.6607,—,—,1.0774
+Llama + Gold Ref,1,0.6552,0.9310,0.8621,0.7414,—,—,0.9757
+Llama + Gold Ref,2,0.7889,0.8667,0.9333,0.6633,—,—,1.1421
+Llama + Gold Ref,3,0.3333,1.0000,1.0000,0.5605,—,—,1.0713
+Llama + Gold Ref,4,0.5000,1.0000,1.0000,0.4386,—,—,1.3297
+GPT-5.1 + Gold Ref (Ceiling),all,0.5737,0.8793,0.9138,0.8195,—,—,0.8390
+GPT-5.1 + Gold Ref (Ceiling),1,0.5345,0.8276,0.8621,0.8546,—,—,0.8697
+GPT-5.1 + Gold Ref (Ceiling),2,0.6738,0.8667,0.9333,0.7631,—,—,0.8116
+GPT-5.1 + Gold Ref (Ceiling),3,0.7222,1.0000,1.0000,0.9505,—,—,0.8380
+GPT-5.1 + Gold Ref (Ceiling),4,0.4167,1.0000,1.0000,0.6994,—,—,0.7795
