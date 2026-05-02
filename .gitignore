@@ -5,6 +5,8 @@
 CLAUDE.md
 TASKS.md
 PLAN.md
+PLAN2.md
+TASKS2.md
 
 # Python virtual environment
 .venv/
@@ -23,6 +25,10 @@ build/
 
 # Pipeline data (generated, not source)
 Validation/pipeline/data/
+
+# App runtime data (generated, not source)
+app/backend/data/
+app/backend/storage/
 
 # Results: track CSVs (research output), ignore SQLite binary
 Validation/pipeline/results/*.db

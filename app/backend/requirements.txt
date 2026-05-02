@@ -1,0 +1,36 @@
+# NOTE: NVIDIA users: pip install torch==2.10.0 --index-url https://download.pytorch.org/whl/cu121
+torch==2.10.0
+
+# LlamaIndex
+llama-index-core==0.14.15
+llama-index-llms-openai==0.6.26
+llama-index-embeddings-huggingface==0.6.1
+llama-index-vector-stores-chroma==0.5.5
+llama-index-retrievers-bm25==0.6.5
+llama-index-postprocessor-flashrank-rerank==0.2.1
+
+# MLX (Apple Silicon only)
+mlx-lm>=0.22.0
+
+# Vector DB
+chromadb==1.5.1
+
+# Reranker
+FlashRank==0.2.10
+
+# PDF
+pymupdf4llm==1.27.2.2
+pymupdf>=1.24
+
+# NLP
+nltk==3.9.3
+
+# Env
+python-dotenv==1.2.1
+
+# Web
+flask>=3.0
+flask-cors>=4.0
+
+# Dev / test
+pytest==9.0.2
