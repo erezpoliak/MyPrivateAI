@@ -66,6 +66,10 @@ def ingest_document(
         )
 
         nodes = chunker.get_nodes_from_documents([doc])
+        # page_offsets is a list[int] — ChromaDB only accepts scalar metadata values.
+        # page_start/page_end have already been computed by the chunker, so strip it.
+        for node in nodes:
+            node.metadata.pop("page_offsets", None)
         store.upsert_nodes(nodes)
 
         db.update_document_status(

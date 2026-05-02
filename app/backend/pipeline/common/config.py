@@ -55,6 +55,7 @@ class Config:
     # -- Chunking ------------------------------------------------------------
     semantic_threshold_pct: int = 95     # percentile for cosine dissimilarity spike
     semantic_max_tokens: int = 512       # sub-split semantic chunks exceeding this limit, Specter2 max context is 512 tokens
+    chunk_overlap: int = 50              # token overlap between sub-split chunks
 
     # -- Retrieval -----------------------------------------------------------
     vector_top_k: int = 10

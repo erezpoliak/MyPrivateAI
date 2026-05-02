@@ -35,7 +35,7 @@ class CappedSemanticSplitter:
         )
         self._capper = SentenceSplitter(
             chunk_size=config.semantic_max_tokens,
-            chunk_overlap=config.fixed_chunk_overlap,
+            chunk_overlap=config.chunk_overlap,
         )
 
     def get_nodes_from_documents(

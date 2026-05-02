@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+
 from llama_index.core import StorageContext, VectorStoreIndex
 from llama_index.core.base.embeddings.base import BaseEmbedding
 from llama_index.core.schema import TextNode
@@ -86,8 +88,18 @@ class DocumentStore:
             raise RuntimeError("Call load_index() before get_all_nodes()")
         result = self._chroma_collection.get(include=["documents", "metadatas"])
         nodes: list[TextNode] = []
-        for node_id, text, metadata in zip(
+        for node_id, text, chroma_meta in zip(
             result["ids"], result["documents"], result["metadatas"]
         ):
-            nodes.append(TextNode(id_=node_id, text=text or "", metadata=metadata or {}))
+            # LlamaIndex serializes the full node into _node_content as JSON.
+            # Parse it to recover the original metadata dict (doc_id, title, etc.).
+            node_content = chroma_meta.get("_node_content") if chroma_meta else None
+            if node_content:
+                try:
+                    meta = json.loads(node_content).get("metadata", {})
+                except (json.JSONDecodeError, AttributeError):
+                    meta = {}
+            else:
+                meta = {k: v for k, v in (chroma_meta or {}).items() if not k.startswith("_")}
+            nodes.append(TextNode(id_=node_id, text=text or "", metadata=meta))
         return nodes
