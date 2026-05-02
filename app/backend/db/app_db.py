@@ -76,6 +76,7 @@ class AppDB:
         id: str,
         status: str,
         chunk_count: int | None = None,
+        page_count: int | None = None,
         error: str | None = None,
     ) -> None:
         with self._connect() as conn:
@@ -83,9 +84,10 @@ class AppDB:
                 """UPDATE documents
                    SET status = ?,
                        chunk_count = COALESCE(?, chunk_count),
+                       page_count = COALESCE(?, page_count),
                        error = ?
                    WHERE id = ?""",
-                (status, chunk_count, error, id),
+                (status, chunk_count, page_count, error, id),
             )
 
     def get_document(self, id: str) -> dict[str, Any] | None:

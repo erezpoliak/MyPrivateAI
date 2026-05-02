@@ -75,3 +75,19 @@ class DocumentStore:
             raise RuntimeError("Call load_index() before delete_by_doc_id()")
         self._chroma_collection.delete(where={"doc_id": doc_id})
         logger.info("Deleted nodes for doc_id '%s' from '%s'", doc_id, self._collection_name)
+
+    def get_all_nodes(self) -> list[TextNode]:
+        """Return all TextNodes currently stored in the collection.
+
+        Used by RetrieverService to rebuild the BM25 retriever after the corpus
+        changes (document added or deleted).
+        """
+        if self._chroma_collection is None:
+            raise RuntimeError("Call load_index() before get_all_nodes()")
+        result = self._chroma_collection.get(include=["documents", "metadatas"])
+        nodes: list[TextNode] = []
+        for node_id, text, metadata in zip(
+            result["ids"], result["documents"], result["metadatas"]
+        ):
+            nodes.append(TextNode(id_=node_id, text=text or "", metadata=metadata or {}))
+        return nodes
