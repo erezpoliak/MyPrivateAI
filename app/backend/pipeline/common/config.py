@@ -38,6 +38,7 @@ class Config:
     # -- Paths ---------------------------------------------------------------
     papers_dir: Path = _BACKEND_DIR / "storage" / "papers"
     chroma_dir: Path = _DATA_DIR / "chroma"
+    db_path: Path = _DATA_DIR / "app.db"
     reranker_cache_dir: Path = _DATA_DIR / "reranker_models"
     nltk_data_dir: Path = _DATA_DIR / "nltk_data"
 

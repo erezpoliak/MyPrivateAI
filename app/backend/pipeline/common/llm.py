@@ -6,6 +6,7 @@ from typing import Any
 
 from llama_index.core.base.llms.types import (
     CompletionResponse,
+    CompletionResponseAsyncGen,
     CompletionResponseGen,
     LLMMetadata,
 )
@@ -57,7 +58,31 @@ class MlxLM(CustomLLM):
 
     @llm_completion_callback()
     def stream_complete(self, prompt: str, **kwargs: Any) -> CompletionResponseGen:
-        raise NotImplementedError("Streaming is not used in batch evaluation.")
+        from mlx_lm import stream_generate
+        from mlx_lm.sample_utils import make_sampler
+        formatted = self._tokenizer.apply_chat_template(
+            [{"role": "user", "content": prompt}],
+            tokenize=False,
+            add_generation_prompt=True,
+            enable_thinking=False,
+        )
+        accumulated = ""
+        for token in stream_generate(
+            self._model,
+            self._tokenizer,
+            prompt=formatted,
+            max_tokens=self.max_tokens,
+            sampler=make_sampler(temp=self.temperature),
+        ):
+            accumulated += token
+            yield CompletionResponse(text=accumulated, delta=token)
+
+    @llm_completion_callback()
+    async def astream_complete(self, prompt: str, **kwargs: Any) -> CompletionResponseAsyncGen:
+        async def _gen() -> CompletionResponseAsyncGen:
+            for response in self.stream_complete(prompt, **kwargs):
+                yield response
+        return _gen()
 
 
 def get_llm(config: Config | None = None) -> MlxLM:
