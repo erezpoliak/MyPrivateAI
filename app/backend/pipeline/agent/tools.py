@@ -20,7 +20,7 @@ Usage::
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Protocol
 
 from ..common.utils import get_logger
@@ -47,6 +47,7 @@ class RetrievalResult:
     texts: list[str]
     scores: list[float]
     node_ids: list[str]
+    metadatas: list[dict] = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
@@ -67,6 +68,7 @@ def retrieve_context(query: str, retriever: Retriever) -> RetrievalResult:
         texts=[n.node.get_content() for n in nodes],
         scores=[n.score for n in nodes],
         node_ids=[n.node.node_id for n in nodes],
+        metadatas=[dict(n.node.metadata) for n in nodes],
     )
     logger.debug(
         "Retrieved %d chunks for %r (top score=%.4f)",
@@ -92,14 +94,16 @@ def merge_results(results: list[RetrievalResult]) -> RetrievalResult:
     texts: list[str] = []
     scores: list[float] = []
     node_ids: list[str] = []
+    metadatas: list[dict] = []
 
     for r in results:
-        for nid, txt, score in zip(r.node_ids, r.texts, r.scores):
+        for nid, txt, score, meta in zip(r.node_ids, r.texts, r.scores, r.metadatas or [{}] * len(r.texts)):
             if nid not in seen:
                 seen.add(nid)
                 texts.append(txt)
                 scores.append(score)
                 node_ids.append(nid)
+                metadatas.append(meta)
 
     merged_query = "; ".join(r.query for r in results)
     logger.debug(
@@ -112,6 +116,7 @@ def merge_results(results: list[RetrievalResult]) -> RetrievalResult:
         texts=texts,
         scores=scores,
         node_ids=node_ids,
+        metadatas=metadatas,
     )
 
 

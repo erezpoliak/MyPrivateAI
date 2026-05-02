@@ -289,12 +289,23 @@ class AgentWorkflow(Workflow):
 
     # ── Helpers ────────────────────────────────────────────────────────
 
-    def cited_chunks_for(self, answer: str) -> list:
+    def cited_chunks_for(self, answer: str) -> list[dict]:
         """Return context chunks in the order they were rendered into the prompt.
 
         Index 0 → [1], index 1 → [2], etc. — matches the [n] markers the LLM
         was asked to emit. Pass this list to parse_citations together with the
         answer to resolve markers to source metadata.
+
+        Each dict contains: text, doc_id, title, page_start, page_end.
         """
         merged = merge_results(self._retrieval_results)
-        return merged.texts
+        chunks = []
+        for text, meta in zip(merged.texts, merged.metadatas):
+            chunks.append({
+                "text": text,
+                "doc_id": meta.get("doc_id", ""),
+                "title": meta.get("title", ""),
+                "page_start": meta.get("page_start"),
+                "page_end": meta.get("page_end"),
+            })
+        return chunks
