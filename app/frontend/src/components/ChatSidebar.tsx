@@ -4,23 +4,40 @@ function ChatItem({
   chat,
   active,
   onSelect,
+  onDelete,
 }: {
   chat: Chat;
   active: boolean;
   onSelect: () => void;
+  onDelete: () => void;
 }) {
   return (
-    <button
-      onClick={onSelect}
+    <div
       className={[
-        "w-full text-left px-3 py-2 rounded-md text-sm truncate transition-colors",
-        active
-          ? "bg-indigo-100 text-indigo-800 font-medium"
-          : "text-gray-700 hover:bg-gray-100",
+        "group flex items-center rounded-md transition-colors",
+        active ? "bg-indigo-100" : "hover:bg-gray-100",
       ].join(" ")}
     >
-      {chat.title || "New chat"}
-    </button>
+      <button
+        onClick={onSelect}
+        className={[
+          "flex-1 text-left px-3 py-2 text-sm truncate",
+          active ? "text-indigo-800 font-medium" : "text-gray-700",
+        ].join(" ")}
+      >
+        {chat.title || "New chat"}
+      </button>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete();
+        }}
+        className="pr-2 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity"
+        title="Delete chat"
+      >
+        ×
+      </button>
+    </div>
   );
 }
 
@@ -30,6 +47,7 @@ interface Props {
   activeChatId: string | null;
   onSelect: (id: string) => void;
   onNewChat: () => void;
+  onDelete: (id: string) => void;
 }
 
 export default function ChatSidebar({
@@ -38,6 +56,7 @@ export default function ChatSidebar({
   activeChatId,
   onSelect,
   onNewChat,
+  onDelete,
 }: Props) {
   return (
     <aside className="w-60 flex-shrink-0 border-r border-gray-200 flex flex-col">
@@ -60,6 +79,7 @@ export default function ChatSidebar({
             chat={chat}
             active={chat.id === activeChatId}
             onSelect={() => onSelect(chat.id)}
+            onDelete={() => onDelete(chat.id)}
           />
         ))}
         {!loading && chats.length === 0 && (

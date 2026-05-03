@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { listChats, createChat, getChat, postMessage, type Message } from "../api";
+import { listChats, createChat, getChat, postMessage, deleteChat, type Message } from "../api";
 import { useSSE, type DonePayload, type TracePayload } from "../hooks/useSSE";
 import ChatSidebar from "../components/ChatSidebar";
 import ChatInput from "../components/ChatInput";
@@ -49,6 +49,19 @@ export default function Chat() {
   useEffect(() => {
     scrollToBottom();
   }, [chatDetail?.messages, streamingMsg?.content, scrollToBottom]);
+
+  async function handleDeleteChat(chatId: string) {
+    try {
+      await deleteChat(chatId);
+      await queryClient.invalidateQueries({ queryKey: ["chats"] });
+      if (activeChatId === chatId) {
+        setActiveChatId(null);
+      }
+      toast.success("Chat deleted");
+    } catch (err) {
+      toast.error((err as Error).message ?? "Failed to delete chat");
+    }
+  }
 
   async function handleNewChat() {
     try {
@@ -156,6 +169,7 @@ export default function Chat() {
         activeChatId={activeChatId}
         onSelect={setActiveChatId}
         onNewChat={handleNewChat}
+        onDelete={handleDeleteChat}
       />
 
       <div className="flex-1 flex flex-col min-w-0">
