@@ -59,6 +59,7 @@ def ingest_document(
             excluded_from_embed.append("title")
 
         doc = Document(
+            id_=doc_id,  # makes LlamaIndex store our doc_id as ref_doc_id on all nodes
             text=result.text,
             metadata=metadata,
             excluded_embed_metadata_keys=excluded_from_embed,

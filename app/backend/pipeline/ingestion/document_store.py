@@ -75,8 +75,14 @@ class DocumentStore:
         """Remove all nodes whose metadata ``doc_id`` matches *doc_id*."""
         if self._chroma_collection is None:
             raise RuntimeError("Call load_index() before delete_by_doc_id()")
-        self._chroma_collection.delete(where={"doc_id": doc_id})
-        logger.info("Deleted nodes for doc_id '%s' from '%s'", doc_id, self._collection_name)
+        nodes = self.get_all_nodes()
+        ids_to_delete = [n.id_ for n in nodes if n.metadata.get("doc_id") == doc_id]
+        if ids_to_delete:
+            self._chroma_collection.delete(ids=ids_to_delete)
+        logger.info(
+            "Deleted %d nodes for doc_id '%s' from '%s'",
+            len(ids_to_delete), doc_id, self._collection_name,
+        )
 
     def get_all_nodes(self) -> list[TextNode]:
         """Return all TextNodes currently stored in the collection.
