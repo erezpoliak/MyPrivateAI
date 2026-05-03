@@ -1,98 +1,75 @@
-"""Chats blueprint: CRUD + streaming message endpoint."""
+"""Chats router: CRUD + streaming message endpoint."""
 
 from __future__ import annotations
 
-import asyncio
 import uuid
-from typing import Generator
 
-from flask import Blueprint, Response, current_app, jsonify, request
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel
 
 from ..services.chat import stream_answer
 
-bp = Blueprint("chats", __name__)
+router = APIRouter()
 
 
-def _sync_stream(async_gen) -> Generator[str, None, None]:
-    """Drive an async generator synchronously for Flask streaming."""
-    loop = asyncio.new_event_loop()
-    try:
-        ait = async_gen.__aiter__()
-        while True:
-            try:
-                yield loop.run_until_complete(ait.__anext__())
-            except StopAsyncIteration:
-                break
-    finally:
-        loop.close()
+class MessageBody(BaseModel):
+    content: str = ""
 
 
-@bp.get("/api/chats")
-def list_chats():
-    db = current_app.config["DB"]
-    return jsonify(db.list_chats())
+@router.get("/api/chats")
+async def list_chats(request: Request):
+    return request.app.state.db.list_chats()
 
 
-@bp.post("/api/chats")
-def create_chat():
-    db = current_app.config["DB"]
+@router.post("/api/chats", status_code=201)
+async def create_chat(request: Request):
+    db = request.app.state.db
     chat_id = str(uuid.uuid4())
-    row = db.create_chat(chat_id)
-    return jsonify(row), 201
+    return db.create_chat(chat_id)
 
 
-@bp.get("/api/chats/<chat_id>")
-def get_chat(chat_id: str):
-    db = current_app.config["DB"]
-
+@router.get("/api/chats/{chat_id}")
+async def get_chat(chat_id: str, request: Request):
+    db = request.app.state.db
     chat = db.get_chat(chat_id)
     if chat is None:
-        return jsonify({"error": "Chat not found"}), 404
+        raise HTTPException(status_code=404, detail="Chat not found")
 
     messages = db.get_messages(chat_id)
     for msg in messages:
         msg["sources"] = db.get_message_sources(msg["id"])
 
-    return jsonify({**chat, "messages": messages})
+    return {**chat, "messages": messages}
 
 
-@bp.delete("/api/chats/<chat_id>")
-def delete_chat(chat_id: str):
-    db = current_app.config["DB"]
-
+@router.delete("/api/chats/{chat_id}", status_code=204)
+async def delete_chat(chat_id: str, request: Request):
+    db = request.app.state.db
     if db.get_chat(chat_id) is None:
-        return jsonify({"error": "Chat not found"}), 404
-
+        raise HTTPException(status_code=404, detail="Chat not found")
     db.delete_chat(chat_id)
-    return "", 204
 
 
-@bp.post("/api/chats/<chat_id>/messages")
-def post_message(chat_id: str):
-    db = current_app.config["DB"]
-
+@router.post("/api/chats/{chat_id}/messages")
+async def post_message(chat_id: str, body: MessageBody, request: Request):
+    db = request.app.state.db
     if db.get_chat(chat_id) is None:
-        return jsonify({"error": "Chat not found"}), 404
+        raise HTTPException(status_code=404, detail="Chat not found")
 
-    body = request.get_json(silent=True) or {}
-    content = (body.get("content") or "").strip()
+    content = body.content.strip()
     if not content:
-        return jsonify({"error": "content is required"}), 400
+        raise HTTPException(status_code=400, detail="content is required")
 
-    llm = current_app.config["LLM"]
-    retriever_service = current_app.config["RETRIEVER_SERVICE"]
-    cfg = current_app.config["PIPELINE_CONFIG"]
-
-    gen = stream_answer(
-        chat_id=chat_id,
-        content=content,
-        db=db,
-        llm=llm,
-        retriever_service=retriever_service,
-        config=cfg,
+    return StreamingResponse(
+        stream_answer(
+            chat_id=chat_id,
+            content=content,
+            db=db,
+            llm=request.app.state.llm,
+            retriever_service=request.app.state.retriever_service,
+            config=request.app.state.config,
+        ),
+        media_type="text/event-stream",
+        headers={"X-Accel-Buffering": "no", "Cache-Control": "no-cache"},
     )
-
-    response = Response(_sync_stream(gen), mimetype="text/event-stream")
-    response.headers["X-Accel-Buffering"] = "no"
-    response.headers["Cache-Control"] = "no-cache"
-    return response

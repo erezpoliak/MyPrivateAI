@@ -1,32 +1,27 @@
-"""Documents blueprint: upload, list, delete."""
+"""Documents router: upload, list, delete."""
 
 from __future__ import annotations
 
-import threading
 import uuid
 from pathlib import Path
 
-from flask import Blueprint, current_app, jsonify, request
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Request, UploadFile
 
 from ..pipeline.ingestion.semantic_chunker import CappedSemanticSplitter
 from ..services.ingestion import ingest_document
 
-bp = Blueprint("documents", __name__)
+router = APIRouter()
 
 
-@bp.post("/api/documents")
-def upload_document():
-    if "file" not in request.files:
-        return jsonify({"error": "No file provided"}), 400
-
-    file = request.files["file"]
+@router.post("/api/documents", status_code=201)
+async def upload_document(request: Request, file: UploadFile, background_tasks: BackgroundTasks):
     if not file.filename or not file.filename.lower().endswith(".pdf"):
-        return jsonify({"error": "Only PDF files are accepted"}), 400
+        raise HTTPException(status_code=400, detail="Only PDF files are accepted")
 
-    db = current_app.config["DB"]
-    store = current_app.config["STORE"]
-    retriever_service = current_app.config["RETRIEVER_SERVICE"]
-    cfg = current_app.config["PIPELINE_CONFIG"]
+    db = request.app.state.db
+    store = request.app.state.store
+    retriever_service = request.app.state.retriever_service
+    cfg = request.app.state.config
 
     doc_id = str(uuid.uuid4())
     filename = file.filename
@@ -34,48 +29,40 @@ def upload_document():
 
     dest: Path = cfg.papers_dir / f"{doc_id}.pdf"
     dest.parent.mkdir(parents=True, exist_ok=True)
-    file.save(str(dest))
+    dest.write_bytes(await file.read())
 
     row = db.create_document(doc_id, filename, title)
 
-    embed_model = store.embed_model
-    chunker = CappedSemanticSplitter(embed_model, cfg)
-
-    thread = threading.Thread(
-        target=ingest_document,
-        kwargs=dict(
-            doc_id=doc_id,
-            pdf_path=dest,
-            filename=filename,
-            db=db,
-            store=store,
-            chunker=chunker,
-            retriever_service=retriever_service,
-            config=cfg,
-        ),
-        daemon=True,
+    chunker = CappedSemanticSplitter(store.embed_model, cfg)
+    background_tasks.add_task(
+        ingest_document,
+        doc_id=doc_id,
+        pdf_path=dest,
+        filename=filename,
+        db=db,
+        store=store,
+        chunker=chunker,
+        retriever_service=retriever_service,
+        config=cfg,
     )
-    thread.start()
 
-    return jsonify(row), 201
-
-
-@bp.get("/api/documents")
-def list_documents():
-    db = current_app.config["DB"]
-    return jsonify(db.list_documents())
+    return row
 
 
-@bp.delete("/api/documents/<doc_id>")
-def delete_document(doc_id: str):
-    db = current_app.config["DB"]
-    store = current_app.config["STORE"]
-    retriever_service = current_app.config["RETRIEVER_SERVICE"]
-    cfg = current_app.config["PIPELINE_CONFIG"]
+@router.get("/api/documents")
+async def list_documents(request: Request):
+    return request.app.state.db.list_documents()
 
-    row = db.get_document(doc_id)
-    if row is None:
-        return jsonify({"error": "Document not found"}), 404
+
+@router.delete("/api/documents/{doc_id}", status_code=204)
+async def delete_document(doc_id: str, request: Request):
+    db = request.app.state.db
+    store = request.app.state.store
+    retriever_service = request.app.state.retriever_service
+    cfg = request.app.state.config
+
+    if db.get_document(doc_id) is None:
+        raise HTTPException(status_code=404, detail="Document not found")
 
     store.delete_by_doc_id(doc_id)
 
@@ -85,5 +72,3 @@ def delete_document(doc_id: str):
 
     db.delete_document(doc_id)
     retriever_service.invalidate()
-
-    return "", 204

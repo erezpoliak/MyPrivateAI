@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import asyncio
+import concurrent.futures
+import queue as thread_queue
 from typing import Any
 
 from llama_index.core.base.llms.types import (
@@ -16,6 +19,10 @@ from pydantic import PrivateAttr
 
 from .config import Config
 
+# All MLX GPU ops must run on the thread that owns the Metal stream.
+# A single-worker executor guarantees every call lands on the same thread.
+_mlx_executor = concurrent.futures.ThreadPoolExecutor(max_workers=1, thread_name_prefix="mlx")
+
 
 class MlxLM(CustomLLM):
     """LlamaIndex CustomLLM backed by mlx-lm (Apple Silicon only)."""
@@ -29,8 +36,11 @@ class MlxLM(CustomLLM):
 
     def __init__(self, model_name: str, temperature: float = 0.1, max_tokens: int = 512) -> None:
         super().__init__(model_name=model_name, temperature=temperature, max_tokens=max_tokens)
-        from mlx_lm import load
-        self._model, self._tokenizer = load(model_name)
+        # Load on the MLX executor thread so the Metal stream is bound there.
+        def _load():
+            from mlx_lm import load
+            return load(model_name)
+        self._model, self._tokenizer = _mlx_executor.submit(_load).result()
 
     @property
     def metadata(self) -> LLMMetadata:
@@ -38,50 +48,94 @@ class MlxLM(CustomLLM):
 
     @llm_completion_callback()
     def complete(self, prompt: str, **kwargs: Any) -> CompletionResponse:
-        from mlx_lm import generate
-        from mlx_lm.sample_utils import make_sampler
-        formatted = self._tokenizer.apply_chat_template(
-            [{"role": "user", "content": prompt}],
-            tokenize=False,
-            add_generation_prompt=True,
-            enable_thinking=False,
-        )
-        text = generate(
-            self._model,
-            self._tokenizer,
-            prompt=formatted,
-            max_tokens=self.max_tokens,
-            sampler=make_sampler(temp=self.temperature),
-            verbose=False,
-        )
-        return CompletionResponse(text=text)
+        def _run():
+            from mlx_lm import generate
+            from mlx_lm.sample_utils import make_sampler
+            formatted = self._tokenizer.apply_chat_template(
+                [{"role": "user", "content": prompt}],
+                tokenize=False,
+                add_generation_prompt=True,
+                enable_thinking=False,
+            )
+            return generate(
+                self._model,
+                self._tokenizer,
+                prompt=formatted,
+                max_tokens=self.max_tokens,
+                sampler=make_sampler(temp=self.temperature),
+                verbose=False,
+            )
+        return CompletionResponse(text=_mlx_executor.submit(_run).result())
 
     @llm_completion_callback()
     def stream_complete(self, prompt: str, **kwargs: Any) -> CompletionResponseGen:
-        from mlx_lm import stream_generate
-        from mlx_lm.sample_utils import make_sampler
-        formatted = self._tokenizer.apply_chat_template(
-            [{"role": "user", "content": prompt}],
-            tokenize=False,
-            add_generation_prompt=True,
-            enable_thinking=False,
-        )
-        accumulated = ""
-        for token in stream_generate(
-            self._model,
-            self._tokenizer,
-            prompt=formatted,
-            max_tokens=self.max_tokens,
-            sampler=make_sampler(temp=self.temperature),
-        ):
-            accumulated += token
-            yield CompletionResponse(text=accumulated, delta=token)
+        q: thread_queue.Queue = thread_queue.Queue()
 
-    @llm_completion_callback()
+        def _produce():
+            from mlx_lm import stream_generate
+            from mlx_lm.sample_utils import make_sampler
+            formatted = self._tokenizer.apply_chat_template(
+                [{"role": "user", "content": prompt}],
+                tokenize=False,
+                add_generation_prompt=True,
+                enable_thinking=False,
+            )
+            accumulated = ""
+            try:
+                for token in stream_generate(
+                    self._model,
+                    self._tokenizer,
+                    prompt=formatted,
+                    max_tokens=self.max_tokens,
+                    sampler=make_sampler(temp=self.temperature),
+                ):
+                    accumulated += token
+                    q.put(CompletionResponse(text=accumulated, delta=token))
+            finally:
+                q.put(None)
+
+        _mlx_executor.submit(_produce)
+        while True:
+            item = q.get()
+            if item is None:
+                break
+            yield item
+
     async def astream_complete(self, prompt: str, **kwargs: Any) -> CompletionResponseAsyncGen:
         async def _gen() -> CompletionResponseAsyncGen:
-            for response in self.stream_complete(prompt, **kwargs):
-                yield response
+            q: thread_queue.Queue = thread_queue.Queue()
+            loop = asyncio.get_running_loop()
+
+            def _produce():
+                from mlx_lm import stream_generate
+                from mlx_lm.sample_utils import make_sampler
+                formatted = self._tokenizer.apply_chat_template(
+                    [{"role": "user", "content": prompt}],
+                    tokenize=False,
+                    add_generation_prompt=True,
+                    enable_thinking=False,
+                )
+                accumulated = ""
+                try:
+                    for token in stream_generate(
+                        self._model,
+                        self._tokenizer,
+                        prompt=formatted,
+                        max_tokens=self.max_tokens,
+                        sampler=make_sampler(temp=self.temperature),
+                    ):
+                        accumulated += token
+                        q.put(CompletionResponse(text=accumulated, delta=token))
+                finally:
+                    q.put(None)
+
+            _mlx_executor.submit(_produce)
+            while True:
+                item = await loop.run_in_executor(None, q.get)
+                if item is None:
+                    break
+                yield item
+
         return _gen()
 
 

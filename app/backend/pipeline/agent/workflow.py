@@ -148,7 +148,7 @@ class AgentWorkflow(Workflow):
         self._hop += 1
         hop = self._hop
 
-        await ctx.write_event_to_stream(
+        ctx.write_event_to_stream(
             TraceEvent(step="retrieve", status="start", info=f"hop {hop}")
         )
 
@@ -170,7 +170,7 @@ class AgentWorkflow(Workflow):
             logger.info("Hop 2: %d sub-questions generated", len(sub_questions))
             for i, sq in enumerate(sub_questions, 1):
                 logger.info("  Sub-question %d: %s", i, sq)
-            await ctx.write_event_to_stream(
+            ctx.write_event_to_stream(
                 TraceEvent(step="decompose", status="done", info="\n".join(sub_questions))
             )
 
@@ -183,7 +183,7 @@ class AgentWorkflow(Workflow):
             )
 
         self._retrieval_results.append(result)
-        await ctx.write_event_to_stream(
+        ctx.write_event_to_stream(
             TraceEvent(step="retrieve", status="done", info=f"{len(result.texts)} chunks")
         )
         return SynthesizeEvent()
@@ -202,21 +202,21 @@ class AgentWorkflow(Workflow):
             context=all_context,
         )
 
-        await ctx.write_event_to_stream(
+        ctx.write_event_to_stream(
             TraceEvent(step="synthesize", status="start", info="")
         )
 
         answer_parts: list[str] = []
         async for chunk in await self._llm.astream_complete(final_prompt):
             if chunk.delta:
-                await ctx.write_event_to_stream(TokenEvent(text=chunk.delta))
+                ctx.write_event_to_stream(TokenEvent(text=chunk.delta))
                 answer_parts.append(chunk.delta)
         answer = "".join(answer_parts).strip()
 
         self.trajectory.log("synthesize", final_prompt, answer)
         logger.info("Synthesis complete (%.120s)", answer)
 
-        await ctx.write_event_to_stream(
+        ctx.write_event_to_stream(
             TraceEvent(step="synthesize", status="done", info="")
         )
         return CritiqueEvent(answer=answer, all_context=all_context)
@@ -226,7 +226,7 @@ class AgentWorkflow(Workflow):
         self, ctx: Context, ev: CritiqueEvent,
     ) -> StopEvent | RetrieveEvent | CorrectEvent:
         """PASS/FAIL evaluation after hops 1 and 2."""
-        await ctx.write_event_to_stream(
+        ctx.write_event_to_stream(
             TraceEvent(step="critique", status="start", info="")
         )
 
@@ -241,7 +241,7 @@ class AgentWorkflow(Workflow):
         passed = verdict.upper().startswith("PASS")
         logger.info("Hop %d critique: %s", self._hop, "PASS" if passed else "FAIL")
 
-        await ctx.write_event_to_stream(
+        ctx.write_event_to_stream(
             TraceEvent(step="critique", status="done", info="PASS" if passed else "FAIL")
         )
 
@@ -268,21 +268,21 @@ class AgentWorkflow(Workflow):
             context=all_context,
         )
 
-        await ctx.write_event_to_stream(
+        ctx.write_event_to_stream(
             TraceEvent(step="correct", status="start", info="")
         )
 
         answer_parts: list[str] = []
         async for chunk in await self._llm.astream_complete(correct_prompt):
             if chunk.delta:
-                await ctx.write_event_to_stream(TokenEvent(text=chunk.delta))
+                ctx.write_event_to_stream(TokenEvent(text=chunk.delta))
                 answer_parts.append(chunk.delta)
         answer = "".join(answer_parts).strip()
 
         self.trajectory.log("correct", correct_prompt, answer)
         logger.info("Inferential correction complete (%.120s)", answer)
 
-        await ctx.write_event_to_stream(
+        ctx.write_event_to_stream(
             TraceEvent(step="correct", status="done", info="")
         )
         return StopEvent(result=answer)
