@@ -39,6 +39,7 @@ async def get_chat(chat_id: str, request: Request):
     messages = db.get_messages(chat_id)
     for msg in messages:
         msg["sources"] = db.get_message_sources(msg["id"])
+        msg["traces"] = db.get_message_traces(msg["id"])
 
     return {**chat, "messages": messages}
 

@@ -197,3 +197,27 @@ class AppDB:
                 (message_id,),
             ).fetchall()
             return [dict(r) for r in rows]
+
+    # ── message_traces ─────────────────────────────────────────────────────
+
+    def create_message_traces(self, traces: list[dict[str, Any]]) -> None:
+        """Insert one row per completed trace step.
+
+        Each dict must have: message_id, seq, step, status, info.
+        """
+        with self._connect() as conn:
+            conn.executemany(
+                """INSERT INTO message_traces (message_id, seq, step, status, info)
+                   VALUES (:message_id, :seq, :step, :status, :info)""",
+                traces,
+            )
+
+    def get_message_traces(self, message_id: str) -> list[dict[str, Any]]:
+        with self._connect() as conn:
+            rows = conn.execute(
+                """SELECT step, status, info FROM message_traces
+                   WHERE message_id = ?
+                   ORDER BY seq ASC""",
+                (message_id,),
+            ).fetchall()
+            return [dict(r) for r in rows]

@@ -29,6 +29,15 @@ function buildRows(traces: TracePayload[]): TraceRow[] {
     }
   }
 
+  // Critique always follows synthesize; infer it as running so the spinner
+  // appears even when start+done arrive batched in the same TCP chunk.
+  const last = rows[rows.length - 1];
+  if (last?.step === "synthesize" && last.status === "done") {
+    if (!rows.some((r) => r.step === "critique")) {
+      rows.push({ step: "critique", status: "running", info: "" });
+    }
+  }
+
   return rows;
 }
 
@@ -61,10 +70,9 @@ export default function TraceTimeline({ traces, isStreaming }: Props) {
   const rows = buildRows(traces);
   const [collapsed, setCollapsed] = useState(false);
 
-  // Auto-expand while streaming, auto-collapse when done
+  // Expand when new streaming starts
   useEffect(() => {
     if (isStreaming) setCollapsed(false);
-    else setCollapsed(true);
   }, [isStreaming]);
 
   if (rows.length === 0) return null;
@@ -85,17 +93,30 @@ export default function TraceTimeline({ traces, isStreaming }: Props) {
 
       {!collapsed && (
         <ul className="px-4 pb-2 space-y-1.5">
-          {rows.map((row, i) => (
+          {rows.map((row, i) => {
+            const infoLines = row.info ? row.info.split("\n").filter(Boolean) : [];
+            const multiLine = infoLines.length > 1;
+            return (
             <li key={i} className="flex items-start gap-2">
               <span className="mt-px flex-shrink-0 w-4 flex justify-center">
                 <StatusIcon status={row.status} />
               </span>
-              <span className="font-mono text-gray-700">{row.step}</span>
-              {row.info && (
-                <span className="text-gray-400 truncate max-w-[240px]">{row.info}</span>
-              )}
+              <div className="min-w-0">
+                <span className="font-mono text-gray-700">{row.step}</span>
+                {!multiLine && infoLines[0] && (
+                  <span className="ml-2 text-gray-400">{infoLines[0]}</span>
+                )}
+                {multiLine && (
+                  <ul className="mt-1 space-y-0.5 text-gray-400">
+                    {infoLines.map((line, j) => (
+                      <li key={j} className="flex gap-1"><span>–</span><span>{line}</span></li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
     </div>

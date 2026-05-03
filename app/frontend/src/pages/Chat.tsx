@@ -123,6 +123,10 @@ export default function Chat() {
             prev ? { ...prev, traces: [...prev.traces, payload] } : prev
           );
         },
+        onReset: () => {
+          accumulated = "";
+          setStreamingMsg((prev) => (prev ? { ...prev, content: "" } : prev));
+        },
         onDone: (payload: DonePayload) => {
           // Write final message to cache immediately so there's no gap when
           // streamingMsg clears before the refetch lands.
@@ -137,6 +141,7 @@ export default function Chat() {
               id: i,
               message_id: payload.message_id,
             })),
+            traces: payload.traces ?? [],
           };
           queryClient.setQueryData(["chat", chatId], (old: typeof chatDetail) => {
             if (!old) return old;
@@ -185,7 +190,7 @@ export default function Chat() {
               role={msg.role}
               content={msg.content}
               sources={isStreaming(msg) ? [] : (msg as Message).sources}
-              traces={isStreaming(msg) ? msg.traces : []}
+              traces={isStreaming(msg) ? msg.traces : (msg as Message).traces ?? []}
               isStreaming={isStreaming(msg)}
             />
           ))}

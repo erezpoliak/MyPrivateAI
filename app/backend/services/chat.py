@@ -7,7 +7,7 @@ import uuid
 from typing import AsyncGenerator
 
 from ..db.app_db import AppDB
-from ..pipeline.agent.events import TokenEvent, TraceEvent
+from ..pipeline.agent.events import ResetEvent, TokenEvent, TraceEvent
 from ..pipeline.agent.workflow import AgentWorkflow
 from ..pipeline.common.config import Config
 from .citations import parse_citations
@@ -51,8 +51,11 @@ async def stream_answer(
     )
     handler = workflow.run()
 
+    collected_traces: list[TraceEvent] = []
+
     async for event in handler.stream_events():
         if isinstance(event, TraceEvent):
+            collected_traces.append(event)
             yield _sse("trace", {
                 "step": event.step,
                 "status": event.status,
@@ -60,6 +63,8 @@ async def stream_answer(
             })
         elif isinstance(event, TokenEvent):
             yield _sse("token", {"text": event.text})
+        elif isinstance(event, ResetEvent):
+            yield _sse("reset", {})
 
     answer = await handler
 
@@ -83,6 +88,19 @@ async def stream_answer(
             for s in sources
         ])
 
+    done_traces = [t for t in collected_traces if t.status in ("done", "error")]
+    if done_traces:
+        db.create_message_traces([
+            {
+                "message_id": assistant_msg_id,
+                "seq": i,
+                "step": t.step,
+                "status": t.status,
+                "info": t.info,
+            }
+            for i, t in enumerate(done_traces)
+        ])
+
     yield _sse("done", {
         "message_id": assistant_msg_id,
         "sources": [
@@ -95,5 +113,9 @@ async def stream_answer(
                 "snippet": s.snippet,
             }
             for s in sources
+        ],
+        "traces": [
+            {"step": t.step, "status": t.status, "info": t.info}
+            for t in done_traces
         ],
     })

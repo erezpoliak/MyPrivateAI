@@ -1,15 +1,11 @@
 import { useCallback, useRef } from "react";
-import type { Source } from "../api";
+import type { Source, Trace } from "../api";
 
 // ---------------------------------------------------------------------------
 // Event payload types
 // ---------------------------------------------------------------------------
 
-export interface TracePayload {
-  step: string;
-  status: string;
-  info: string;
-}
+export type TracePayload = Trace;
 
 export interface TokenPayload {
   text: string;
@@ -18,12 +14,14 @@ export interface TokenPayload {
 export interface DonePayload {
   message_id: string;
   sources: Omit<Source, "id" | "message_id">[];
+  traces: Trace[];
 }
 
 export interface SSECallbacks {
   onTrace: (payload: TracePayload) => void;
   onToken: (payload: TokenPayload) => void;
   onDone: (payload: DonePayload) => void;
+  onReset: () => void;
   onError?: (err: Error) => void;
 }
 
@@ -74,6 +72,8 @@ export function useSSE() {
             callbacks.onToken(event as unknown as TokenPayload);
           } else if (event.type === "done") {
             callbacks.onDone(event as unknown as DonePayload);
+          } else if (event.type === "reset") {
+            callbacks.onReset();
           }
         }
       }

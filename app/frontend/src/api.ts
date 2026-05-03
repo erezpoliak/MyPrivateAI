@@ -33,6 +33,12 @@ export interface Source {
   snippet: string;
 }
 
+export interface Trace {
+  step: string;
+  status: string;
+  info: string;
+}
+
 export interface Message {
   id: string;
   chat_id: string;
@@ -40,6 +46,7 @@ export interface Message {
   content: string;
   created_at: string;
   sources: Source[];
+  traces: Trace[];
 }
 
 export interface ChatDetail extends Chat {

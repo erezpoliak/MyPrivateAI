@@ -55,3 +55,18 @@ CREATE TABLE IF NOT EXISTS message_sources (
 );
 
 CREATE INDEX IF NOT EXISTS idx_message_sources_message_id ON message_sources(message_id);
+
+-- ---------------------------------------------------------------------------
+-- message_traces
+-- Thinking-trace steps attached to an assistant message.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS message_traces (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    message_id TEXT    NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
+    seq        INTEGER NOT NULL,  -- display order (0-based)
+    step       TEXT    NOT NULL,
+    status     TEXT    NOT NULL,  -- done | error
+    info       TEXT    NOT NULL DEFAULT ''
+);
+
+CREATE INDEX IF NOT EXISTS idx_message_traces_message_id ON message_traces(message_id);
