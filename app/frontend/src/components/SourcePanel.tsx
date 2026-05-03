@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Source } from "../api";
 
 interface Props {
@@ -13,6 +14,17 @@ function pageRange(src: Source): string {
 }
 
 export default function SourcePanel({ sources, activeMarker, itemRefs }: Props) {
+  const [expanded, setExpanded] = useState<Set<number>>(new Set());
+
+  function toggleExpanded(chunkIndex: number) {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(chunkIndex)) next.delete(chunkIndex);
+      else next.add(chunkIndex);
+      return next;
+    });
+  }
+
   return (
     <div className="border-t border-gray-100 px-4 py-3 space-y-2">
       <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">
@@ -20,6 +32,7 @@ export default function SourcePanel({ sources, activeMarker, itemRefs }: Props) 
       </p>
       {sources.map((src) => {
         const isActive = activeMarker === src.chunk_index;
+        const isExpanded = expanded.has(src.chunk_index);
         const range = pageRange(src);
 
         return (
@@ -29,11 +42,12 @@ export default function SourcePanel({ sources, activeMarker, itemRefs }: Props) 
               if (el) itemRefs.set(src.chunk_index, el);
               else itemRefs.delete(src.chunk_index);
             }}
+            onClick={() => toggleExpanded(src.chunk_index)}
             className={[
-              "rounded-lg border px-3 py-2 text-xs transition-colors",
+              "rounded-lg border px-3 py-2 text-xs transition-colors cursor-pointer select-none",
               isActive
-                ? "border-indigo-300 bg-indigo-50"
-                : "border-gray-100 bg-gray-50",
+                ? "border-indigo-300 bg-indigo-50 hover:bg-indigo-100"
+                : "border-gray-100 bg-gray-50 hover:bg-gray-100",
             ].join(" ")}
           >
             <div className="flex items-baseline gap-2 mb-1">
@@ -44,9 +58,19 @@ export default function SourcePanel({ sources, activeMarker, itemRefs }: Props) 
               {range && (
                 <span className="flex-shrink-0 text-gray-400">{range}</span>
               )}
+              {src.snippet && (
+                <span className="ml-auto flex-shrink-0 text-gray-400">
+                  {isExpanded ? "▲" : "▼"}
+                </span>
+              )}
             </div>
             {src.snippet && (
-              <p className="text-gray-500 line-clamp-2 leading-relaxed pl-6">
+              <p
+                className={[
+                  "text-gray-500 leading-relaxed pl-6",
+                  isExpanded ? "" : "line-clamp-2",
+                ].join(" ")}
+              >
                 {src.snippet}
               </p>
             )}

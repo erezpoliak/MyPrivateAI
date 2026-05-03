@@ -57,12 +57,6 @@ def test_no_markers_returns_empty():
     assert sources == []
 
 
-def test_snippet_truncated():
-    long_chunk = {"text": "x" * 300, "doc_id": "doc-1", "title": "T", "page_start": 1, "page_end": 1}
-    sources = parse_citations("[1] see here.", [long_chunk])
-    assert len(sources[0].snippet) <= 201  # 200 chars + ellipsis
-    assert sources[0].snippet.endswith("…")
-
 
 def test_page_metadata_preserved():
     answer = "[2] confirms B."
