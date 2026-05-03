@@ -18,17 +18,16 @@ export default function SourcePanel({ sources, activeMarker, itemRefs }: Props) 
       <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">
         Sources
       </p>
-      {sources.map((src, i) => {
-        const markerIndex = i + 1;
-        const isActive = activeMarker === markerIndex;
+      {sources.map((src) => {
+        const isActive = activeMarker === src.chunk_index;
         const range = pageRange(src);
 
         return (
           <div
-            key={src.id}
+            key={src.chunk_index}
             ref={(el) => {
-              if (el) itemRefs.set(markerIndex, el);
-              else itemRefs.delete(markerIndex);
+              if (el) itemRefs.set(src.chunk_index, el);
+              else itemRefs.delete(src.chunk_index);
             }}
             className={[
               "rounded-lg border px-3 py-2 text-xs transition-colors",
@@ -39,7 +38,7 @@ export default function SourcePanel({ sources, activeMarker, itemRefs }: Props) 
           >
             <div className="flex items-baseline gap-2 mb-1">
               <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-semibold flex-shrink-0">
-                {markerIndex}
+                {src.chunk_index}
               </span>
               <span className="font-medium text-gray-700 truncate">{src.title}</span>
               {range && (
