@@ -139,6 +139,10 @@ class AppDB:
         with self._connect() as conn:
             conn.execute("DELETE FROM chats WHERE id = ?", (id,))
 
+    def update_chat_title(self, id: str, title: str) -> None:
+        with self._connect() as conn:
+            conn.execute("UPDATE chats SET title = ? WHERE id = ?", (title, id))
+
     # ── messages ───────────────────────────────────────────────────────────
 
     def create_message(

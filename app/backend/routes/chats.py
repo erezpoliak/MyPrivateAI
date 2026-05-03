@@ -61,6 +61,10 @@ async def post_message(chat_id: str, body: MessageBody, request: Request):
     if not content:
         raise HTTPException(status_code=400, detail="content is required")
 
+    if not db.get_messages(chat_id):
+        title = content[:50].strip()
+        db.update_chat_title(chat_id, title)
+
     return StreamingResponse(
         stream_answer(
             chat_id=chat_id,
