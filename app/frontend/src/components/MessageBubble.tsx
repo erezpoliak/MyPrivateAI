@@ -12,6 +12,12 @@ export interface MessageBubbleProps {
   isStreaming?: boolean;
 }
 
+function critiquePending(traces: TracePayload[]): boolean {
+  const synthDone = traces.some((t) => t.step === "synthesize" && t.status === "done");
+  const critiqueDone = traces.some((t) => t.step === "critique" && (t.status === "done" || t.status === "error"));
+  return synthDone && !critiqueDone;
+}
+
 export default function MessageBubble({
   role,
   content,
@@ -33,6 +39,8 @@ export default function MessageBubble({
     );
   }
 
+  const pending = critiquePending(traces);
+
   function handleMarkerClick(n: number) {
     setActiveMarker((prev) => (prev === n ? null : n));
     const el = sourceItemRefs.current.get(n);
@@ -44,12 +52,21 @@ export default function MessageBubble({
       <div className="max-w-[75%] rounded-2xl border border-gray-200 bg-white text-sm text-gray-800 overflow-hidden">
         <TraceTimeline traces={traces} isStreaming={isStreaming} />
 
-        <AnswerSection
-          content={content}
-          isStreaming={isStreaming}
-          activeMarker={activeMarker}
-          onMarkerClick={handleMarkerClick}
-        />
+        <div className={`transition-all duration-300 ${pending ? "italic text-gray-400" : "not-italic text-gray-800"}`}>
+          <AnswerSection
+            content={content}
+            isStreaming={isStreaming}
+            activeMarker={activeMarker}
+            onMarkerClick={handleMarkerClick}
+          />
+        </div>
+
+        {pending && (
+          <div className="px-4 py-2 border-t border-gray-100 flex items-center gap-1.5 text-xs text-amber-500">
+            <span className="inline-block w-3 h-3 rounded-full border-2 border-amber-400 border-t-transparent animate-spin" />
+            Evaluating…
+          </div>
+        )}
 
         {sources.length > 0 && (
           <SourcePanel

@@ -31,7 +31,7 @@ from llama_index.core.workflow import (
 
 from ..common.config import Config
 from ..common.utils import get_logger
-from .events import TokenEvent, TraceEvent
+from .events import ResetEvent, TokenEvent, TraceEvent
 from .prompts import (
     CORRECT_PROMPT,
     CRITIQUE_PROMPT,
@@ -248,6 +248,8 @@ class AgentWorkflow(Workflow):
         if passed:
             self.trajectory.success = True
             return StopEvent(result=ev.answer)
+
+        ctx.write_event_to_stream(ResetEvent())
 
         if self._hop == 1:
             logger.info("Hop 1 failed — advancing to decompose/multi-retrieve")

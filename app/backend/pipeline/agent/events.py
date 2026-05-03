@@ -11,3 +11,8 @@ class TraceEvent(Event):
 
 class TokenEvent(Event):
     text: str
+
+
+class ResetEvent(Event):
+    """Signals the frontend to discard the current streamed draft."""
+    pass
