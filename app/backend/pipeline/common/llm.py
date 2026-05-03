@@ -36,7 +36,6 @@ class MlxLM(CustomLLM):
 
     def __init__(self, model_name: str, temperature: float = 0.1, max_tokens: int = 512) -> None:
         super().__init__(model_name=model_name, temperature=temperature, max_tokens=max_tokens)
-        # Load on the MLX executor thread so the Metal stream is bound there.
         def _load():
             from mlx_lm import load
             return load(model_name)
@@ -46,21 +45,23 @@ class MlxLM(CustomLLM):
     def metadata(self) -> LLMMetadata:
         return LLMMetadata(model_name=self.model_name, num_output=self.max_tokens)
 
+    def _format_prompt(self, prompt: str) -> str:
+        return self._tokenizer.apply_chat_template(
+            [{"role": "user", "content": prompt}],
+            tokenize=False,
+            add_generation_prompt=True,
+            enable_thinking=False,
+        )
+
     @llm_completion_callback()
     def complete(self, prompt: str, **kwargs: Any) -> CompletionResponse:
         def _run():
             from mlx_lm import generate
             from mlx_lm.sample_utils import make_sampler
-            formatted = self._tokenizer.apply_chat_template(
-                [{"role": "user", "content": prompt}],
-                tokenize=False,
-                add_generation_prompt=True,
-                enable_thinking=False,
-            )
             return generate(
                 self._model,
                 self._tokenizer,
-                prompt=formatted,
+                prompt=self._format_prompt(prompt),
                 max_tokens=self.max_tokens,
                 sampler=make_sampler(temp=self.temperature),
                 verbose=False,
@@ -72,33 +73,30 @@ class MlxLM(CustomLLM):
         q: thread_queue.Queue = thread_queue.Queue()
 
         def _produce():
-            from mlx_lm import stream_generate
-            from mlx_lm.sample_utils import make_sampler
-            formatted = self._tokenizer.apply_chat_template(
-                [{"role": "user", "content": prompt}],
-                tokenize=False,
-                add_generation_prompt=True,
-                enable_thinking=False,
-            )
-            accumulated = ""
             try:
+                from mlx_lm import stream_generate
+                from mlx_lm.sample_utils import make_sampler
+                accumulated = ""
                 for token in stream_generate(
                     self._model,
                     self._tokenizer,
-                    prompt=formatted,
+                    prompt=self._format_prompt(prompt),
                     max_tokens=self.max_tokens,
                     sampler=make_sampler(temp=self.temperature),
                 ):
-                    accumulated += token
-                    q.put(CompletionResponse(text=accumulated, delta=token))
-            finally:
+                    accumulated += token.text
+                    q.put(CompletionResponse(text=accumulated, delta=token.text))
                 q.put(None)
+            except Exception as exc:
+                q.put(exc)
 
         _mlx_executor.submit(_produce)
         while True:
             item = q.get()
             if item is None:
                 break
+            if isinstance(item, Exception):
+                raise item
             yield item
 
     async def astream_complete(self, prompt: str, **kwargs: Any) -> CompletionResponseAsyncGen:
@@ -107,33 +105,30 @@ class MlxLM(CustomLLM):
             loop = asyncio.get_running_loop()
 
             def _produce():
-                from mlx_lm import stream_generate
-                from mlx_lm.sample_utils import make_sampler
-                formatted = self._tokenizer.apply_chat_template(
-                    [{"role": "user", "content": prompt}],
-                    tokenize=False,
-                    add_generation_prompt=True,
-                    enable_thinking=False,
-                )
-                accumulated = ""
                 try:
+                    from mlx_lm import stream_generate
+                    from mlx_lm.sample_utils import make_sampler
+                    accumulated = ""
                     for token in stream_generate(
                         self._model,
                         self._tokenizer,
-                        prompt=formatted,
+                        prompt=self._format_prompt(prompt),
                         max_tokens=self.max_tokens,
                         sampler=make_sampler(temp=self.temperature),
                     ):
-                        accumulated += token
-                        q.put(CompletionResponse(text=accumulated, delta=token))
-                finally:
+                        accumulated += token.text
+                        q.put(CompletionResponse(text=accumulated, delta=token.text))
                     q.put(None)
+                except Exception as exc:
+                    q.put(exc)
 
             _mlx_executor.submit(_produce)
             while True:
                 item = await loop.run_in_executor(None, q.get)
                 if item is None:
                     break
+                if isinstance(item, Exception):
+                    raise item
                 yield item
 
         return _gen()
