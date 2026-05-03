@@ -149,7 +149,7 @@ export default function Chat() {
   ];
 
   return (
-    <div className="flex h-[calc(100vh-49px)]">
+    <div className="flex flex-1 min-h-0">
       <ChatSidebar
         chats={chats}
         loading={chatsLoading}

@@ -14,7 +14,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>("documents");
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="h-screen bg-white flex flex-col overflow-hidden">
       <header className="border-b border-gray-200">
         <nav className="flex gap-1 px-4">
           {TABS.map((tab) => (
@@ -34,7 +34,7 @@ export default function App() {
         </nav>
       </header>
 
-      <main className="flex-1">
+      <main className="flex-1 min-h-0 flex flex-col">
         {activeTab === "documents" ? <Documents /> : <Chat />}
       </main>
 
