@@ -29,12 +29,25 @@ function buildRows(traces: TracePayload[]): TraceRow[] {
     }
   }
 
-  // Critique always follows synthesize; infer it as running so the spinner
-  // appears even when start+done arrive batched in the same TCP chunk.
+  // Infer the next expected step so spinners appear even when start+done
+  // arrive batched in the same TCP chunk.
   const last = rows[rows.length - 1];
+  const synthDoneCount = rows.filter((r) => r.step === "synthesize" && r.status === "done").length;
+  const critiqueCount = rows.filter((r) => r.step === "critique").length;
+
   if (last?.step === "synthesize" && last.status === "done") {
-    if (!rows.some((r) => r.step === "critique")) {
+    // Each synthesize is followed by a critique; infer it if not yet visible.
+    if (critiqueCount < synthDoneCount) {
       rows.push({ step: "critique", status: "running", info: "" });
+    }
+  } else if (last?.step === "critique" && last.status === "done" && last.info === "FAIL") {
+    const retrieveDoneCount = rows.filter((r) => r.step === "retrieve" && r.status === "done").length;
+    if (retrieveDoneCount === 1) {
+      // Hop 1 failed — hop 2 retrieve (with decompose) is imminent.
+      rows.push({ step: "retrieve", status: "running", info: "hop 2" });
+    } else if (!rows.some((r) => r.step === "correct")) {
+      // Hop 2 failed — inferential correction step is imminent.
+      rows.push({ step: "correct", status: "running", info: "" });
     }
   }
 

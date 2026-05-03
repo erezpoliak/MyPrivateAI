@@ -163,6 +163,9 @@ class AgentWorkflow(Workflow):
             )
 
         else:
+            ctx.write_event_to_stream(
+                TraceEvent(step="decompose", status="start", info="")
+            )
             decompose_prompt = DECOMPOSE_PROMPT.format(question=self._question)
             raw = (await self._llm.acomplete(decompose_prompt)).text.strip()
             sub_questions = _parse_sub_questions(raw)

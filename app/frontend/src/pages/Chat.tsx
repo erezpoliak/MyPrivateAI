@@ -128,8 +128,6 @@ export default function Chat() {
           setStreamingMsg((prev) => (prev ? { ...prev, content: "" } : prev));
         },
         onDone: (payload: DonePayload) => {
-          // Write final message to cache immediately so there's no gap when
-          // streamingMsg clears before the refetch lands.
           const finalMessage: Message = {
             id: payload.message_id,
             chat_id: chatId!,
@@ -143,10 +141,15 @@ export default function Chat() {
             })),
             traces: payload.traces ?? [],
           };
+          // Write final message and clear the streaming bubble in the same
+          // synchronous block so React batches them into one render — this
+          // prevents a frame where both the streaming bubble (no sources) and
+          // the final message (with sources) are visible simultaneously.
           queryClient.setQueryData(["chat", chatId], (old: typeof chatDetail) => {
             if (!old) return old;
             return { ...old, messages: [...old.messages, finalMessage] };
           });
+          setStreamingMsg(null);
           // Sync with server to replace optimistic IDs with canonical ones.
           queryClient.invalidateQueries({ queryKey: ["chat", chatId] });
           queryClient.invalidateQueries({ queryKey: ["chats"] });

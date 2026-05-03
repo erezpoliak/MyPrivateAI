@@ -13,9 +13,9 @@ export interface MessageBubbleProps {
 }
 
 function critiquePending(traces: TracePayload[]): boolean {
-  const synthDone = traces.some((t) => t.step === "synthesize" && t.status === "done");
-  const critiqueDone = traces.some((t) => t.step === "critique" && (t.status === "done" || t.status === "error"));
-  return synthDone && !critiqueDone;
+  const synthDoneCount = traces.filter((t) => t.step === "synthesize" && t.status === "done").length;
+  const critiqueDoneCount = traces.filter((t) => t.step === "critique" && (t.status === "done" || t.status === "error")).length;
+  return synthDoneCount > critiqueDoneCount;
 }
 
 export default function MessageBubble({
