@@ -36,6 +36,10 @@ export default function Documents() {
       );
       return { prev };
     },
+    onSuccess: (_data, docId, ctx) => {
+      const doc = ctx?.prev?.find((d) => d.id === docId);
+      toast.success(`"${doc?.title ?? "Document"}" deleted`);
+    },
     onError: (err: Error, _docId, ctx) => {
       queryClient.setQueryData(["documents"], ctx?.prev);
       toast.error(err.message || "Delete failed");
