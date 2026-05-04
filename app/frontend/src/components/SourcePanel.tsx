@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 import type { Source } from "../api";
 
 interface Props {
@@ -65,14 +66,26 @@ export default function SourcePanel({ sources, activeMarker, itemRefs }: Props) 
               )}
             </div>
             {src.snippet && (
-              <p
+              <div
                 className={[
-                  "text-gray-500 leading-relaxed pl-6",
+                  "text-gray-500 leading-relaxed pl-6 text-xs",
                   isExpanded ? "" : "line-clamp-2",
                 ].join(" ")}
               >
-                {src.snippet}
-              </p>
+                <ReactMarkdown
+                  components={{
+                    h1: ({ children }) => <p style={{ fontSize: "0.8rem", fontWeight: 600, color: "#374151", marginTop: "0.5rem" }}>{children}</p>,
+                    h2: ({ children }) => <p style={{ fontSize: "0.8rem", fontWeight: 600, color: "#374151", marginTop: "0.5rem" }}>{children}</p>,
+                    h3: ({ children }) => <p style={{ fontSize: "0.8rem", fontWeight: 600, color: "#374151", marginTop: "0.5rem" }}>{children}</p>,
+                  }}
+                >
+                  {src.snippet
+                    .replace(/-<br\s*\/?>\s*/gi, "-")
+                    .replace(/<br\s*\/?>\s*/gi, " ")
+                    .replace(/- *\n\n+(\S)/g, "$1")
+                    .replace(/\|/g, "\n\n---\n\n")}
+                </ReactMarkdown>
+              </div>
             )}
           </div>
         );
