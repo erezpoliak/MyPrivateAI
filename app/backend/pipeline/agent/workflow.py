@@ -148,11 +148,10 @@ class AgentWorkflow(Workflow):
         self._hop += 1
         hop = self._hop
 
-        ctx.write_event_to_stream(
-            TraceEvent(step="retrieve", status="start", info=f"hop {hop}")
-        )
-
         if hop == 1:
+            ctx.write_event_to_stream(
+                TraceEvent(step="retrieve", status="start", info=f"hop {hop}")
+            )
             logger.info("Hop 1: direct retrieval")
             result = retrieve_context(self._question, self._retriever)
             self.trajectory.log(
@@ -177,6 +176,9 @@ class AgentWorkflow(Workflow):
                 TraceEvent(step="decompose", status="done", info="\n".join(sub_questions))
             )
 
+            ctx.write_event_to_stream(
+                TraceEvent(step="retrieve", status="start", info=f"hop {hop}")
+            )
             queries = [self._question] + sub_questions
             result = retrieve_multi(queries, self._retriever)
             self.trajectory.log(

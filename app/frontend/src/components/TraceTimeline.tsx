@@ -43,8 +43,8 @@ function buildRows(traces: TracePayload[]): TraceRow[] {
   } else if (last?.step === "critique" && last.status === "done" && last.info === "FAIL") {
     const retrieveDoneCount = rows.filter((r) => r.step === "retrieve" && r.status === "done").length;
     if (retrieveDoneCount === 1) {
-      // Hop 1 failed — hop 2 retrieve (with decompose) is imminent.
-      rows.push({ step: "retrieve", status: "running", info: "hop 2" });
+      // Hop 1 failed — hop 2 decompose is imminent.
+      rows.push({ step: "decompose", status: "running", info: "" });
     } else if (!rows.some((r) => r.step === "correct")) {
       // Hop 2 failed — inferential correction step is imminent.
       rows.push({ step: "correct", status: "running", info: "" });
