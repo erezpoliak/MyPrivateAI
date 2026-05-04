@@ -62,7 +62,7 @@ export default function Documents() {
   );
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="p-8 max-w-4xl mx-auto w-full overflow-y-auto h-full">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Documents</h1>
       <UploadZone onFiles={handleFiles} isPending={isPending} />
       <DocumentsTable docs={docs} onDelete={remove} />
