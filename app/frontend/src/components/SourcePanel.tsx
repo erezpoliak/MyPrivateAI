@@ -80,6 +80,7 @@ export default function SourcePanel({ sources, activeMarker, itemRefs }: Props) 
                   }}
                 >
                   {src.snippet
+                    .replace(/```[\s\S]*?```/g, "")
                     .replace(/-<br\s*\/?>\s*/gi, "-")
                     .replace(/<br\s*\/?>\s*/gi, " ")
                     .replace(/- *\n\n+(\S)/g, "$1")
