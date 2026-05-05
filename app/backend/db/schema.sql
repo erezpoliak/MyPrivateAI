@@ -70,3 +70,18 @@ CREATE TABLE IF NOT EXISTS message_traces (
 );
 
 CREATE INDEX IF NOT EXISTS idx_message_traces_message_id ON message_traces(message_id);
+
+-- ---------------------------------------------------------------------------
+-- collections
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS collections (
+    id         TEXT PRIMARY KEY,
+    name       TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+);
+
+CREATE TABLE IF NOT EXISTS document_collections (
+    doc_id        TEXT NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+    collection_id TEXT NOT NULL REFERENCES collections(id) ON DELETE CASCADE,
+    PRIMARY KEY (doc_id, collection_id)
+);

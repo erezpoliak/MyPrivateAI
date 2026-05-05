@@ -1,15 +1,80 @@
-import { useState } from "react";
-import type { Document } from "../api";
+import { useState, useRef, useEffect } from "react";
+import type { Collection, Document } from "../api";
 import StatusBadge from "./StatusBadge";
+
+function AssignPopover({
+  doc,
+  collections,
+  onAssign,
+  onUnassign,
+  onClose,
+}: {
+  doc: Document;
+  collections: Collection[];
+  onAssign: (docId: string, collectionId: string) => void;
+  onUnassign: (docId: string, collectionId: string) => void;
+  onClose: () => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+    }
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [onClose]);
+
+  if (collections.length === 0) {
+    return (
+      <div ref={ref} className="absolute z-20 right-0 top-full mt-1 w-44 bg-white border border-gray-200 rounded-lg shadow-lg p-3 text-xs text-gray-400">
+        No collections yet. Create one in the sidebar.
+      </div>
+    );
+  }
+
+  return (
+    <div ref={ref} className="absolute z-20 right-0 top-full mt-1 w-52 bg-white border border-gray-200 rounded-lg shadow-lg py-1">
+      {collections.map((c) => {
+        const assigned = doc.collection_ids.includes(c.id);
+        return (
+          <button
+            key={c.id}
+            onClick={() => assigned ? onUnassign(doc.id, c.id) : onAssign(doc.id, c.id)}
+            className="flex items-center gap-2 w-full px-3 py-1.5 text-sm text-left hover:bg-gray-50 transition-colors"
+          >
+            <span className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${assigned ? "bg-indigo-600 border-indigo-600" : "border-gray-300"}`}>
+              {assigned && (
+                <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                </svg>
+              )}
+            </span>
+            <span className="truncate text-gray-700">{c.name}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function DocumentsTable({
   docs,
+  collections,
   onDelete,
+  onAssign,
+  onUnassign,
 }: {
   docs: Document[];
+  collections: Collection[];
   onDelete: (id: string) => void;
+  onAssign: (docId: string, collectionId: string) => void;
+  onUnassign: (docId: string, collectionId: string) => void;
 }) {
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
+  const [assigningId, setAssigningId] = useState<string | null>(null);
+
+  const collectionMap = Object.fromEntries(collections.map((c) => [c.id, c.name]));
 
   if (docs.length === 0) {
     return (
@@ -25,7 +90,7 @@ export default function DocumentsTable({
         <thead className="bg-gray-50 text-gray-500 uppercase text-xs tracking-wide">
           <tr>
             <th className="px-4 py-3">Title</th>
-            <th className="px-4 py-3">Filename</th>
+            <th className="px-4 py-3">Collections</th>
             <th className="px-4 py-3 text-right">Pages</th>
             <th className="px-4 py-3 text-right">Chunks</th>
             <th className="px-4 py-3">Uploaded</th>
@@ -35,12 +100,49 @@ export default function DocumentsTable({
         </thead>
         <tbody className="divide-y divide-gray-100">
           {docs.map((doc) => (
-            <tr key={doc.id} className="hover:bg-gray-50 transition-colors">
-              <td className="px-4 py-3 font-medium text-gray-800 max-w-[180px] truncate">
+            <tr
+              key={doc.id}
+              draggable
+              onDragStart={(e) => {
+                e.dataTransfer.setData("application/x-doc-id", doc.id);
+                e.dataTransfer.effectAllowed = "copy";
+              }}
+              className="hover:bg-gray-50 transition-colors cursor-grab active:cursor-grabbing"
+            >
+              <td className="px-4 py-3 font-medium text-gray-800 max-w-[160px] truncate">
                 {doc.title}
               </td>
-              <td className="px-4 py-3 text-gray-500 max-w-[160px] truncate">
-                {doc.filename}
+              <td className="px-4 py-3">
+                <div className="relative flex items-center gap-1 flex-wrap">
+                  {doc.collection_ids.map((cid) =>
+                    collectionMap[cid] ? (
+                      <span
+                        key={cid}
+                        className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100"
+                      >
+                        {collectionMap[cid]}
+                      </span>
+                    ) : null
+                  )}
+                  <button
+                    onClick={() => setAssigningId(assigningId === doc.id ? null : doc.id)}
+                    title="Assign to collection"
+                    className="inline-flex items-center justify-center w-5 h-5 rounded border border-dashed border-gray-300 text-gray-400 hover:border-indigo-400 hover:text-indigo-500 transition-colors"
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                  </button>
+                  {assigningId === doc.id && (
+                    <AssignPopover
+                      doc={doc}
+                      collections={collections}
+                      onAssign={(docId, cid) => { onAssign(docId, cid); }}
+                      onUnassign={(docId, cid) => { onUnassign(docId, cid); }}
+                      onClose={() => setAssigningId(null)}
+                    />
+                  )}
+                </div>
               </td>
               <td className="px-4 py-3 text-right text-gray-600">
                 {doc.page_count || "—"}

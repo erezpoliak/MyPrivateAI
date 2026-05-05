@@ -13,6 +13,14 @@ export interface Document {
   status: "ingesting" | "ready" | "failed";
   error: string | null;
   created_at: string;
+  collection_ids: string[];
+}
+
+export interface Collection {
+  id: string;
+  name: string;
+  doc_count: number;
+  created_at: string;
 }
 
 export interface Chat {
@@ -86,6 +94,48 @@ export function deleteDocument(docId: string): Promise<void> {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
     }
   );
+}
+
+// ---------------------------------------------------------------------------
+// Collections
+// ---------------------------------------------------------------------------
+
+export function listCollections(): Promise<Collection[]> {
+  return req<Collection[]>("/api/collections");
+}
+
+export function createCollection(name: string): Promise<Collection> {
+  return req<Collection>("/api/collections", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name }),
+  });
+}
+
+export function renameCollection(id: string, name: string): Promise<void> {
+  return req<void>(`/api/collections/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name }),
+  });
+}
+
+export function deleteCollection(id: string): Promise<void> {
+  return fetch(`${BASE}/api/collections/${id}`, { method: "DELETE" }).then(
+    (res) => { if (!res.ok) throw new Error(`HTTP ${res.status}`); }
+  );
+}
+
+export function addDocToCollection(collectionId: string, docId: string): Promise<void> {
+  return fetch(`${BASE}/api/collections/${collectionId}/documents/${docId}`, {
+    method: "POST",
+  }).then((res) => { if (!res.ok) throw new Error(`HTTP ${res.status}`); });
+}
+
+export function removeDocFromCollection(collectionId: string, docId: string): Promise<void> {
+  return fetch(`${BASE}/api/collections/${collectionId}/documents/${docId}`, {
+    method: "DELETE",
+  }).then((res) => { if (!res.ok) throw new Error(`HTTP ${res.status}`); });
 }
 
 // ---------------------------------------------------------------------------

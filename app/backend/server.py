@@ -62,8 +62,10 @@ def create_app(config: Config | None = None) -> FastAPI:
 
     from .routes.documents import router as documents_router
     from .routes.chats import router as chats_router
+    from .routes.collections import router as collections_router
     app.include_router(documents_router)
     app.include_router(chats_router)
+    app.include_router(collections_router)
 
     return app
 

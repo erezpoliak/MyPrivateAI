@@ -100,9 +100,20 @@ class AppDB:
     def list_documents(self) -> list[dict[str, Any]]:
         with self._connect() as conn:
             rows = conn.execute(
-                "SELECT * FROM documents ORDER BY created_at DESC"
+                """SELECT d.*,
+                          GROUP_CONCAT(dc.collection_id) AS collection_ids_str
+                   FROM documents d
+                   LEFT JOIN document_collections dc ON dc.doc_id = d.id
+                   GROUP BY d.id
+                   ORDER BY d.created_at DESC"""
             ).fetchall()
-            return [dict(r) for r in rows]
+            result = []
+            for r in rows:
+                doc = dict(r)
+                raw = doc.pop("collection_ids_str", None)
+                doc["collection_ids"] = raw.split(",") if raw else []
+                result.append(doc)
+            return result
 
     def delete_document(self, id: str) -> None:
         with self._connect() as conn:
@@ -211,6 +222,53 @@ class AppDB:
                    VALUES (:message_id, :seq, :step, :status, :info)""",
                 traces,
             )
+
+    # ── collections ────────────────────────────────────────────────────────
+
+    def list_collections(self) -> list[dict[str, Any]]:
+        with self._connect() as conn:
+            rows = conn.execute(
+                """SELECT c.*, COUNT(dc.doc_id) AS doc_count
+                   FROM collections c
+                   LEFT JOIN document_collections dc ON dc.collection_id = c.id
+                   GROUP BY c.id
+                   ORDER BY c.created_at ASC"""
+            ).fetchall()
+            return [dict(r) for r in rows]
+
+    def create_collection(self, id: str, name: str) -> dict[str, Any]:
+        with self._connect() as conn:
+            conn.execute(
+                "INSERT INTO collections (id, name) VALUES (?, ?)", (id, name)
+            )
+            row = conn.execute(
+                "SELECT *, 0 AS doc_count FROM collections WHERE id = ?", (id,)
+            ).fetchone()
+            return dict(row)
+
+    def rename_collection(self, id: str, name: str) -> None:
+        with self._connect() as conn:
+            conn.execute("UPDATE collections SET name = ? WHERE id = ?", (name, id))
+
+    def delete_collection(self, id: str) -> None:
+        with self._connect() as conn:
+            conn.execute("DELETE FROM collections WHERE id = ?", (id,))
+
+    def add_doc_to_collection(self, doc_id: str, collection_id: str) -> None:
+        with self._connect() as conn:
+            conn.execute(
+                "INSERT OR IGNORE INTO document_collections (doc_id, collection_id) VALUES (?, ?)",
+                (doc_id, collection_id),
+            )
+
+    def remove_doc_from_collection(self, doc_id: str, collection_id: str) -> None:
+        with self._connect() as conn:
+            conn.execute(
+                "DELETE FROM document_collections WHERE doc_id = ? AND collection_id = ?",
+                (doc_id, collection_id),
+            )
+
+    # ── message_traces ─────────────────────────────────────────────────────
 
     def get_message_traces(self, message_id: str) -> list[dict[str, Any]]:
         with self._connect() as conn:
