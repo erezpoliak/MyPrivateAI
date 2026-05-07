@@ -115,6 +115,7 @@ export default function Documents() {
     try {
       await deleteDocument(id);
       queryClient.invalidateQueries({ queryKey: ["documents"] });
+      queryClient.invalidateQueries({ queryKey: ["collections"] });
       toast.success(`"${doc?.title ?? "Document"}" deleted`);
     } catch (err) {
       toast.error((err as Error).message || "Delete failed");
