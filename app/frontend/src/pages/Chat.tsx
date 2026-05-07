@@ -1,11 +1,13 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { listChats, createChat, getChat, postMessage, deleteChat, type Message } from "../api";
+import { listChats, createChat, getChat, postMessage, deleteChat, type Message, type Source } from "../api";
 import { useSSE, type DonePayload, type TracePayload } from "../hooks/useSSE";
 import ChatSidebar from "../components/ChatSidebar";
 import ChatInput from "../components/ChatInput";
 import MessageBubble from "../components/MessageBubble";
+import SourcePanel from "../components/SourcePanel";
+import styles from "./Chat.module.css";
 
 interface StreamingMessage {
   role: "assistant";
@@ -28,8 +30,11 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [streamingMsg, setStreamingMsg] = useState<StreamingMessage | null>(null);
+  const [activeMarker, setActiveMarker] = useState<number | null>(null);
+  const [inspectorOpen, setInspectorOpen] = useState(true);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const sourceItemRefs = useRef<Map<number, HTMLElement>>(new Map());
 
   const { data: chats = [], isLoading: chatsLoading } = useQuery({
     queryKey: ["chats"],
@@ -50,16 +55,31 @@ export default function Chat() {
     scrollToBottom();
   }, [chatDetail?.messages, streamingMsg?.content, scrollToBottom]);
 
+  const displaySources = useMemo((): Source[] => {
+    const msgs = chatDetail?.messages ?? [];
+    for (let i = msgs.length - 1; i >= 0; i--) {
+      if (msgs[i].role === "assistant" && msgs[i].sources?.length > 0) {
+        return msgs[i].sources;
+      }
+    }
+    return [];
+  }, [chatDetail?.messages]);
+
+  function handleMarkerClick(n: number) {
+    setActiveMarker((prev) => (prev === n ? null : n));
+    if (!inspectorOpen) setInspectorOpen(true);
+    const el = sourceItemRefs.current.get(n);
+    el?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
   async function handleDeleteChat(chatId: string) {
     try {
       await deleteChat(chatId);
       await queryClient.invalidateQueries({ queryKey: ["chats"] });
-      if (activeChatId === chatId) {
-        setActiveChatId(null);
-      }
-      toast.success("Chat deleted");
+      if (activeChatId === chatId) setActiveChatId(null);
+      toast.success("Thread deleted");
     } catch (err) {
-      toast.error((err as Error).message ?? "Failed to delete chat");
+      toast.error((err as Error).message ?? "Failed to delete thread");
     }
   }
 
@@ -69,7 +89,7 @@ export default function Chat() {
       await queryClient.invalidateQueries({ queryKey: ["chats"] });
       setActiveChatId(chat.id);
     } catch (err) {
-      toast.error((err as Error).message ?? "Failed to create chat");
+      toast.error((err as Error).message ?? "Failed to create thread");
     }
   }
 
@@ -84,7 +104,7 @@ export default function Chat() {
         setActiveChatId(chat.id);
         chatId = chat.id;
       } catch (err) {
-        toast.error((err as Error).message ?? "Failed to create chat");
+        toast.error((err as Error).message ?? "Failed to create thread");
         return;
       }
     }
@@ -103,6 +123,7 @@ export default function Chat() {
         content: userContent,
         created_at: new Date().toISOString(),
         sources: [],
+        traces: [],
       };
       return { ...old, messages: [...old.messages, tempUser] };
     });
@@ -134,23 +155,14 @@ export default function Chat() {
             role: "assistant",
             content: accumulated,
             created_at: new Date().toISOString(),
-            sources: payload.sources.map((s, i) => ({
-              ...s,
-              id: i,
-              message_id: payload.message_id,
-            })),
+            sources: payload.sources.map((s, i) => ({ ...s, id: i, message_id: payload.message_id })),
             traces: payload.traces ?? [],
           };
-          // Write final message and clear the streaming bubble in the same
-          // synchronous block so React batches them into one render — this
-          // prevents a frame where both the streaming bubble (no sources) and
-          // the final message (with sources) are visible simultaneously.
           queryClient.setQueryData(["chat", chatId], (old: typeof chatDetail) => {
             if (!old) return old;
             return { ...old, messages: [...old.messages, finalMessage] };
           });
           setStreamingMsg(null);
-          // Sync with server to replace optimistic IDs with canonical ones.
           queryClient.invalidateQueries({ queryKey: ["chat", chatId] });
           queryClient.invalidateQueries({ queryKey: ["chats"] });
         },
@@ -169,8 +181,11 @@ export default function Chat() {
     ...(streamingMsg ? [streamingMsg] : []),
   ];
 
+  const activeChat = chatDetail ?? chats.find((c) => c.id === activeChatId);
+  const messageCount = chatDetail?.messages?.length ?? 0;
+
   return (
-    <div className="flex flex-1 min-h-0">
+    <div className={styles.root}>
       <ChatSidebar
         chats={chats}
         loading={chatsLoading}
@@ -180,11 +195,24 @@ export default function Chat() {
         onDelete={handleDeleteChat}
       />
 
-      <div className="flex-1 flex flex-col min-w-0">
-        <div className="flex-1 overflow-y-auto px-6 py-4">
+      <main className={styles.main}>
+        <div className={styles.threadHeader}>
+          <div className={`mono ${styles.threadEyebrow}`}>
+            Thread · {messageCount} message{messageCount !== 1 ? "s" : ""}
+          </div>
+          <div className={styles.threadTitle}>
+            <span className={styles.threadTitleText}>
+              {activeChat?.title || (activeChatId ? "New thread" : "Select or start a thread")}
+            </span>
+          </div>
+        </div>
+
+        <div className={styles.messages}>
           {messages.length === 0 && (
-            <div className="h-full flex items-center justify-center text-gray-400 text-sm">
-              Select a chat or start a new one
+            <div className={styles.emptyState}>
+              <p className={`mono ${styles.emptyText}`}>
+                {activeChatId ? "No messages yet — ask something below." : "Select a thread or start a new one."}
+              </p>
             </div>
           )}
           {messages.map((msg, i) => (
@@ -192,21 +220,33 @@ export default function Chat() {
               key={isStreaming(msg) ? "streaming" : (msg as Message).id ?? i}
               role={msg.role}
               content={msg.content}
-              sources={isStreaming(msg) ? [] : (msg as Message).sources}
               traces={isStreaming(msg) ? msg.traces : (msg as Message).traces ?? []}
               isStreaming={isStreaming(msg)}
+              activeMarker={activeMarker}
+              onMarkerClick={handleMarkerClick}
             />
           ))}
           <div ref={messagesEndRef} />
         </div>
 
-        <ChatInput
-          value={input}
-          disabled={sending}
-          onChange={setInput}
-          onSend={handleSend}
-        />
-      </div>
+        <ChatInput value={input} disabled={sending} onChange={setInput} onSend={handleSend} />
+      </main>
+
+      <SourcePanel
+        sources={displaySources}
+        activeMarker={activeMarker}
+        itemRefs={sourceItemRefs.current}
+        open={inspectorOpen}
+        onToggle={() => setInspectorOpen((o) => !o)}
+      />
+
+      {!inspectorOpen && (
+        <button onClick={() => setInspectorOpen(true)} className={styles.inspectorTab}>
+          <svg width={10} height={10} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+            <path d="m15 6-6 6 6 6" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 }

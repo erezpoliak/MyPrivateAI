@@ -1,45 +1,5 @@
 import type { Chat } from "../api";
-
-function ChatItem({
-  chat,
-  active,
-  onSelect,
-  onDelete,
-}: {
-  chat: Chat;
-  active: boolean;
-  onSelect: () => void;
-  onDelete: () => void;
-}) {
-  return (
-    <div
-      className={[
-        "group flex items-center rounded-md transition-colors",
-        active ? "bg-indigo-100" : "hover:bg-gray-100",
-      ].join(" ")}
-    >
-      <button
-        onClick={onSelect}
-        className={[
-          "flex-1 text-left px-3 py-2 text-sm truncate",
-          active ? "text-indigo-800 font-medium" : "text-gray-700",
-        ].join(" ")}
-      >
-        {chat.title || "New chat"}
-      </button>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onDelete();
-        }}
-        className="pr-2 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity"
-        title="Delete chat"
-      >
-        ×
-      </button>
-    </div>
-  );
-}
+import styles from "./ChatSidebar.module.css";
 
 interface Props {
   chats: Chat[];
@@ -50,42 +10,58 @@ interface Props {
   onDelete: (id: string) => void;
 }
 
-export default function ChatSidebar({
-  chats,
-  loading,
-  activeChatId,
-  onSelect,
-  onNewChat,
-  onDelete,
-}: Props) {
+function timeAgo(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const min = Math.floor(diff / 60000);
+  if (min < 2)  return "just now";
+  if (min < 60) return `${min}m`;
+  const hr = Math.floor(min / 60);
+  if (hr < 24)  return `${hr}h`;
+  const d = Math.floor(hr / 24);
+  if (d === 1)  return "Yesterday";
+  return `${d}d`;
+}
+
+export default function ChatSidebar({ chats, loading, activeChatId, onSelect, onNewChat, onDelete }: Props) {
   return (
-    <aside className="w-60 flex-shrink-0 border-r border-gray-200 flex flex-col">
-      <div className="p-3 border-b border-gray-100">
-        <button
-          onClick={onNewChat}
-          className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
-        >
-          <span className="text-base leading-none">+</span> New chat
+    <aside className={styles.sidebar}>
+      <div className={styles.newThreadWrap}>
+        <button onClick={onNewChat} className={styles.newThread}>
+          <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          New thread
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto p-2 space-y-0.5">
-        {loading && (
-          <p className="text-xs text-gray-400 px-2 pt-2">Loading…</p>
-        )}
-        {chats.map((chat) => (
-          <ChatItem
-            key={chat.id}
-            chat={chat}
-            active={chat.id === activeChatId}
-            onSelect={() => onSelect(chat.id)}
-            onDelete={() => onDelete(chat.id)}
-          />
-        ))}
+      <div className={styles.threadList}>
+        {loading && <p className={`mono ${styles.empty}`}>Loading…</p>}
+        {chats.map((chat) => {
+          const active = chat.id === activeChatId;
+          return (
+            <div key={chat.id} className={styles.threadItem}>
+              <button
+                onClick={() => onSelect(chat.id)}
+                className={styles.threadBtn}
+                data-active={active}
+              >
+                <div className={styles.threadTitle}>{chat.title || "New thread"}</div>
+                <div className={`mono ${styles.threadTime}`}>{timeAgo(chat.updated_at)}</div>
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); onDelete(chat.id); }}
+                title="Delete"
+                className={styles.deleteBtn}
+              >
+                ×
+              </button>
+            </div>
+          );
+        })}
         {!loading && chats.length === 0 && (
-          <p className="text-xs text-gray-400 px-2 pt-2">No chats yet</p>
+          <p className={`mono ${styles.empty}`}>No threads yet</p>
         )}
-      </nav>
+      </div>
     </aside>
   );
 }

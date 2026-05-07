@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import type { Collection } from "../api";
+import styles from "./CollectionSidebar.module.css";
 
 interface Props {
   collections: Collection[];
@@ -10,17 +11,11 @@ interface Props {
   onDelete: (id: string) => void;
   onDocDrop: (docId: string, collectionId: string) => void;
   totalDocs: number;
+  collectionDots: string[];
 }
 
 export default function CollectionSidebar({
-  collections,
-  activeId,
-  onSelect,
-  onCreate,
-  onRename,
-  onDelete,
-  onDocDrop,
-  totalDocs,
+  collections, activeId, onSelect, onCreate, onRename, onDelete, onDocDrop, totalDocs, collectionDots,
 }: Props) {
   const [creating, setCreating] = useState(false);
   const [newName, setNewName] = useState("");
@@ -31,13 +26,8 @@ export default function CollectionSidebar({
   const renameInputRef = useRef<HTMLInputElement>(null);
   const dragCounters = useRef<Record<string, number>>({});
 
-  useEffect(() => {
-    if (creating) newInputRef.current?.focus();
-  }, [creating]);
-
-  useEffect(() => {
-    if (renamingId) renameInputRef.current?.focus();
-  }, [renamingId]);
+  useEffect(() => { if (creating) newInputRef.current?.focus(); }, [creating]);
+  useEffect(() => { if (renamingId) renameInputRef.current?.focus(); }, [renamingId]);
 
   function submitCreate() {
     const name = newName.trim();
@@ -79,32 +69,23 @@ export default function CollectionSidebar({
   }
 
   return (
-    <aside className="w-52 shrink-0 border-r border-gray-200 flex flex-col bg-gray-50 overflow-y-auto">
-      <div className="px-3 pt-5 pb-2">
-        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-          Collections
-        </span>
-      </div>
+    <aside className={styles.sidebar}>
+      <span className={`mono ${styles.sectionLabel}`}>Collections</span>
 
-      {/* All Documents */}
       <button
         onClick={() => onSelect(null)}
-        className={`flex items-center justify-between mx-2 px-2 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-          activeId === null
-            ? "bg-indigo-100 text-indigo-700"
-            : "text-gray-600 hover:bg-gray-200"
-        }`}
+        className={styles.allDocs}
+        data-active={activeId === null}
       >
         <span>All Documents</span>
-        <span className="text-xs text-gray-400">{totalDocs}</span>
+        <span className={`mono ${styles.allDocsCount}`}>{totalDocs}</span>
       </button>
 
-      {/* Collection list */}
-      <div className="mt-1 flex flex-col gap-0.5 px-2">
-        {collections.map((c) => (
+      <div className={styles.list}>
+        {collections.map((c, idx) => (
           <div
             key={c.id}
-            className="group relative"
+            className={styles.item}
             onDragEnter={(e) => handleDragEnter(e, c.id)}
             onDragLeave={(e) => handleDragLeave(e, c.id)}
             onDragOver={handleDragOver}
@@ -118,29 +99,28 @@ export default function CollectionSidebar({
                 onBlur={() => submitRename(c.id)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") submitRename(c.id);
-                  if (e.key === "Escape") { setRenamingId(null); }
+                  if (e.key === "Escape") setRenamingId(null);
                 }}
-                className="w-full px-2 py-1.5 text-sm rounded-lg border border-indigo-400 outline-none bg-white"
+                className={styles.renameInput}
               />
             ) : (
               <button
                 onClick={() => onSelect(c.id)}
                 onDoubleClick={() => { setRenamingId(c.id); setRenameValue(c.name); }}
-                className={`w-full flex items-center justify-between px-2 py-1.5 rounded-lg text-sm transition-colors text-left ${
-                  dropTargetId === c.id
-                    ? "bg-indigo-100 ring-2 ring-indigo-400 text-indigo-700"
-                    : activeId === c.id
-                    ? "bg-indigo-100 text-indigo-700"
-                    : "text-gray-600 hover:bg-gray-200"
-                }`}
+                className={styles.itemBtn}
+                data-active={activeId === c.id}
+                data-drop={dropTargetId === c.id}
               >
-                <span className="truncate">{c.name}</span>
+                <div className={styles.itemLeft}>
+                  <span className={styles.dot} style={{ background: collectionDots[idx % collectionDots.length] }} />
+                  <span className={styles.itemName}>{c.name}</span>
+                </div>
                 {dropTargetId === c.id ? (
-                  <svg className="w-3.5 h-3.5 text-indigo-500 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 5v14M5 12h14" />
                   </svg>
                 ) : (
-                  <span className="text-xs text-gray-400 shrink-0 ml-1">{c.doc_count}</span>
+                  <span className={`mono ${styles.itemCount}`}>{c.doc_count}</span>
                 )}
               </button>
             )}
@@ -148,11 +128,10 @@ export default function CollectionSidebar({
             {renamingId !== c.id && dropTargetId !== c.id && (
               <button
                 onClick={(e) => { e.stopPropagation(); onDelete(c.id); }}
-                title="Delete collection"
-                className="absolute right-1 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center justify-center w-5 h-5 rounded text-gray-400 hover:text-red-500 hover:bg-red-50"
+                className={styles.deleteBtn}
               >
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 6 6 18M6 6l12 12" />
                 </svg>
               </button>
             )}
@@ -160,8 +139,7 @@ export default function CollectionSidebar({
         ))}
       </div>
 
-      {/* Create new */}
-      <div className="px-2 mt-2">
+      <div className={styles.createWrap}>
         {creating ? (
           <input
             ref={newInputRef}
@@ -173,15 +151,12 @@ export default function CollectionSidebar({
               if (e.key === "Escape") { setCreating(false); setNewName(""); }
             }}
             placeholder="Collection name…"
-            className="w-full px-2 py-1.5 text-sm rounded-lg border border-indigo-400 outline-none bg-white"
+            className={styles.createInput}
           />
         ) : (
-          <button
-            onClick={() => setCreating(true)}
-            className="flex items-center gap-1 px-2 py-1.5 text-sm text-gray-400 hover:text-indigo-600 rounded-lg hover:bg-gray-200 w-full transition-colors"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          <button onClick={() => setCreating(true)} className={styles.newBtn}>
+            <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 5v14M5 12h14" />
             </svg>
             New collection
           </button>

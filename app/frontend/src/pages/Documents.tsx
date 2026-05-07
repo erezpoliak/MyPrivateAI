@@ -1,5 +1,5 @@
-import { useCallback, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRef, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   uploadDocument,
@@ -13,15 +13,29 @@ import {
   removeDocFromCollection,
   type Document,
 } from "../api";
-import UploadZone from "../components/UploadZone";
 import DocumentsTable from "../components/DocumentsTable";
+import UploadModal from "../components/UploadModal";
 import CollectionSidebar from "../components/CollectionSidebar";
-import CollectionPickerModal from "../components/CollectionPickerModal";
+import styles from "./Documents.module.css";
+
+const COLLECTION_DOTS = [
+  "oklch(0.82 0.13 200)",
+  "oklch(0.72 0.16 20)",
+  "oklch(0.82 0.14 75)",
+  "oklch(0.78 0.14 155)",
+  "var(--accent)",
+];
 
 export default function Documents() {
   const queryClient = useQueryClient();
-  const [activeCollection, setActiveCollection] = useState<string | null>(null);
-  const [uploadedDoc, setUploadedDoc] = useState<Document | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [pageDragging, setPageDragging] = useState(false);
+  const pageDragCounter = useRef(0);
 
   const { data: docs = [] } = useQuery({
     queryKey: ["documents"],
@@ -35,168 +49,187 @@ export default function Documents() {
     queryFn: listCollections,
   });
 
-  const { mutate: upload, isPending } = useMutation({
-    mutationFn: uploadDocument,
-    onSuccess: (doc) => {
+  async function handleIngest(file: File, collectionId: string | null) {
+    setIsUploading(true);
+    try {
+      const doc = await uploadDocument(file);
       queryClient.invalidateQueries({ queryKey: ["documents"] });
-      toast.success(`"${doc.title}" uploaded — ingesting…`);
-      if (collections.length > 0) setUploadedDoc(doc);
-    },
-    onError: (err: Error) => {
-      toast.error(err.message || "Upload failed");
-    },
-  });
-
-  const { mutate: remove } = useMutation({
-    mutationFn: deleteDocument,
-    onMutate: async (docId) => {
-      await queryClient.cancelQueries({ queryKey: ["documents"] });
-      const prev = queryClient.getQueryData<Document[]>(["documents"]);
-      queryClient.setQueryData<Document[]>(["documents"], (old) =>
-        old?.filter((d) => d.id !== docId) ?? []
-      );
-      return { prev };
-    },
-    onSuccess: (_data, docId, ctx) => {
-      const doc = ctx?.prev?.find((d) => d.id === docId);
-      toast.success(`"${doc?.title ?? "Document"}" deleted`);
-    },
-    onError: (err: Error, _docId, ctx) => {
-      queryClient.setQueryData(["documents"], ctx?.prev);
-      toast.error(err.message || "Delete failed");
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["documents"] });
-    },
-  });
-
-  const { mutate: addCollection } = useMutation({
-    mutationFn: (name: string) => createCollection(name),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["collections"] }),
-    onError: (err: Error) => toast.error(err.message || "Failed to create collection"),
-  });
-
-  const { mutate: updateCollection } = useMutation({
-    mutationFn: ({ id, name }: { id: string; name: string }) => renameCollection(id, name),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["collections"] }),
-    onError: (err: Error) => toast.error(err.message || "Failed to rename collection"),
-  });
-
-  const { mutate: removeCollection } = useMutation({
-    mutationFn: deleteCollection,
-    onMutate: (id) => {
-      if (activeCollection === id) setActiveCollection(null);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["collections"] });
-      queryClient.invalidateQueries({ queryKey: ["documents"] });
-    },
-    onError: (err: Error) => toast.error(err.message || "Failed to delete collection"),
-  });
-
-  const { mutate: assign } = useMutation({
-    mutationFn: ({ docId, collectionId }: { docId: string; collectionId: string }) =>
-      addDocToCollection(collectionId, docId),
-    onMutate: async ({ docId, collectionId }) => {
-      await queryClient.cancelQueries({ queryKey: ["documents"] });
-      const prev = queryClient.getQueryData<Document[]>(["documents"]);
-      queryClient.setQueryData<Document[]>(["documents"], (old) =>
-        old?.map((d) =>
-          d.id === docId
-            ? { ...d, collection_ids: [...new Set([...d.collection_ids, collectionId])] }
-            : d
-        ) ?? []
-      );
-      return { prev };
-    },
-    onError: (err: Error, _vars, ctx) => {
-      queryClient.setQueryData(["documents"], ctx?.prev);
-      toast.error(err.message || "Failed to assign");
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["documents"] });
-      queryClient.invalidateQueries({ queryKey: ["collections"] });
-    },
-  });
-
-  const { mutate: unassign } = useMutation({
-    mutationFn: ({ docId, collectionId }: { docId: string; collectionId: string }) =>
-      removeDocFromCollection(collectionId, docId),
-    onMutate: async ({ docId, collectionId }) => {
-      await queryClient.cancelQueries({ queryKey: ["documents"] });
-      const prev = queryClient.getQueryData<Document[]>(["documents"]);
-      queryClient.setQueryData<Document[]>(["documents"], (old) =>
-        old?.map((d) =>
-          d.id === docId
-            ? { ...d, collection_ids: d.collection_ids.filter((id) => id !== collectionId) }
-            : d
-        ) ?? []
-      );
-      return { prev };
-    },
-    onError: (err: Error, _vars, ctx) => {
-      queryClient.setQueryData(["documents"], ctx?.prev);
-      toast.error(err.message || "Failed to unassign");
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["documents"] });
-      queryClient.invalidateQueries({ queryKey: ["collections"] });
-    },
-  });
-
-  const handleFiles = useCallback(
-    (files: File[]) => {
-      const pdfs = files.filter((f) => f.name.toLowerCase().endsWith(".pdf"));
-      if (pdfs.length === 0) {
-        toast.error("Only PDF files are accepted");
-        return;
+      toast.success(`"${doc.title}" uploading…`);
+      if (collectionId) {
+        await addDocToCollection(collectionId, doc.id);
+        queryClient.invalidateQueries({ queryKey: ["documents"] });
+        queryClient.invalidateQueries({ queryKey: ["collections"] });
       }
-      pdfs.forEach((f) => upload(f));
-    },
-    [upload]
-  );
+      setShowUploadModal(false);
+      setPendingFile(null);
+    } catch (err) {
+      toast.error((err as Error).message || "Upload failed");
+    } finally {
+      setIsUploading(false);
+    }
+  }
 
-  const visibleDocs =
-    activeCollection === null
-      ? docs
-      : docs.filter((d) => d.collection_ids.includes(activeCollection));
+  async function handleCreateCollection(name: string): Promise<string> {
+    const coll = await createCollection(name);
+    queryClient.invalidateQueries({ queryKey: ["collections"] });
+    return coll.id;
+  }
+
+  async function handleRenameCollection(id: string, name: string) {
+    try {
+      await renameCollection(id, name);
+      queryClient.invalidateQueries({ queryKey: ["collections"] });
+    } catch (err) {
+      toast.error((err as Error).message || "Rename failed");
+    }
+  }
+
+  async function handleDeleteCollection(id: string) {
+    try {
+      await deleteCollection(id);
+      if (activeFilter === id) setActiveFilter(null);
+      queryClient.invalidateQueries({ queryKey: ["collections"] });
+      queryClient.invalidateQueries({ queryKey: ["documents"] });
+    } catch (err) {
+      toast.error((err as Error).message || "Delete failed");
+    }
+  }
+
+  function openUploadModal(file?: File) {
+    setPendingFile(file ?? null);
+    setShowUploadModal(true);
+  }
+
+  function handleFileInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (f) openUploadModal(f);
+    e.target.value = "";
+  }
+
+  function handlePageDragEnter(e: React.DragEvent) {
+    e.preventDefault();
+    pageDragCounter.current += 1;
+    if (pageDragCounter.current === 1) setPageDragging(true);
+  }
+  function handlePageDragLeave(e: React.DragEvent) {
+    e.preventDefault();
+    pageDragCounter.current -= 1;
+    if (pageDragCounter.current === 0) setPageDragging(false);
+  }
+  function handlePageDragOver(e: React.DragEvent) { e.preventDefault(); }
+  function handlePageDrop(e: React.DragEvent) {
+    e.preventDefault();
+    pageDragCounter.current = 0;
+    setPageDragging(false);
+    const pdfs = Array.from(e.dataTransfer.files).filter((f) => f.name.toLowerCase().endsWith(".pdf"));
+    if (pdfs.length === 0) { toast.error("Only PDF files are accepted"); return; }
+    openUploadModal(pdfs[0]);
+  }
+
+  async function handleDelete(id: string) {
+    const doc = docs.find((d) => d.id === id);
+    try {
+      await deleteDocument(id);
+      queryClient.invalidateQueries({ queryKey: ["documents"] });
+      toast.success(`"${doc?.title ?? "Document"}" deleted`);
+    } catch (err) {
+      toast.error((err as Error).message || "Delete failed");
+    }
+  }
+
+  async function handleAssign(docId: string, collectionId: string) {
+    await addDocToCollection(collectionId, docId);
+    queryClient.invalidateQueries({ queryKey: ["documents"] });
+    queryClient.invalidateQueries({ queryKey: ["collections"] });
+  }
+
+  async function handleUnassign(docId: string, collectionId: string) {
+    await removeDocFromCollection(collectionId, docId);
+    queryClient.invalidateQueries({ queryKey: ["documents"] });
+    queryClient.invalidateQueries({ queryKey: ["collections"] });
+  }
+
+  async function handleDocDrop(docId: string, collectionId: string) {
+    await addDocToCollection(collectionId, docId);
+    queryClient.invalidateQueries({ queryKey: ["documents"] });
+    queryClient.invalidateQueries({ queryKey: ["collections"] });
+    toast.success("Added to collection");
+  }
+
+  const visibleDocs: Document[] = activeFilter === null
+    ? docs
+    : docs.filter((d) => d.collection_ids.includes(activeFilter));
 
   return (
-    <div className="flex h-full overflow-hidden">
-      {uploadedDoc && (
-        <CollectionPickerModal
-          doc={uploadedDoc}
+    <div
+      className={styles.root}
+      onDragEnter={handlePageDragEnter}
+      onDragLeave={handlePageDragLeave}
+      onDragOver={handlePageDragOver}
+      onDrop={handlePageDrop}
+    >
+      {pageDragging && <div className={styles.dragOverlay} />}
+
+      <input ref={fileInputRef} type="file" accept=".pdf" style={{ display: "none" }} onChange={handleFileInputChange} />
+
+      {showUploadModal && (
+        <UploadModal
+          file={pendingFile}
           collections={collections}
-          onConfirm={(collectionIds) => {
-            collectionIds.forEach((cid) => assign({ docId: uploadedDoc.id, collectionId: cid }));
-            setUploadedDoc(null);
-          }}
-          onSkip={() => setUploadedDoc(null)}
+          onClose={() => { setShowUploadModal(false); setPendingFile(null); }}
+          onIngest={handleIngest}
+          onCreateCollection={handleCreateCollection}
+          isPending={isUploading}
+          collectionDots={COLLECTION_DOTS}
         />
       )}
+
       <CollectionSidebar
         collections={collections}
-        activeId={activeCollection}
-        onSelect={setActiveCollection}
-        onCreate={(name) => addCollection(name)}
-        onRename={(id, name) => updateCollection({ id, name })}
-        onDelete={(id) => removeCollection(id)}
-        onDocDrop={(docId, collectionId) => assign({ docId, collectionId })}
+        activeId={activeFilter}
+        onSelect={setActiveFilter}
+        onCreate={(name) => handleCreateCollection(name).then((id) => setActiveFilter(id))}
+        onRename={handleRenameCollection}
+        onDelete={handleDeleteCollection}
+        onDocDrop={handleDocDrop}
         totalDocs={docs.length}
+        collectionDots={COLLECTION_DOTS}
       />
-      <div className="flex-1 p-8 overflow-y-auto">
-        <h1 className="text-2xl font-semibold text-gray-800 mb-6">
-          {activeCollection
-            ? (collections.find((c) => c.id === activeCollection)?.name ?? "Collection")
-            : "Documents"}
-        </h1>
-        <UploadZone onFiles={handleFiles} isPending={isPending} />
+
+      <div className={styles.content}>
+        <div className={styles.header}>
+          <div>
+            <div className={`mono ${styles.eyebrow}`}>Library</div>
+            <h1 className={styles.h1}>
+              Documents{" "}
+              <span className={`serif ${styles.h1Count}`}>
+                — {docs.length} item{docs.length !== 1 ? "s" : ""}
+              </span>
+            </h1>
+          </div>
+          <button onClick={() => fileInputRef.current?.click()} className={styles.uploadBtn}>
+            <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 16V4M6 10l6-6 6 6" /><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />
+            </svg>
+            Upload PDF
+          </button>
+        </div>
+
+        <div className={styles.dropStrip} onClick={() => openUploadModal()}>
+          <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+            <path d="M7 18a5 5 0 1 1 1-9.9A6 6 0 0 1 19 10a4 4 0 0 1 0 8H7z" />
+            <path d="M12 14V8M9 11l3-3 3 3" />
+          </svg>
+          <span>Drop PDFs anywhere on this page</span>
+        </div>
+
         <DocumentsTable
           docs={visibleDocs}
           collections={collections}
-          onDelete={remove}
-          onAssign={(docId, collectionId) => assign({ docId, collectionId })}
-          onUnassign={(docId, collectionId) => unassign({ docId, collectionId })}
+          onDelete={handleDelete}
+          onAssign={handleAssign}
+          onUnassign={handleUnassign}
+          collectionDots={COLLECTION_DOTS}
         />
       </div>
     </div>

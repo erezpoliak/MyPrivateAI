@@ -2,40 +2,38 @@ import { useState } from "react";
 import { Toaster } from "sonner";
 import Documents from "./pages/Documents";
 import Chat from "./pages/Chat";
+import styles from "./App.module.css";
 
-type Tab = "documents" | "chat";
-
-const TABS: { id: Tab; label: string }[] = [
-  { id: "documents", label: "Documents" },
-  { id: "chat", label: "Chat" },
-];
+type Tab = "library" | "workspace";
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<Tab>("documents");
+  const [tab, setTab] = useState<Tab>("library");
 
   return (
-    <div className="h-screen bg-white flex flex-col overflow-hidden">
-      <header className="border-b border-gray-200">
-        <nav className="flex gap-1 px-4">
-          {TABS.map((tab) => (
+    <div style={{ height: "100svh", display: "flex", flexDirection: "column", overflow: "hidden", background: "var(--bg)" }}>
+      <header className={styles.header}>
+        <span className={styles.logo}>MyPrivateAI</span>
+
+        <div className={styles.spacer} />
+
+        <div className={styles.tabGroup}>
+          {([ ["library", "Library"], ["workspace", "Workspace"] ] as const).map(([id, label]) => (
             <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={[
-                "px-4 py-3 text-sm font-medium border-b-2 -mb-px transition-colors",
-                activeTab === tab.id
-                  ? "border-indigo-600 text-indigo-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700",
-              ].join(" ")}
+              key={id}
+              onClick={() => setTab(id)}
+              className={styles.tab}
+              data-active={tab === id}
             >
-              {tab.label}
+              {label}
             </button>
           ))}
-        </nav>
+        </div>
+
+        <div className={styles.avatar}>USR</div>
       </header>
 
-      <main className="flex-1 min-h-0 flex flex-col">
-        {activeTab === "documents" ? <Documents /> : <Chat />}
+      <main className={styles.main}>
+        {tab === "library" ? <Documents /> : <Chat />}
       </main>
 
       <Toaster position="bottom-right" richColors />

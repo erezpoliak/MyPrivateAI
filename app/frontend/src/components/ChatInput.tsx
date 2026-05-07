@@ -1,3 +1,5 @@
+import styles from "./ChatInput.module.css";
+
 interface Props {
   value: string;
   disabled: boolean;
@@ -7,31 +9,37 @@ interface Props {
 
 export default function ChatInput({ value, disabled, onChange, onSend }: Props) {
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if ((e.key === "Enter" && e.metaKey) || (e.key === "Enter" && !e.shiftKey)) {
       e.preventDefault();
       onSend();
     }
   }
 
   return (
-    <div className="border-t border-gray-200 px-4 py-3 flex gap-2 items-end">
-      <textarea
-        rows={1}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onKeyDown={handleKeyDown}
-        disabled={disabled}
-        placeholder="Ask something about your documents…"
-        className="flex-1 resize-none rounded-xl border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 max-h-40 overflow-y-auto"
-        style={{ lineHeight: "1.5" }}
-      />
-      <button
-        onClick={onSend}
-        disabled={disabled || !value.trim()}
-        className="flex-shrink-0 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-      >
-        {disabled ? "…" : "Send"}
-      </button>
+    <div className={styles.wrap}>
+      <div className={styles.inner}>
+        <textarea
+          rows={1}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          disabled={disabled}
+          placeholder="Ask a question about a document…"
+          className={styles.textarea}
+        />
+        <button
+          onClick={onSend}
+          disabled={disabled || !value.trim()}
+          className={styles.send}
+        >
+          {disabled ? "…" : "Send"}
+          {!disabled && (
+            <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          )}
+        </button>
+      </div>
     </div>
   );
 }

@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
+import type { CSSProperties } from "react";
 import type { TracePayload } from "../hooks/useSSE";
-
-// ---------------------------------------------------------------------------
-// Collapse each start/done pair into a single display row
-// ---------------------------------------------------------------------------
+import styles from "./TraceTimeline.module.css";
 
 interface TraceRow {
   step: string;
@@ -13,66 +11,48 @@ interface TraceRow {
 
 function buildRows(traces: TracePayload[]): TraceRow[] {
   const rows: TraceRow[] = [];
-
   for (const t of traces) {
     if (t.status === "start") {
       rows.push({ step: t.step, status: "running", info: t.info });
     } else if (t.status === "done" || t.status === "error") {
-      // Find the last running row for this step and promote it
       const idx = [...rows].reverse().findIndex((r) => r.step === t.step && r.status === "running");
       if (idx !== -1) {
-        const realIdx = rows.length - 1 - idx;
-        rows[realIdx] = { step: t.step, status: t.status === "done" ? "done" : "error", info: t.info };
+        rows[rows.length - 1 - idx] = { step: t.step, status: t.status === "done" ? "done" : "error", info: t.info };
       } else {
         rows.push({ step: t.step, status: t.status === "done" ? "done" : "error", info: t.info });
       }
     }
   }
-
-  // Infer the next expected step so spinners appear even when start+done
-  // arrive batched in the same TCP chunk.
   const last = rows[rows.length - 1];
   const synthDoneCount = rows.filter((r) => r.step === "synthesize" && r.status === "done").length;
-  const critiqueCount = rows.filter((r) => r.step === "critique").length;
-
-  if (last?.step === "synthesize" && last.status === "done") {
-    // Each synthesize is followed by a critique; infer it if not yet visible.
-    if (critiqueCount < synthDoneCount) {
-      rows.push({ step: "critique", status: "running", info: "" });
-    }
+  const critiqueCount  = rows.filter((r) => r.step === "critique").length;
+  if (last?.step === "synthesize" && last.status === "done" && critiqueCount < synthDoneCount) {
+    rows.push({ step: "critique", status: "running", info: "" });
   } else if (last?.step === "critique" && last.status === "done" && last.info === "FAIL") {
     const retrieveDoneCount = rows.filter((r) => r.step === "retrieve" && r.status === "done").length;
     if (retrieveDoneCount === 1) {
-      // Hop 1 failed — hop 2 decompose is imminent.
       rows.push({ step: "decompose", status: "running", info: "" });
     } else if (!rows.some((r) => r.step === "correct")) {
-      // Hop 2 failed — inferential correction step is imminent.
       rows.push({ step: "correct", status: "running", info: "" });
     }
   }
-
   return rows;
 }
 
-// ---------------------------------------------------------------------------
-// Icons
-// ---------------------------------------------------------------------------
-
-function StatusIcon({ status }: { status: TraceRow["status"] }) {
-  if (status === "running") {
-    return (
-      <span className="inline-block w-3.5 h-3.5 rounded-full border-2 border-gray-400 border-t-transparent animate-spin" />
-    );
-  }
-  if (status === "done") {
-    return <span className="text-green-500 text-xs font-bold leading-none">✓</span>;
-  }
-  return <span className="text-red-500 text-xs font-bold leading-none">✕</span>;
+function dotStyle(status: TraceRow["status"], info: string): CSSProperties {
+  const isFail = status === "error" || (status === "done" && info === "FAIL");
+  const isPass = status === "done" && info === "PASS";
+  if (isFail) return { background: "oklch(0.72 0.16 20 / 0.2)", border: "1px solid oklch(0.72 0.16 20)" };
+  if (isPass) return { background: "oklch(0.78 0.14 155 / 0.2)", border: "1px solid oklch(0.78 0.14 155)" };
+  if (status === "running") return { background: "var(--accent-soft)", border: "1px solid var(--accent)", animation: "breathe 1.6s ease-in-out infinite" };
+  return { background: "var(--accent-soft)", border: "1px solid var(--accent)" };
 }
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
+function metaColor(status: TraceRow["status"], info: string): string {
+  if (status === "error" || (status === "done" && info === "FAIL")) return "oklch(0.82 0.14 20)";
+  if (status === "done" && info === "PASS") return "oklch(0.85 0.14 155)";
+  return "var(--fg-3)";
+}
 
 interface Props {
   traces: TracePayload[];
@@ -83,54 +63,72 @@ export default function TraceTimeline({ traces, isStreaming }: Props) {
   const rows = buildRows(traces);
   const [collapsed, setCollapsed] = useState(false);
 
-  // Expand when new streaming starts
   useEffect(() => {
     if (isStreaming) setCollapsed(false);
   }, [isStreaming]);
 
   if (rows.length === 0) return null;
 
+  const doneCount = rows.filter((r) => r.status !== "running").length;
+
   return (
-    <div className="border-b border-gray-100 text-xs text-gray-500">
+    <div className={styles.card}>
       <button
         onClick={() => setCollapsed((c) => !c)}
-        className="w-full flex items-center gap-1.5 px-4 py-2 hover:bg-gray-50 transition-colors text-left"
+        className={styles.toggle}
+        data-expanded={!collapsed}
       >
-        <span className={`transition-transform duration-150 ${collapsed ? "" : "rotate-90"}`}>
-          ▶
+        <span className={`mono ${styles.label}`}>
+          {isStreaming
+            ? `Reasoning · ${rows.length} step${rows.length !== 1 ? "s" : ""}…`
+            : `Reasoning · ${rows.length} steps`}
         </span>
-        <span className="font-medium text-gray-600">
-          {isStreaming ? "Thinking…" : `${rows.length} step${rows.length !== 1 ? "s" : ""}`}
-        </span>
+        <span className={styles.spacer} />
+        <svg
+          width={12} height={12} viewBox="0 0 24 24" fill="none"
+          stroke="var(--fg-4)" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round"
+          className={styles.chevron}
+          data-collapsed={collapsed}
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
       </button>
 
       {!collapsed && (
-        <ul className="px-4 pb-2 space-y-1.5">
+        <div className={styles.rows}>
+          <div className={styles.rail} />
           {rows.map((row, i) => {
             const infoLines = row.info ? row.info.split("\n").filter(Boolean) : [];
-            const multiLine = infoLines.length > 1;
+            const isMultiLine = infoLines.length > 1;
+            const metaText = !isMultiLine && infoLines[0] ? infoLines[0] : null;
             return (
-            <li key={i} className="flex items-start gap-2">
-              <span className="mt-px flex-shrink-0 w-4 flex justify-center">
-                <StatusIcon status={row.status} />
-              </span>
-              <div className="min-w-0">
-                <span className="font-mono text-gray-700">{row.step}</span>
-                {!multiLine && infoLines[0] && (
-                  <span className="ml-2 text-gray-400">{infoLines[0]}</span>
-                )}
-                {multiLine && (
-                  <ul className="mt-1 space-y-0.5 text-gray-400">
-                    {infoLines.map((line, j) => (
-                      <li key={j} className="flex gap-1"><span>–</span><span>{line}</span></li>
-                    ))}
-                  </ul>
-                )}
+              <div key={i} className={styles.row}>
+                <div className={styles.dot} style={dotStyle(row.status, row.info)} />
+                <div className={styles.rowContent}>
+                  <div className={styles.rowHeader}>
+                    <span className={`mono ${styles.stepName}`}>{row.step}</span>
+                    {metaText && (
+                      <span className={`mono ${styles.stepMeta}`} style={{ color: metaColor(row.status, row.info) }}>{metaText}</span>
+                    )}
+                  </div>
+                  {isMultiLine && (
+                    <div className={styles.infoLines}>
+                      {infoLines.map((line, j) => (
+                        <div key={j} className={`mono ${styles.infoLine}`}>{line}</div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-            </li>
             );
           })}
-        </ul>
+        </div>
+      )}
+
+      {collapsed && doneCount > 0 && (
+        <div className={`mono ${styles.summary}`}>
+          {doneCount} of {rows.length} steps complete
+        </div>
       )}
     </div>
   );

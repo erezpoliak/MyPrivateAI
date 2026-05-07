@@ -1,0 +1,115 @@
+.bubble {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+/* User */
+.userAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--accent), oklch(0.55 0.18 320));
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  color: #fff;
+  font-weight: 600;
+  font-family: var(--mono);
+}
+
+.userContent {
+  font-size: 13.5px;
+  color: var(--fg);
+  line-height: 1.55;
+  padding-top: 2px;
+}
+
+/* Assistant */
+.rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.aiAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--accent), oklch(0.55 0.18 308));
+}
+
+.railLine {
+  flex: 1;
+  width: 1px;
+  background: var(--line);
+  margin-top: 6px;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Answer text */
+.answer {
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  color: var(--fg);
+  transition: color 300ms, font-style 300ms;
+}
+.answer[data-pending="true"] {
+  color: var(--fg-3);
+  font-style: italic;
+}
+
+.cursor { color: var(--fg-4); }
+
+/* Citation marker */
+.marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  padding: 0 3px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  border: none;
+  cursor: pointer;
+  transition: background 120ms, color 120ms;
+  margin-left: 1px;
+}
+.marker[data-active="true"] {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Pending banner */
+.pendingBanner {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--amber);
+}
+
+.spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--amber);
+  border-top-color: transparent;
+  animation: spin 0.7s linear infinite;
+}

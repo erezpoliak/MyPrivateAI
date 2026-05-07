@@ -1,0 +1,83 @@
+.root {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  background: var(--bg);
+  position: relative;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.threadHeader {
+  padding: 14px 28px 10px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.threadEyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--fg-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.threadTitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fg);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.threadTitleText {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.messages {
+  flex: 1;
+  overflow: auto;
+  padding: 24px 28px;
+}
+
+.emptyState {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyText {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--fg-4);
+}
+
+.inspectorTab {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+  color: var(--fg-3);
+  cursor: pointer;
+  padding: 12px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
