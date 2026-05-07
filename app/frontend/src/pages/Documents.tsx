@@ -34,9 +34,6 @@ export default function Documents() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [pageDragging, setPageDragging] = useState(false);
-  const pageDragCounter = useRef(0);
-
   const { data: docs = [] } = useQuery({
     queryKey: ["documents"],
     queryFn: listDocuments,
@@ -106,21 +103,8 @@ export default function Documents() {
     e.target.value = "";
   }
 
-  function handlePageDragEnter(e: React.DragEvent) {
-    e.preventDefault();
-    pageDragCounter.current += 1;
-    if (pageDragCounter.current === 1) setPageDragging(true);
-  }
-  function handlePageDragLeave(e: React.DragEvent) {
-    e.preventDefault();
-    pageDragCounter.current -= 1;
-    if (pageDragCounter.current === 0) setPageDragging(false);
-  }
-  function handlePageDragOver(e: React.DragEvent) { e.preventDefault(); }
   function handlePageDrop(e: React.DragEvent) {
     e.preventDefault();
-    pageDragCounter.current = 0;
-    setPageDragging(false);
     const pdfs = Array.from(e.dataTransfer.files).filter((f) => f.name.toLowerCase().endsWith(".pdf"));
     if (pdfs.length === 0) { toast.error("Only PDF files are accepted"); return; }
     openUploadModal(pdfs[0]);
@@ -149,13 +133,6 @@ export default function Documents() {
     queryClient.invalidateQueries({ queryKey: ["collections"] });
   }
 
-  async function handleDocDrop(docId: string, collectionId: string) {
-    await addDocToCollection(collectionId, docId);
-    queryClient.invalidateQueries({ queryKey: ["documents"] });
-    queryClient.invalidateQueries({ queryKey: ["collections"] });
-    toast.success("Added to collection");
-  }
-
   const visibleDocs: Document[] = activeFilter === null
     ? docs
     : docs.filter((d) => d.collection_ids.includes(activeFilter));
@@ -163,13 +140,9 @@ export default function Documents() {
   return (
     <div
       className={styles.root}
-      onDragEnter={handlePageDragEnter}
-      onDragLeave={handlePageDragLeave}
-      onDragOver={handlePageDragOver}
+      onDragOver={(e) => e.preventDefault()}
       onDrop={handlePageDrop}
     >
-      {pageDragging && <div className={styles.dragOverlay} />}
-
       <input ref={fileInputRef} type="file" accept=".pdf" style={{ display: "none" }} onChange={handleFileInputChange} />
 
       {showUploadModal && (
@@ -191,7 +164,6 @@ export default function Documents() {
         onCreate={(name) => handleCreateCollection(name).then((id) => setActiveFilter(id))}
         onRename={handleRenameCollection}
         onDelete={handleDeleteCollection}
-        onDocDrop={handleDocDrop}
         totalDocs={docs.length}
         collectionDots={COLLECTION_DOTS}
       />
