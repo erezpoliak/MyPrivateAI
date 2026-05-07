@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import type { Source } from "../api";
 import styles from "./SourcePanel.module.css";
 
@@ -23,8 +24,7 @@ function cleanSnippet(text: string): string {
     .replace(/```[\s\S]*?```/g, "")
     .replace(/-<br\s*\/?>\s*/gi, "-")
     .replace(/<br\s*\/?>\s*/gi, " ")
-    .replace(/- *\n\n+(\S)/g, "$1")
-    .replace(/\|/g, "\n\n---\n\n");
+    .replace(/- *\n\n+(\S)/g, "$1");
 }
 
 const mdComponents = {
@@ -34,6 +34,17 @@ const mdComponents = {
   p:  ({ children }: { children: ReactNode }) => <p style={{ margin: "0.3rem 0", lineHeight: 1.65 }}>{children}</p>,
   li: ({ children }: { children: ReactNode }) => <li style={{ margin: "0.15rem 0" }}>{children}</li>,
   code: ({ children }: { children: ReactNode }) => <code style={{ background: "var(--bg-4)", borderRadius: 3, padding: "1px 4px", fontSize: "0.85em", fontFamily: "var(--mono)" }}>{children}</code>,
+  table: ({ children }: { children: ReactNode }) => (
+    <div style={{ overflowX: "auto", margin: "0.5rem 0" }}>
+      <table style={{ borderCollapse: "collapse", fontSize: "0.8rem", width: "100%" }}>{children}</table>
+    </div>
+  ),
+  th: ({ children }: { children: ReactNode }) => (
+    <th style={{ border: "1px solid var(--border)", padding: "4px 8px", background: "var(--bg-3)", fontWeight: 600, textAlign: "left" }}>{children}</th>
+  ),
+  td: ({ children }: { children: ReactNode }) => (
+    <td style={{ border: "1px solid var(--border)", padding: "4px 8px" }}>{children}</td>
+  ),
 };
 
 function ViewerModal({ src, onClose }: { src: Source; onClose: () => void }) {
@@ -58,7 +69,7 @@ function ViewerModal({ src, onClose }: { src: Source; onClose: () => void }) {
         </div>
         <div className={styles.modalBody}>
           {src.snippet ? (
-            <ReactMarkdown components={mdComponents}>{cleanSnippet(src.snippet)}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>{cleanSnippet(src.snippet)}</ReactMarkdown>
           ) : (
             <p className={`mono ${styles.modalEmpty}`}>No content available.</p>
           )}
@@ -110,7 +121,7 @@ function SourceCard({
         {src.snippet && (
           expanded ? (
             <div className={styles.snippetExpanded}>
-              <ReactMarkdown components={mdComponents}>{cleanSnippet(src.snippet)}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>{cleanSnippet(src.snippet)}</ReactMarkdown>
             </div>
           ) : (
             <div className={styles.snippetCollapsed}>
