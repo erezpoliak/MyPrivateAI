@@ -1,0 +1,57 @@
+{
+  "name": "myprivateai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MyPrivateAI desktop app (Electron shell around the local FastAPI + React app)",
+  "main": "electron/main.js",
+  "scripts": {
+    "electron:dev": "electron .",
+    "dist:mac": "electron-builder --mac"
+  },
+  "devDependencies": {
+    "electron": "^44.0.0",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.myprivateai.app",
+    "productName": "MyPrivateAI",
+    "asar": true,
+    "files": [
+      "electron/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release",
+      "buildResources": "build-resources"
+    },
+    "afterPack": "electron/afterPack.js",
+    "extraResources": [
+      { "from": "build/python", "to": "python" },
+      { "from": "build/models", "to": "models" },
+      { "from": "app/frontend/dist", "to": "frontend" },
+      { "from": "app/__init__.py", "to": "app/__init__.py" },
+      {
+        "from": "app/backend",
+        "to": "app/backend",
+        "filter": [
+          "**/*",
+          "!tests/**",
+          "!**/__pycache__/**",
+          "!**/*.pyc",
+          "!data/**",
+          "!storage/**",
+          "!.pytest_cache/**"
+        ]
+      }
+    ],
+    "mac": {
+      "target": [
+        { "target": "dmg", "arch": ["arm64"] }
+      ],
+      "category": "public.app-category.productivity",
+      "icon": "build-resources/icon.icns",
+      "identity": null,
+      "minimumSystemVersion": "13.0"
+    }
+  }
+}

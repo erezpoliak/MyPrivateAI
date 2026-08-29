@@ -28,21 +28,21 @@ function cleanSnippet(text: string): string {
 }
 
 const mdComponents = {
-  h1: ({ children }: { children: ReactNode }) => <p style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--fg)", marginTop: "0.75rem", marginBottom: "0.25rem" }}>{children}</p>,
-  h2: ({ children }: { children: ReactNode }) => <p style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--fg)", marginTop: "0.75rem", marginBottom: "0.25rem" }}>{children}</p>,
-  h3: ({ children }: { children: ReactNode }) => <p style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--fg-2)", marginTop: "0.5rem", marginBottom: "0.25rem" }}>{children}</p>,
-  p:  ({ children }: { children: ReactNode }) => <p style={{ margin: "0.3rem 0", lineHeight: 1.65 }}>{children}</p>,
-  li: ({ children }: { children: ReactNode }) => <li style={{ margin: "0.15rem 0" }}>{children}</li>,
-  code: ({ children }: { children: ReactNode }) => <code style={{ background: "var(--bg-4)", borderRadius: 3, padding: "1px 4px", fontSize: "0.85em", fontFamily: "var(--mono)" }}>{children}</code>,
-  table: ({ children }: { children: ReactNode }) => (
+  h1: ({ children }: { children?: ReactNode }) => <p style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--fg)", marginTop: "0.75rem", marginBottom: "0.25rem" }}>{children}</p>,
+  h2: ({ children }: { children?: ReactNode }) => <p style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--fg)", marginTop: "0.75rem", marginBottom: "0.25rem" }}>{children}</p>,
+  h3: ({ children }: { children?: ReactNode }) => <p style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--fg-2)", marginTop: "0.5rem", marginBottom: "0.25rem" }}>{children}</p>,
+  p:  ({ children }: { children?: ReactNode }) => <p style={{ margin: "0.3rem 0", lineHeight: 1.65 }}>{children}</p>,
+  li: ({ children }: { children?: ReactNode }) => <li style={{ margin: "0.15rem 0" }}>{children}</li>,
+  code: ({ children }: { children?: ReactNode }) => <code style={{ background: "var(--bg-4)", borderRadius: 3, padding: "1px 4px", fontSize: "0.85em", fontFamily: "var(--mono)" }}>{children}</code>,
+  table: ({ children }: { children?: ReactNode }) => (
     <div style={{ overflowX: "auto", margin: "0.5rem 0" }}>
       <table style={{ borderCollapse: "collapse", fontSize: "0.8rem", width: "100%" }}>{children}</table>
     </div>
   ),
-  th: ({ children }: { children: ReactNode }) => (
+  th: ({ children }: { children?: ReactNode }) => (
     <th style={{ border: "1px solid var(--border)", padding: "4px 8px", background: "var(--bg-3)", fontWeight: 600, textAlign: "left" }}>{children}</th>
   ),
-  td: ({ children }: { children: ReactNode }) => (
+  td: ({ children }: { children?: ReactNode }) => (
     <td style={{ border: "1px solid var(--border)", padding: "4px 8px" }}>{children}</td>
   ),
 };

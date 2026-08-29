@@ -7,6 +7,8 @@ TASKS.md
 PLAN.md
 PLAN2.md
 TASKS2.md
+installer_plan.md
+INSTALLER.md
 
 # Python virtual environment
 .venv/
@@ -22,6 +24,10 @@ dist/
 build/
 .pytest_cache/
 .mypy_cache/
+
+# Node / Electron
+node_modules/
+release/
 
 # Pipeline data (generated, not source)
 Validation/pipeline/data/

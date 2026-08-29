@@ -21,11 +21,26 @@ def _detect_device() -> str:
 
 # ---------------------------------------------------------------------------
 # Resolve key directories relative to *this file* so the config works
-# regardless of the caller's working directory.
+# regardless of the caller's working directory — this is the source-tree
+# default used in local dev.
+#
+# Both roots below are env-overridable so a packaged app can point them at
+# an OS-appropriate location instead of the (read-only, once bundled) source
+# tree:
+#   MYPRIVATEAI_DATA_DIR      — writable: sqlite db, chroma index, uploaded PDFs
+#   MYPRIVATEAI_RESOURCE_DIR  — read-only: reranker + NLTK model caches
 # ---------------------------------------------------------------------------
 _PIPELINE_DIR = Path(__file__).resolve().parent.parent          # app/backend/pipeline
-_BACKEND_DIR = _PIPELINE_DIR.parent                             # app/backend
-_DATA_DIR = _BACKEND_DIR / "data"
+_BACKEND_DIR = _PIPELINE_DIR.parent                              # app/backend
+_DATA_DIR = Path(os.getenv("MYPRIVATEAI_DATA_DIR", str(_BACKEND_DIR / "data")))
+_RESOURCE_DIR = Path(os.getenv("MYPRIVATEAI_RESOURCE_DIR", str(_BACKEND_DIR / "data")))
+# Unchanged dev default (app/backend/storage/papers) so existing local uploads
+# stay where they are when MYPRIVATEAI_DATA_DIR is unset.
+_PAPERS_DIR = (
+    _DATA_DIR / "storage" / "papers"
+    if os.getenv("MYPRIVATEAI_DATA_DIR")
+    else _BACKEND_DIR / "storage" / "papers"
+)
 
 
 @dataclass
@@ -36,11 +51,13 @@ class Config:
     device: str = field(default_factory=_detect_device)
 
     # -- Paths ---------------------------------------------------------------
-    papers_dir: Path = _BACKEND_DIR / "storage" / "papers"
+    # Writable at runtime.
+    papers_dir: Path = _PAPERS_DIR
     chroma_dir: Path = _DATA_DIR / "chroma"
     db_path: Path = _DATA_DIR / "app.db"
-    reranker_cache_dir: Path = _DATA_DIR / "reranker_models"
-    nltk_data_dir: Path = _DATA_DIR / "nltk_data"
+    # Read-only model caches — never written to after packaging.
+    reranker_cache_dir: Path = _RESOURCE_DIR / "reranker_models"
+    nltk_data_dir: Path = _RESOURCE_DIR / "nltk_data"
 
     # -- LLM (MLX — Apple Silicon only) -------------------------------------
     mlx_model: str = "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit"
@@ -72,7 +89,16 @@ class Config:
     embed_paper_metadata: bool = True    # prepend title to chunk embeddings
 
     def __post_init__(self) -> None:
-        # Honour .env override for NLTK_DATA
+        # Honour .env override for NLTK_DATA (takes priority over
+        # MYPRIVATEAI_RESOURCE_DIR — useful for pointing at a scratch dir
+        # in dev without touching the resource dir env var).
         env_nltk = os.getenv("NLTK_DATA")
         if env_nltk:
             self.nltk_data_dir = Path(env_nltk)
+
+        # Writable dirs must exist before anything tries to read/write them.
+        # Read-only resource dirs (reranker_cache_dir, nltk_data_dir) are
+        # never created here — in a packaged app they're pre-populated and
+        # read-only; creating them would fail there and is unnecessary in dev.
+        for path in (self.papers_dir, self.chroma_dir, self.db_path.parent):
+            path.mkdir(parents=True, exist_ok=True)

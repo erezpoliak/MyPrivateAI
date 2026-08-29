@@ -1,4 +1,8 @@
-const BASE = "http://localhost:5001";
+// In dev (`npm run dev`), Vite runs on :5173 and the backend on :5001, so
+// requests need an absolute URL. In a production build, FastAPI serves the
+// built frontend itself (see server.py), so requests are same-origin and
+// BASE should be empty.
+const BASE = import.meta.env.DEV ? "http://localhost:5001" : "";
 
 // ---------------------------------------------------------------------------
 // Types

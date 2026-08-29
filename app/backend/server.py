@@ -7,11 +7,14 @@ Run with:
 from __future__ import annotations
 
 import logging
+import os
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
 from .db.app_db import AppDB
@@ -67,8 +70,24 @@ def create_app(config: Config | None = None) -> FastAPI:
     app.include_router(chats_router)
     app.include_router(collections_router)
 
+    @app.get("/health")
+    async def health() -> dict[str, str]:
+        # Uvicorn only accepts connections after `lifespan` finishes, so a
+        # response here already implies every model is loaded. The Electron
+        # shell polls this to know when to swap the splash screen for the UI.
+        return {"status": "ok"}
+
+    # In a packaged app, FastAPI also serves the built frontend so the whole
+    # thing is same-origin — no CORS, no separate Vite process. Mounted last
+    # (and only when configured) so it never shadows the API routes above.
+    frontend_dir = os.getenv("MYPRIVATEAI_FRONTEND_DIR")
+    if frontend_dir:
+        app.mount("/", StaticFiles(directory=Path(frontend_dir), html=True), name="frontend")
+
     return app
 
 
 if __name__ == "__main__":
-    uvicorn.run(create_app(), host="0.0.0.0", port=5001)
+    host = os.getenv("HOST", "127.0.0.1")
+    port = int(os.getenv("PORT", "5001"))
+    uvicorn.run(create_app(), host=host, port=port)
