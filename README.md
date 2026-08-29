@@ -2,9 +2,9 @@
 
 **A local-first desktop application that brings cloud-level AI to sensitive private documents — without sacrificing security, cost, or accessibility.**
 
-While existing local AI tools and Agentic RAG pipelines require technical expertise, MyPrivateAI offers a simple installer for researchers, lawyers, and professionals handling confidential data.
+Many professionals can't use cloud AI tools because their documents contain confidential information, and existing local alternatives are either hard to use or weak at complex document reasoning. MyPrivateAI closes that gap with a simple installer for researchers, lawyers, and other professionals handling confidential data — no technical expertise required.
 
-**The core innovation:** Local LLMs typically underperform on complex reasoning compared to GPT-5. Our Optimized Agentic RAG system combines advanced RAG techniques with multi-turn reasoning agents, enabling complex multi-document analysis once reserved for cloud services. Through systematic validation on the SciRAG-QA benchmark, we demonstrate that frontier-level performance is achievable on consumer hardware — **MyPrivateAI achieved 95% of GPT-5.1 + Gold Ref, a ceiling simulating a perfect cloud model with perfect retrieval.**
+**The core innovation:** our Optimized Agentic RAG system combines advanced RAG techniques with multi-turn reasoning agents, enabling complex multi-document analysis once reserved for cloud services. Through systematic validation on the SciRAG-QA benchmark, we demonstrate that frontier-level performance is achievable on consumer hardware — **MyPrivateAI achieved 95% of GPT-5.1 + Gold Ref, a ceiling simulating a perfect cloud model with perfect retrieval.**
 
 MyPrivateAI delivers a "cloud LLM experience" locally — completely free, private, and offline — making advanced AI accessible to anyone with sensitive documents.
 
@@ -67,12 +67,6 @@ Hop 3:  correct(all accumulated context) ──> done
 
 ---
 
-## Installation
-
-> **Coming soon.** MyPrivateAI is currently in the validation phase. A guided installer will be provided in a future release.
-
----
-
 ## Experiment Results
 
 **Phase 2 (Agentic RAG) achieved 95% of GPT-5.1 + Gold Ref performance — a ceiling that simulates a perfect cloud model with perfect retrieval.**
@@ -87,5 +81,22 @@ All experiments evaluated with [RAGAS](https://docs.ragas.io/) metrics on the Sc
 | Phase 2 (Agentic RAG) | 0.7615 | 0.8276 | 0.7363 | 0.7816 |
 | Llama + Gold Ref | 0.6351 | 0.9310 | 0.9138 | 0.6607 |
 | GPT-5.1 + Gold Ref (Ceiling) | 0.5737 | 0.8793 | 0.9138 | 0.8195 |
+
+---
+
+## Installation
+
+**Requirements:** Apple Silicon Mac (M1 or later), macOS 13+, 16 GB RAM, ~8 GB free disk space.
+
+1. Download [`MyPrivateAI-0.1.0-arm64.dmg`](https://transfer.it/t/cjmGmxwjHRBT) and open it.
+2. Drag **MyPrivateAI** into **Applications**, then launch it.
+3. The app isn't code-signed yet, so macOS will block the first launch with a
+   "malware" warning — this is expected. Go to **System Settings → Privacy &
+   Security**, click **Open Anyway** next to the MyPrivateAI notice, and confirm.
+   You'll only need to do this once.
+4. A splash screen appears while the app loads on first launch — everything
+   (models included) ships inside the app, so no downloads or internet needed.
+
+Your documents and chats stay local, in `~/Library/Application Support/MyPrivateAI`.
 
 ---
